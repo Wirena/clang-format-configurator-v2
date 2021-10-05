@@ -1,0 +1,1 @@
+# clang-format-configurator-v2
