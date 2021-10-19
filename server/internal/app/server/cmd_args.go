@@ -1,5 +1,6 @@
 package server
 
+<<<<<<< HEAD
 func (CmdArgs) Description() string {
 	return "format server"
 }
@@ -13,4 +14,10 @@ func NewCmdArgs() *CmdArgs {
 	return &CmdArgs{
 		Config: *NewConfig(),
 	}
+=======
+type CmdArgs struct {
+	printHelp  bool   `arg:"-h,--help"`
+	configPath string `arg:"-c"`
+	config     Config
+>>>>>>> 3aa214a157b0edb19e64b0ab482a84e4a73a8688
 }
