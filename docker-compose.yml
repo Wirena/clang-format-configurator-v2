@@ -1,0 +1,12 @@
+version: '3'
+services:
+
+
+  server:
+    build: ./format-server
+    container_name: format-server
+
+    ports:
+      - 8080:8080
+      - 2345:2345
+

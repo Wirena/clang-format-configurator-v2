@@ -5,7 +5,7 @@ func (CmdArgs) Description() string {
 }
 
 type CmdArgs struct {
-	ConfigPath string `arg:"-c" help:"path to config file"`
+	ConfigPath string `arg:"-c" help:"path to config file" default:"./config.toml"`
 	Config
 }
 
