@@ -3,18 +3,19 @@ package server
 import (
 	"net/http"
 
+	"github.com/Wirena/clang-format-configurator-v2/internal/app/formatter"
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 )
 
 type server struct {
-	router *mux.Router
-	logger *log.Logger
+	router    *mux.Router
+	formatter *formatter.Formatter
 }
 
 func Start(config *Config) error {
 	s := newServer()
-	s.logger.Infof(`Starting server with config parameters:\n 
+	log.Infof(`Starting server with config parameters:\n 
 	BindAddr: %s\n
 	DatabaseURL %s\n
 	DatabaseUser %s\n`, config.BindAddr, config.DatabaseURL, config.DatabaseUser)
@@ -23,6 +24,11 @@ func Start(config *Config) error {
 
 func newServer() *server {
 	s := &server{router: mux.NewRouter(),
-		logger: log.New()}
+		formatter: formatter.NewFormatter(),
+	}
 	return s
+}
+
+func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	s.router.ServeHTTP(w, r)
 }

@@ -13,13 +13,13 @@ func main() {
 	if len(cmdArgs.ConfigPath) != 0 {
 		_, err := toml.DecodeFile(cmdArgs.ConfigPath, &cmdArgs.Config)
 		if err != nil {
-			log.Errorf("Failed to decode config file: %s", err)
+			log.Fatal("Failed to decode config file", err)
 			return
 		}
 	}
 	error := server.Start(&cmdArgs.Config)
 	if error != nil {
-		log.Errorf("Failed to start server: %s", error)
+		log.Fatal("Failed to start server", error)
 	}
 
 }
