@@ -1,3 +1,4 @@
 *
 !.gitignore
-!get-llvm.sh
+!parse-docs.py
+!llvm-stuff.sh
