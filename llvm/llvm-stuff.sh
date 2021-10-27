@@ -40,7 +40,7 @@ function copy-file-from-repo(){
         IFS='/' read -r tmp version <<< "$branch"
         git checkout "$branch"
         version="docs/$version"
-        cp "$path_to_file" ../"$version"
+        cp "$path_to_file" "../$version.rst"
         echo "File for versioin $version copied"
     done
     cd ..
@@ -49,15 +49,15 @@ function copy-file-from-repo(){
 
 
 llvm_repo_url="https://github.com/llvm/llvm-project.git"
-declare -a versions=("release/13.x" "release/12.x" "release/11.x" "release/10.x"\
+declare -a versions=("release/13.x" "release/12.x" "release/11.x" "release/10.x" \
 "release/9.x" "release/8.x" "release/7.x" "release/6.x" "release/5.x" "release/4.x")
 clone_target="clang/docs/ClangFormatStyleOptions.rst"
 local_repo_dir="temp-llvm-repo" 
 
 
 function clean(){
-    rm -rf "$local_repo_dir"
-    rm -rf "docs"
+    -rm -rf "$local_repo_dir"
+    -rm llvm.tar.zx
 }
 
 function get-docs(){
@@ -80,10 +80,20 @@ function get-docs(){
 }
 
 
+function get-llvm-10(){
+    llvm_link="https://github.com/llvm/llvm-project/releases/download/llvmorg-10.0.0/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz"
+    wget -O llvm.tar.xz "$llvm_link"
+    mkdir llvm-10 && tar xf llvm.tar.xz -C llvm-10 --strip-components 1
+    
+}
+
+
 if [[ "$1" = "clean" ]] ; then
     clean
-elif [[ "$1" = "get-docs" ]] ; then
-    get
+elif [[ "$1" = "docs" ]] ; then
+    get-docs
+elif [[ "$1" = "llvm" ]] ; then
+    get-llvm-10
 else 
-    echo "First and only arg is either \"clean\" to cleanup or \"get-docs\" to get docs from repos"
+    echo "First and only arg is either \"clean\" to cleanup or \"docs\" to get docs from repos"
 fi
