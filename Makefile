@@ -1,11 +1,19 @@
+
 build-server:
-	go build -v format-server/cmd/clang-format-server/
+	cd server && go build -o ./bin/clang-format-configurator -v ./cmd/clang-format-configurator/
 
-set-debug:
-	cp -f format-server/debug.Dockerfile format-server/Dockerfile
 
-set-release:
-	cp -f format-server/release.Dockerfile format-server/Dockerfile
+clean-llvm:
+	cd llvm && ./llvm-stuff.sh clean
 
-clean:
+
+get-docs:
+	cd llvm && ./llvm-stuff.sh docs
+
+
+clean: clean-llvm
 	-rm format-server/clang-format-server Dockerfile
+
+
+run-debug: build-server
+	docker-compose up -f docker-compose-debug.yml

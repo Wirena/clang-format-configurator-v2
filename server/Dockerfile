@@ -13,10 +13,11 @@ RUN echo "deb http://deb.debian.org/debian sid main" >> /etc/apt/sources.list \
 && echo "deb http://deb.debian.org/debian stretch-backports main" >> /etc/apt/sources.list \
 && echo "deb http://deb.debian.org/debian stretch main" >> /etc/apt/sources.list \
 && apt update
-RUN apt -y install clang-format-13 clang-format-12 clang-format-11 clang-format-9 clang-format-8 libtinfo5
+RUN apt -y install clang-format-13 clang-format-12 clang-format-11 clang-format-9 \
+clang-format-8 clang-format-7 clang-format-6 clang-format-5 libtinfo5
 
-RUN go install github.com/go-delve/delve/cmd/dlv@v1.7.2
 
-COPY ./server .
 
-CMD ["dlv", "debug", "./cmd/clang-format-server/", "--headless", "--listen=:2345", "--api-version=2", "--log"]
+COPY ./server/bin .
+
+#CMD ["dlv", "debug", "./cmd/clang-format-server/", "--headless", "--listen=:2345", "--api-version=2", "--log"]

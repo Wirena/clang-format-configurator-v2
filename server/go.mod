@@ -10,6 +10,6 @@ require (
 )
 
 require (
-	github.com/alexflint/go-scalar v1.1.0 // indirect
-	golang.org/x/sys v0.0.0-20211023085530-d6a326fbbf70 // indirect
+	github.com/alexflint/go-scalar v1.0.0 // indirect
+	golang.org/x/sys v0.0.0-20191026070338-33540a1f6037 // indirect
 )
