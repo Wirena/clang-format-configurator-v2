@@ -10,6 +10,8 @@ clean-llvm:
 get-docs:
 	cd llvm && ./llvm-stuff.sh docs
 
+parse-docs: get-docs
+	cd llvm && ./parse-docs.py
 
 clean: clean-llvm
 	-rm format-server/clang-format-server Dockerfile

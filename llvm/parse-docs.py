@@ -114,13 +114,13 @@ def parse_rst(rst: str):
 if __name__ == "__main__":
 
 
-    filenames = next(os.walk(dir), (None, None, []))[2]  # [] if no file
+    filenames = next(os.walk('docs/'), (None, None, []))[2]  # [] if no file
     optionList = {}
     for (_, filename) in enumerate(filenames):
         f = open('docs/'+filename, "r")
-        optionList[filename.replace(".rst","")]= parse_rst(f.read())
+        optionList["clang-format-"+filename.replace(".x.rst","")]= parse_rst(f.read())
         f.close()
 
-    fo = open("docs/options.json", "w") 
+    fo = open("options.json", "w") 
     fo.write(json.dumps(optionList))
         
