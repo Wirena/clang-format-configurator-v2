@@ -6,7 +6,6 @@ build-server:
 clean-llvm:
 	cd llvm && ./llvm-stuff.sh clean
 
-
 get-docs:
 	cd llvm && ./llvm-stuff.sh docs
 

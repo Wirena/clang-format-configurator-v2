@@ -1,48 +1,131 @@
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    margin: 0;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 200;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+    padding: 2px 4px;
+    font-size: 90%;
+    color: #c7254e;
+    background-color: #f9f2f4;
+    border-radius: 4px;
+    font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+pre {
+    padding: 0;
+    font-size: inherit;
+    color: inherit;
+    border-style: solid;
+    border: 1px solid #e3e3e3;
+    background-color: #f8f8f8;
+    border-radius: 4px;
+    white-space: pre-wrap;
+    padding-top: 10px;
+    font-weight: 200;
+    font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+select,
+button {
+    margin: 5px;
+    padding: 4px 12px;
+    font-size: 14px;
+    font-weight: 400;
 }
 
 .Header {
-  background-color: rgb(38, 36, 36);
-  overflow: hidden;
-  padding: 10px;
-  
+    background-color: rgb(38, 38, 38);
+    overflow: hidden;
+    padding: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.Header span{
-  color: #cecdcd;
-  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-  font-size: medium;
-  float:left;
-  padding-left: 2%;
-  padding-top: 6px;
-  font-weight: 400;
+.Header h2 {
+    color: #cecdcd;
+    font-size: medium;
+    padding-left: 5px;
 }
-
-button {
-  margin: 5px;
-  padding: 4px 12px;
-  font-size: 14px;
-  font-weight: 400;
-}
-
 
 .Header button {
-  float: right;
+    float: right;
 }
 
-.Option{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.PaneContainer {
+    display: flex;
+}
+
+.LeftSide {
+    flex: 5;
+    overflow: hidden;
+    margin: 10px 15px;
+}
+
+.RightSide {
+    flex: 5;
+    overflow: hidden;
+    border-left-style: solid;
+}
+
+.OptionList hr {
+    margin: 0px;
+}
+
+.TopRow span,
+.TopRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.TopRow h4 {
+    margin: 13px 0px;
+    font-weight: bold;
+    font-size: 90%;
+}
+
+.BottomRow .InfoField {
+    min-height: 20px;
+    padding: 10px;
+    background-color: #f5f5f5;
+    border: 1px solid #e3e3e3;
+    border-radius: 4px;
+}
+
+.BottomRow h5 {
+    margin: 2px;
+    font-weight: normal;
+}
+
+.Option .OptionInput {
+    width: 200px;
+    margin: 2px;
+    padding: 4px;
+    -webkit-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.InfoButton,
+.InfoButton img {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    border: none;
+    background: none;
+    transition-duration: 200ms;
+}
+
+.InfoButton:hover {
+    opacity: 0.8;
+    transition-duration: 200ms;
 }

@@ -50,15 +50,10 @@ function copy-file-from-repo(){
 
 llvm_repo_url="https://github.com/llvm/llvm-project.git"
 declare -a versions=("release/13.x" "release/12.x" "release/11.x" "release/10.x" \
-"release/9.x" "release/8.x" "release/7.x" "release/6.x" "release/5.x" "release/4.x")
+"release/9.x")
 clone_target="clang/docs/ClangFormatStyleOptions.rst"
 local_repo_dir="temp-llvm-repo" 
 
-
-function clean(){
-    -rm -rf "$local_repo_dir"
-    -rm llvm.tar.zx
-}
 
 function get-docs(){
     echo "Cloning repo"
@@ -76,24 +71,61 @@ function get-docs(){
     else 
         echo "Done."
     fi
+    rm -rf "$local_repo_dir"
+}
+
+
+declare -a llvm_links=(\
+    'https://github.com/llvm/llvm-project/releases/download/llvmorg-10.0.1/clang+llvm-10.0.1-x86_64-linux-gnu-ubuntu-16.04.tar.xz')
+
+function download-clang-10(){
+    cntr=10
+    mkdir clang
+    for lnk in "${llvm_links[@]}"
+    do
+       wget -O clangtar.tar.xz "$lnk"
+       mkdir -p "clang/clang_$cntr" && tar xvf clangtar.tar.xz -C "clang/clang_$cntr" --strip-components 1
+       ((cntr=cntr-1))
+       rm clangtar.tar.xz
+    done
     
 }
 
 
-function get-llvm-10(){
-    llvm_link="https://github.com/llvm/llvm-project/releases/download/llvmorg-10.0.0/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz"
-    wget -O llvm.tar.xz "$llvm_link"
-    mkdir llvm-10 && tar xf llvm.tar.xz -C llvm-10 --strip-components 1
-    
+declare -a styles=(\
+    'LLVM' 'Google' 'Chromium' 'Mozilla' 'Webkit' 'Microsoft' 'GNU')
+function dump-configs(){
+    mkdir dumps
+    for style in "${styles[@]}"
+    do
+        clang-format-13 --style="$style" --dump-config > dumps/clang-format-13_"$style"
+        clang-format-12 --style="$style" --dump-config > dumps/clang-format-12_"$style"
+        clang-format-11 --style="$style" --dump-config > dumps/clang-format-11_"$style"
+        clang-format-10 --style="$style" --dump-config > dumps/clang-format-10_"$style"
+        clang-format-9 --style="$style" --dump-config > dumps/clang-format-9_"$style"
+    done
 }
 
 
-if [[ "$1" = "clean" ]] ; then
-    clean
-elif [[ "$1" = "docs" ]] ; then
+ function get-configs(){
+    docker build . -t conf-dumps
+    docker rm conf-dumps-cont
+    docker create -ti --name conf-dumps-cont conf-dumps bash
+    docker cp conf-dumps-cont:/dumps ./configs
+
+ }
+
+
+if [[ "$1" = "docs" ]] ; then
     get-docs
-elif [[ "$1" = "llvm" ]] ; then
-    get-llvm-10
+elif [[ "$1" = "download-clang" ]] ; then
+    download-clang-10
+elif [[ "$1" = "dump" ]] ; then 
+    #he bought? Dump it.
+    dump-configs
+elif [[ "$1" = "configs" ]] ; then
+    get-configs
 else 
-    echo "First and only arg is either \"clean\" to cleanup or \"docs\" to get docs from repos"
+    echo "First and only arg is either \"docs\" to get docs from repos\
+     or \"download-clang\" to download clang-10 or \"configs\" to get style configs from docker";
 fi
