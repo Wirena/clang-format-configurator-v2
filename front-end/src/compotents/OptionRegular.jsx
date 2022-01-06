@@ -1,9 +1,17 @@
 import React from "react";
 
-const Option = ({ optionTitle, optionInfo, defaultOption, optionList, onOptChange }) => {
+const OptionRegular = ({
+    selectedValue,
+    styleDefValue,
+    optionTitle,
+    optionInfo,
+    optionList,
+    onOptChange,
+}) => {
     const [showInfo, setShowInfo] = React.useState(false);
+    
     return (
-        <div className="Option">
+        <div className="Option OptionRegular">
             <div className="TopRow">
                 <span>
                     <button
@@ -16,13 +24,21 @@ const Option = ({ optionTitle, optionInfo, defaultOption, optionList, onOptChang
                     <h4>{optionTitle}</h4>
                 </span>
                 <span>
-                    {optionList.length == 0 ? <input className="OptionInput">
-                    </input> : (
-                        <select className="OptionInput" onChange={onOptChange}>
-                            {optionList.map((x) => (
-                                <option key={x}>{x}</option>
-                            ))}
-                        </select>
+                    {optionList.length === 0 ? (
+                        <input className="OptionInput"></input>
+                    ) : (
+                    
+                            <select
+                                className="OptionInput"
+                                onChange={onOptChange}
+                                value={selectedValue}
+                            >
+                                {[ ...optionList].map((optText,index) => (
+                                    //console.log(value)
+                                    <option key={optText+index} >{optText}</option>
+                                ))}
+                            </select>
+                        
                     )}
                 </span>
             </div>
@@ -40,4 +56,4 @@ const Option = ({ optionTitle, optionInfo, defaultOption, optionList, onOptChang
     );
 };
 
-export default Option;
+export default OptionRegular;

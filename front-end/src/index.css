@@ -76,20 +76,43 @@ button {
     margin: 0px;
 }
 
-.TopRow span,
-.TopRow {
+.OptionRegular .TopRow span,
+.OptionRegular .TopRow {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.TopRow h4 {
+
+.OptionNested .TopRow{
+    display: flex;
+    justify-content: space-between;
+    align-items:flex-start;
+}
+
+.OptionNested .TopRow span {
+    display: flex;
+    justify-content: space-between;
+    align-items:center;
+}
+
+.NestedContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+.Option h4 {
+    
     margin: 13px 0px;
     font-weight: bold;
     font-size: 90%;
 }
 
-.BottomRow .InfoField {
+
+.Option .BottomRow .InfoField {
     min-height: 20px;
     padding: 10px;
     background-color: #f5f5f5;
@@ -97,7 +120,7 @@ button {
     border-radius: 4px;
 }
 
-.BottomRow h5 {
+.Option h5 {
     margin: 2px;
     font-weight: normal;
 }

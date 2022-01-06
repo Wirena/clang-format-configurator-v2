@@ -1,7 +1,6 @@
-import "./App.css";
 import Header from "./compotents/Header";
-import Option from "./compotents/Option";
 import OptionList from "./compotents/OptionList";
+import OptionRegular from "./compotents/OptionRegular";
 
 function App() {
     return (
@@ -12,7 +11,7 @@ function App() {
                     <OptionList/>
                 </div>
                 <div className="RightSide">
-                    <Option
+                    <OptionRegular
                         optionTitle={"Title"}
                         optionInfo={"text"}
                         optionList={[1, 2, 3, 43]}

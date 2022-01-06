@@ -1,11 +1,12 @@
 import React from "react";
 import sourceOptionList from "./options.json";
-import Option from "./Option";
+import OptionRegular from "./OptionRegular";
+import OptionNested from "./OptionNested";
 
 class OptionList extends React.Component {
     state = {
         selectedVersion: "",
-        selectedStyle: "",
+        chosenOptions: { BasedOnStyle: "" },
     };
 
     constructor(props) {
@@ -17,40 +18,48 @@ class OptionList extends React.Component {
     }
 
     render() {
-        console.log(this.state)
         return (
             <div className="OptionList">
-                <Option
+                <OptionRegular
                     optionTitle="Version"
                     optionInfo="LLVM version"
                     optionList={this.sortedVersions}
-                    onOptChange={(event) =>
+                    onOptChange={(event) => {
+                        console.log(this.state);
+                        this.setState({ chosenOptions: {} });
                         this.setState({
                             selectedVersion: event.target.value,
-                        })
-                    }
+                        });
+                        console.log(this.state);
+                    }}
                 />
                 <hr />
-                {sourceOptionList[this.state.selectedVersion].map((x, y) => (
-                    <Option
-                        key={x["name"]}
-                        optionTitle={x["name"]}
-                        optionInfo={x["docString"]}
-                        optionList={x["typeVariants"]}
-                        onOptChange={(e) => {
-                            let st = this.state;
-                            st[x["name"]] = e.target.value;
-                            this.setState(st);
-                        }}
-                        //onOptChange={y==0?(e)=>console.log("we"):console.log("aa")}
-                    />
-                ))}
-
-                <Option
-                    optionTitle={"T2153"}
-                    optionInfo={"hellloo weewew"}
-                    optionList={[1, 2, 3, 43]}
-                />
+                {sourceOptionList[this.state.selectedVersion].map((x, y) =>
+                    x["nestedOpts"].length === 0 ? (
+                        <OptionRegular
+                            key={x["name"]}
+                            selectedValue={this.state.chosenOptions[x["name"]]}
+                            optionTitle={x["name"]}
+                            optionInfo={x["docString"]}
+                            optionList={x["typeVariants"]}
+                            onOptChange={(e) => {
+                                let st = this.state;
+                                if (e.target.value !== "Default")
+                                    st.chosenOptions[x["name"]] =
+                                        e.target.value;
+                                else delete st.chosenOptions[x["name"]];
+                                this.setState(st);
+                            }}
+                        />
+                    ) : (
+                        <OptionNested
+                            key={x["name"]}
+                            optionTitle={x["name"]}
+                            optionInfo={x["docString"]}
+                            optionList={x["nestedOpts"]}
+                        />
+                    )
+                )}
             </div>
         );
     }

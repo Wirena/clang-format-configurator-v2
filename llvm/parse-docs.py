@@ -11,12 +11,6 @@ known_types = ["bool", "unsigned", "std::string", "std::vector<std::string>", "i
                "std::vector<IncludeCategory>", "std::vector<RawStringFormat>"]
 
 
-def constr_option(name: str, argType: str, docStringRst: str, typeVariants=[],
-                  nestedOpts=[]):
-    return {"name": name, "argType": argType, "docString": docStringRst,
-            "typeVariants": typeVariants, "nestedOpts": nestedOpts}
-
-
 def constr_nested_option(name: str, argType: str, typeVariant=[]):
     return {"name": name, "argType": argType, "typeVariant": typeVariant}
 
@@ -27,16 +21,18 @@ def parse_nested(text: str):
     nopts = []
 
     for m in matches:
-        variants = []
+        variants = ['Default']
         if m.group(1) not in known_types:
             matches1 = re.finditer(
                 r'^    \* ``.*`` \(in configuration: ``(.*)``', text, re.MULTILINE)
+
             for m1 in matches1:
                 variants.append(m1.group(1))
         else:
             if m.group(1) == 'bool':
                 variants.append('true')
                 variants.append('false')
+
         nopts.append(constr_nested_option(m.group(2), m.group(1), variants))
     return nopts
 
@@ -44,7 +40,8 @@ def parse_nested(text: str):
 def parse_unknown_type_variants(text: str):
     # group 1 - type variant
     matches = re.finditer(r'\* ``.*`` \(in configuration: ``(.*)``\)', text)
-    typeVariants=list(map(lambda m: m.group(1), matches))
+    typeVariants = list(map(lambda m: m.group(1), matches))
+    typeVariants.insert(0, "Default")
     return typeVariants
 
 
@@ -52,12 +49,13 @@ def parse_based_on_style(header: str, body: str):
     # group 1 - option name, group 2 - type
     header_match = re.match(r'\*{2}(\w+)\*{2} \(``(.*)``\)',
                             header)
-    
+
     variants_matches = re.finditer(r'\* ``(.*)', body)
     typeVariants = list(map(lambda m: m.group(1).replace("``", ""),
-                             variants_matches))
-    return constr_option(header_match.group(1), header_match.group(2),
-                         rst_to_html_docstring(body).replace("`_", ""), typeVariants)
+                            variants_matches))
+    typeVariants.insert(0, 'Default')
+    return {"name": header_match.group(1), "argType": header_match.group(2),
+            "docString": rst_to_html_docstring(body).replace("`_", ""), "typeVariants": typeVariants}
 
 
 def rst_to_html_docstring(text: str) -> str:
@@ -96,11 +94,11 @@ def parse_rst(rst: str):
             continue
 
         i += 1
-        cur_opt = constr_option(opt_header_match.group(
-            1), opt_header_match.group(2), rst_to_html_docstring(options[i]))
+        cur_opt = {"name": opt_header_match.group(1), "argType": opt_header_match.group(
+            2), "docString": rst_to_html_docstring(options[i])}
         if opt_header_match.group(2) in known_types:
             if opt_header_match.group(2) == "bool":
-                cur_opt["typeVariants"] = ["false", "true"]
+                cur_opt["typeVariants"] = ["Default", "false", "true"]
             options_list.append(cur_opt)
             continue
 
