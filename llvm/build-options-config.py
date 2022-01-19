@@ -11,10 +11,6 @@ known_types = ["bool", "unsigned", "std::string", "std::vector<std::string>", "i
                "std::vector<IncludeCategory>", "std::vector<RawStringFormat>"]
 
 
-def constr_nested_option(name: str, argType: str, typeVariant=[]):
-    return {"name": name, "argType": argType, "typeVariant": typeVariant}
-
-
 def parse_nested(text: str):
     # group 1 - type, group 2 - name
     matches = re.finditer(r'^  \* ``(.*?) (.*?)``', text, re.MULTILINE)
@@ -32,8 +28,7 @@ def parse_nested(text: str):
             if m.group(1) == 'bool':
                 variants.append('true')
                 variants.append('false')
-
-        nopts.append(constr_nested_option(m.group(2), m.group(1), variants))
+        nopts.append({"name":m.group(2),"argType":m.group(1),"typeVariant":variants})
     return nopts
 
 
@@ -55,7 +50,7 @@ def parse_based_on_style(header: str, body: str):
                             variants_matches))
     typeVariants.insert(0, 'Default')
     return {"name": header_match.group(1), "argType": header_match.group(2),
-            "docString": rst_to_html_docstring(body).replace("`_", ""), "typeVariants": typeVariants}
+            "docString": rst_to_html_docstring(body).replace("`_", ""),"nestedOpts":[], "typeVariants": typeVariants}
 
 
 def rst_to_html_docstring(text: str) -> str:
@@ -95,7 +90,7 @@ def parse_rst(rst: str):
 
         i += 1
         cur_opt = {"name": opt_header_match.group(1), "argType": opt_header_match.group(
-            2), "docString": rst_to_html_docstring(options[i])}
+            2), "docString": rst_to_html_docstring(options[i]), "nestedOpts":[]}
         if opt_header_match.group(2) in known_types:
             if opt_header_match.group(2) == "bool":
                 cur_opt["typeVariants"] = ["Default", "false", "true"]
@@ -119,15 +114,49 @@ def parse_rst(rst: str):
 
     return options_list
 
+def parse_defaults(optionList, version:str):
+    configs = next(os.walk('configs/'), (None, None, []))[2]
+    configs = list(filter(lambda filename: filename.find(version)!=-1, configs))
+    styles={}
+    for styleFileName in configs:
+        f= open(f"configs/{styleFileName}","r")
+        styles[styleFileName.split("_")[1]]=yaml.safe_load(f.read())
+        f.close()
+    
+    for optionIndex in range(len(optionList)):
+        if len(optionList[optionIndex]["nestedOpts"]) == 0:
+            defaults=[]
+            for styleName,defaultsList in styles.items():
+                if optionList[optionIndex]["name"] not in defaultsList:
+                    continue
+                defaults.append({"styleName":styleName,"value":defaultsList[optionList[optionIndex]["name"]]})
+            optionList[optionIndex]["defaults"]=defaults
+        else:
+            nestedOpts=optionList[optionIndex]["nestedOpts"]
+            for nestedOptIndex in range(len(nestedOpts)):
+                defaults=[]
+                for styleName, defaultsList in styles.items():
+                    if optionList[optionIndex]["name"] not in defaultsList:
+                           continue
+                    defaults.append({"styleName":styleName,\
+                        "value":defaultsList[optionList[optionIndex]["name"]][nestedOpts[nestedOptIndex]["name"]]})
+                nestedOpts[nestedOptIndex]["defaults"]=defaults 
+
 
 if __name__ == "__main__":
-    filenames = next(os.walk('docs/'), (None, None, []))[2]  # [] if no file
+    if not os.getcwd().endswith("llvm"):
+        sys.stderr.write("launch from llvm directory\n")
+        exit(1)
+    files = next(os.walk('docs/'), (None, None, []))[2]  # [] if no file
     optionList = {}
-    for (_, filename) in enumerate(filenames):
+    for filename in files:
+        version = filename.replace(".x.rst", "")
+        current_version="clang-format-" + version
         f = open('docs/'+filename, "r")
-        optionList["clang-format-" +
-                   filename.replace(".x.rst", "")] = parse_rst(f.read())
-        f.close()
+        optionList[current_version] = parse_rst(f.read())
+        parse_defaults(optionList[current_version],version)
+        
 
     fo = open("options.json", "w")
     fo.write(json.dumps(optionList))
+    fo.close()

@@ -1,4 +1,4 @@
 *
 !.gitignore
-!parse-docs.py
+!build-options-config.py
 !llvm-stuff.sh

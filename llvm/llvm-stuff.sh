@@ -116,6 +116,14 @@ function dump-configs(){
  }
 
 
+
+workdir="$(pwd)"
+if [ "$(basename $workdir)" != "llvm" ]
+then
+    echo "launch script from llvm directory"
+    exit 1
+fi
+
 if [[ "$1" = "docs" ]] ; then
     get-docs
 elif [[ "$1" = "download-clang" ]] ; then
@@ -127,5 +135,6 @@ elif [[ "$1" = "configs" ]] ; then
     get-configs
 else 
     echo "First and only arg is either \"docs\" to get docs from repos\
-     or \"download-clang\" to download clang-10 or \"configs\" to get style configs from docker";
+    or \"download-clang\" to download clang-10 or \"configs\" to get style configs from docker";
 fi
+
