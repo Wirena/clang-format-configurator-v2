@@ -17,26 +17,25 @@ def parse_nested(text: str):
     nopts = []
 
     for m in matches:
-        variants = ['Default']
+        variants = []
         if m.group(1) not in known_types:
+            variants.insert(0, "")
             matches1 = re.finditer(
                 r'^    \* ``.*`` \(in configuration: ``(.*)``', text, re.MULTILINE)
 
             for m1 in matches1:
                 variants.append(m1.group(1))
-        else:
-            if m.group(1) == 'bool':
-                variants.append('true')
-                variants.append('false')
-        nopts.append({"name":m.group(2),"argType":m.group(1),"typeVariant":variants})
+
+        nopts.append({"title": m.group(2), "arument_type": m.group(
+            1), "arg_val_enum": variants})
     return nopts
 
 
-def parse_unknown_type_variants(text: str):
+def parse_unknown_arg_type(text: str):
     # group 1 - type variant
     matches = re.finditer(r'\* ``.*`` \(in configuration: ``(.*)``\)', text)
     typeVariants = list(map(lambda m: m.group(1), matches))
-    typeVariants.insert(0, "Default")
+    typeVariants.insert(0, "")
     return typeVariants
 
 
@@ -48,9 +47,10 @@ def parse_based_on_style(header: str, body: str):
     variants_matches = re.finditer(r'\* ``(.*)', body)
     typeVariants = list(map(lambda m: m.group(1).replace("``", ""),
                             variants_matches))
-    typeVariants.insert(0, 'Default')
-    return {"name": header_match.group(1), "argType": header_match.group(2),
-            "docString": rst_to_html_docstring(body).replace("`_", ""),"nestedOpts":[], "typeVariants": typeVariants}
+    typeVariants.insert(0, '')
+    return {"title": header_match.group(1), "docstring": rst_to_html_docstring(body).replace("`_", ""),
+            "values": [{"title": header_match.group(1), "argument_type": header_match.group(2),
+                       "arg_val_enum": typeVariants}]}
 
 
 def rst_to_html_docstring(text: str) -> str:
@@ -62,6 +62,7 @@ def rst_to_html_docstring(text: str) -> str:
 
     # multiline code and paragraphs
     #  group 3 - language, group 4 - code, group 6 - paragraph
+    text=text.strip()
     text = re.sub(r'(?P<indent>  +)(\.\. code-block:: (.*?)\s+$)((\n|(?P=indent)  .*)+)|(^.+?\n)',
                   repl, text, 0, re.MULTILINE)
     # single line code
@@ -89,58 +90,63 @@ def parse_rst(rst: str):
             continue
 
         i += 1
-        cur_opt = {"name": opt_header_match.group(1), "argType": opt_header_match.group(
-            2), "docString": rst_to_html_docstring(options[i]), "nestedOpts":[]}
-        if opt_header_match.group(2) in known_types:
-            if opt_header_match.group(2) == "bool":
-                cur_opt["typeVariants"] = ["Default", "false", "true"]
-            options_list.append(cur_opt)
-            continue
-
-        nestedOpts = []
-        typeVariants = []
+        cur_opt = {"title": opt_header_match.group(
+            1), "docstring": rst_to_html_docstring(options[i]), "values": []}
+        values = []
 
         if "Nested configuration flags:" in options[i]:
             nestedOpts = parse_nested(options[i])
             if nestedOpts is None:
                 sys.stderr.write(f'Error parsing nested options:{options[i]}')
+            else:
+                values = nestedOpts
         else:
-            typeVariants = parse_unknown_type_variants(options[i])
-            if typeVariants is None:
-                sys.stderr.write(f'Error parsing type variants:{options[i]}')
-        cur_opt["nestedOpts"] = nestedOpts
-        cur_opt["typeVariants"] = typeVariants
+            arg_enum = []
+            if opt_header_match.group(2) not in known_types:
+                arg_enum = parse_unknown_arg_type(options[i])
+                if arg_enum is None:
+                    sys.stderr.write(
+                        f'Error parsing type variants:{options[i]}')
+                    arg_enum = []
+            values.append({"title": cur_opt["title"], "argument_type": opt_header_match.group(
+                2), "arg_val_enum": arg_enum})
+
+        cur_opt["values"] = values
         options_list.append(cur_opt)
 
     return options_list
 
-def parse_defaults(optionList, version:str):
-    configs = next(os.walk('configs/'), (None, None, []))[2]
-    configs = list(filter(lambda filename: filename.find(version)!=-1, configs))
-    styles={}
+
+def parse_defaults(optionList, version: str):
+    configs = next(os.walk('defaults/dumps'), (None, None, []))[2]
+    configs = list(
+        filter(lambda filename: filename.find(version) != -1, configs))
+    styles = {}
     for styleFileName in configs:
-        f= open(f"configs/{styleFileName}","r")
-        styles[styleFileName.split("_")[1]]=yaml.safe_load(f.read())
+        f = open(f"defaults/dumps/{styleFileName}", "r")
+        styles[styleFileName.split("_")[1]] = yaml.safe_load(f.read())
         f.close()
-    
+
     for optionIndex in range(len(optionList)):
-        if len(optionList[optionIndex]["nestedOpts"]) == 0:
-            defaults=[]
-            for styleName,defaultsList in styles.items():
-                if optionList[optionIndex]["name"] not in defaultsList:
+        if len(optionList[optionIndex]["values"]) == 1:
+            defaults = {}
+            for styleName, defaultsList in styles.items():
+                if optionList[optionIndex]["title"] not in defaultsList:
                     continue
-                defaults.append({"styleName":styleName,"value":defaultsList[optionList[optionIndex]["name"]]})
-            optionList[optionIndex]["defaults"]=defaults
+                defaults[styleName] = {
+                    "value": defaultsList[optionList[optionIndex]["title"]]}
+            optionList[optionIndex]["values"][0]["defaults"] = defaults
         else:
-            nestedOpts=optionList[optionIndex]["nestedOpts"]
-            for nestedOptIndex in range(len(nestedOpts)):
-                defaults=[]
+            values = optionList[optionIndex]["values"]
+            for valuesIndex in range(len(values)):
+                defaults = {}
                 for styleName, defaultsList in styles.items():
-                    if optionList[optionIndex]["name"] not in defaultsList:
-                           continue
-                    defaults.append({"styleName":styleName,\
-                        "value":defaultsList[optionList[optionIndex]["name"]][nestedOpts[nestedOptIndex]["name"]]})
-                nestedOpts[nestedOptIndex]["defaults"]=defaults 
+                    if optionList[optionIndex]["title"] not in defaultsList or \
+                    values[valuesIndex]["title"] not in defaultsList[optionList[optionIndex]["title"]]:
+                        continue
+                    defaults[styleName] = {
+                        "value": defaultsList[optionList[optionIndex]["title"]][values[valuesIndex]["title"]]}
+                values[valuesIndex]["defaults"] = defaults
 
 
 if __name__ == "__main__":
@@ -151,11 +157,10 @@ if __name__ == "__main__":
     optionList = {}
     for filename in files:
         version = filename.replace(".x.rst", "")
-        current_version="clang-format-" + version
+        current_version = "clang-format-" + version
         f = open('docs/'+filename, "r")
         optionList[current_version] = parse_rst(f.read())
         parse_defaults(optionList[current_version],version)
-        
 
     fo = open("options.json", "w")
     fo.write(json.dumps(optionList))

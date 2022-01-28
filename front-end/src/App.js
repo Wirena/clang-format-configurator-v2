@@ -1,22 +1,21 @@
-import Header from "./compotents/Header";
-import OptionList from "./compotents/OptionList";
-import OptionRegular from "./compotents/OptionRegular";
+import Header from "./components/Header";
+import OptionList from "./components/OptionList";
+import optionsConfig from "./components/options.json";
+import Option from "./components/Option";
 
 function App() {
     return (
         <div>
             <Header />
-            <div className="PaneContainer">
-                <div className="LeftSide">
-                    <OptionList/>
-                </div>
-                <div className="RightSide">
-                    <OptionRegular
-                        optionTitle={"Title"}
-                        optionInfo={"text"}
-                        optionList={[1, 2, 3, 43]}
-                    />
-                </div>
+            <div className="pane_container">
+                <section className="left_side">
+                    <OptionList />
+                </section>
+                <section className="right_side">
+                    <Option option={optionsConfig["clang-format-11"][0]} />
+                    <hr />
+                    <Option option={optionsConfig["clang-format-11"][9]} />
+                </section>
             </div>
         </div>
     );

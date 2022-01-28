@@ -93,7 +93,7 @@ function download-clang-10(){
 
 
 declare -a styles=(\
-    'LLVM' 'Google' 'Chromium' 'Mozilla' 'Webkit' 'Microsoft' 'GNU')
+    'LLVM' 'Google' 'Chromium' 'Mozilla' 'WebKit' 'Microsoft' 'GNU')
 function dump-configs(){
     mkdir dumps
     for style in "${styles[@]}"
@@ -111,14 +111,14 @@ function dump-configs(){
     docker build . -t conf-dumps
     docker rm conf-dumps-cont
     docker create -ti --name conf-dumps-cont conf-dumps bash
-    docker cp conf-dumps-cont:/dumps ./configs
+    docker cp conf-dumps-cont:/dumps/ ./defaults
 
  }
 
 
 
 workdir="$(pwd)"
-if [ "$(basename $workdir)" != "llvm" ]
+if [ "$(basename $workdir)" != "llvm" ] &&  [ "$1" != "dump" ]
 then
     echo "launch script from llvm directory"
     exit 1
@@ -131,10 +131,10 @@ elif [[ "$1" = "download-clang" ]] ; then
 elif [[ "$1" = "dump" ]] ; then 
     #he bought? Dump it.
     dump-configs
-elif [[ "$1" = "configs" ]] ; then
+elif [[ "$1" = "get-configs" ]] ; then
     get-configs
 else 
     echo "First and only arg is either \"docs\" to get docs from repos\
-    or \"download-clang\" to download clang-10 or \"configs\" to get style configs from docker";
+    or \"download-clang\" to download clang-10 or \"get-configs\" to get style configs from docker";
 fi
 

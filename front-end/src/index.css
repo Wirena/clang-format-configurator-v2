@@ -37,36 +37,17 @@ button {
     font-weight: 400;
 }
 
-.Header {
-    background-color: rgb(38, 38, 38);
-    overflow: hidden;
-    padding: 5px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.Header h2 {
-    color: #cecdcd;
-    font-size: medium;
-    padding-left: 5px;
-}
-
-.Header button {
-    float: right;
-}
-
-.PaneContainer {
+.pane_container {
     display: flex;
 }
 
-.LeftSide {
+.left_side {
     flex: 5;
     overflow: hidden;
     margin: 10px 15px;
 }
 
-.RightSide {
+.right_side {
     flex: 5;
     overflow: hidden;
     border-left-style: solid;

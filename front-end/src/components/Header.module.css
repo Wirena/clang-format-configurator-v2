@@ -1,0 +1,14 @@
+.header{
+    background-color: rgb(38, 38, 38);
+    overflow: hidden;
+    padding: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.title_text{
+    color: #cecdcd;
+    font-size: medium;
+    padding-left: 5px;
+}

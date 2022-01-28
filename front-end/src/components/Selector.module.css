@@ -1,0 +1,13 @@
+.selector {
+    width: 200px;
+    margin: 2px;
+    padding: 4px;
+    -webkit-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.selectorText{
+    width: 3px;
+}
