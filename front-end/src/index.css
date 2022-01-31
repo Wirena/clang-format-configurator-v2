@@ -1,135 +1,28 @@
 body {
-    margin: 0;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    font-weight: 200;
-}
-
-code {
-    padding: 2px 4px;
-    font-size: 90%;
-    color: #c7254e;
-    background-color: #f9f2f4;
-    border-radius: 4px;
-    font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
-}
-
-pre {
-    padding: 0;
-    font-size: inherit;
-    color: inherit;
-    border-style: solid;
-    border: 1px solid #e3e3e3;
-    background-color: #f8f8f8;
-    border-radius: 4px;
-    white-space: pre-wrap;
-    padding-top: 10px;
-    font-weight: 200;
-    font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
-}
-
-select,
-button {
-    margin: 5px;
-    padding: 4px 12px;
-    font-size: 14px;
-    font-weight: 400;
+  margin: 0;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 200;
 }
 
 .pane_container {
-    display: flex;
+  display: flex;
 }
 
 .left_side {
-    flex: 5;
-    overflow: hidden;
-    margin: 10px 15px;
+  width: 50vw;
+
+  border-right-style: solid;
+}
+
+.optionList_container {
+  max-height: calc(100vh - 44px);
+  overflow: scroll;
+  overflow-x: hidden;
 }
 
 .right_side {
-    flex: 5;
-    overflow: hidden;
-    border-left-style: solid;
-}
-
-.OptionList hr {
-    margin: 0px;
-}
-
-.OptionRegular .TopRow span,
-.OptionRegular .TopRow {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-
-.OptionNested .TopRow{
-    display: flex;
-    justify-content: space-between;
-    align-items:flex-start;
-}
-
-.OptionNested .TopRow span {
-    display: flex;
-    justify-content: space-between;
-    align-items:center;
-}
-
-.NestedContainer {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-}
-
-
-.Option h4 {
-    
-    margin: 13px 0px;
-    font-weight: bold;
-    font-size: 90%;
-}
-
-
-.Option .BottomRow .InfoField {
-    min-height: 20px;
-    padding: 10px;
-    background-color: #f5f5f5;
-    border: 1px solid #e3e3e3;
-    border-radius: 4px;
-}
-
-.Option h5 {
-    margin: 2px;
-    font-weight: normal;
-}
-
-.Option .OptionInput {
-    width: 200px;
-    margin: 2px;
-    padding: 4px;
-    -webkit-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-}
-
-.InfoButton,
-.InfoButton img {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 16px;
-    height: 16px;
-    padding: 0;
-    border: none;
-    background: none;
-    transition-duration: 200ms;
-}
-
-.InfoButton:hover {
-    opacity: 0.8;
-    transition-duration: 200ms;
+  width: 50vw;
+  overflow: hidden;
 }

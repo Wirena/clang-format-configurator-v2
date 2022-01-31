@@ -26,7 +26,7 @@ def parse_nested(text: str):
             for m1 in matches1:
                 variants.append(m1.group(1))
 
-        nopts.append({"title": m.group(2), "arument_type": m.group(
+        nopts.append({"title": m.group(2), "argument_type": m.group(
             1), "arg_val_enum": variants})
     return nopts
 

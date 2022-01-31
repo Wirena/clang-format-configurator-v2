@@ -1,70 +1,85 @@
 .option {
-    margin: 5px;
-    padding:0px;
-    display:flex;
-    justify-content: space-between;
+  margin: 5px;
+  padding: 3px 0px;
+  display: flex;
+  justify-content: space-between;
 }
 
 .title {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-weight: bold;
-    font-size: 15px;
-    overflow: hidden;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: bold;
+  font-size: 17px;
+  overflow: hidden;
 }
 
-.title_container{
-    max-width: calc(100% - 200px);
+.title_container {
+  max-width: calc(100% - 235px);
+  padding: 3px;
 }
 
-.docstring{
-    min-height: 20px;
-    padding: 15px;
-    margin: 10px;
-    padding-top: 5px;
-    background-color: #f5f5f5;
-    border: 1px solid #e3e3e3;
-    border-radius: 4px;
-    font-size: 14px;
+.docstring {
+  min-height: 20px;
+  padding: 15px;
+  margin: 10px;
+  padding-top: 5px;
+  background-color: #f5f5f5;
+  border: 1px solid #e3e3e3;
+  border-radius: 4px;
+  font-size: 14px;
 }
 
+.nested_container{
+    padding: 5px 0px 5px 5px;
+    width: 226px;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 5px;
+    border-color: #c0c0c0;
+}
 
+.title_nested {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 17px;
+  display: inline-block;
+  margin: 5px 0px;
+}
 
 code {
-    padding: 2px 4px;
-    font-size: 90%;
-    color: #c7254e;
-    background-color: #f9f2f4;
-    border-radius: 4px;
-    font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+  padding: 2px 4px;
+  font-size: 90%;
+  color: #c7254e;
+  background-color: #f9f2f4;
+  border-radius: 4px;
+  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
 pre {
-    overflow-x: scroll;
-    max-width: 100%; 
-    padding: 0;
-    font-size: inherit;
-    color: inherit;
-    border-style: solid;
-    border: 1px solid #e3e3e3;
-    background-color: #f8f8f8;
-    border-radius: 4px;
-    white-space: pre;
-    padding-top: 10px;
-    font-weight: 200;
-    font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+  overflow-x: scroll;
+  max-width: 100%;
+  padding: 0;
+  font-size: inherit;
+  color: inherit;
+  border-style: solid;
+  border: 1px solid #e3e3e3;
+  background-color: #f8f8f8;
+  border-radius: 4px;
+  white-space: pre;
+  padding-top: 10px;
+  font-weight: 200;
+  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
 .info_button {
-    display: inline-block;
-    width: 13px;
-    height: 13px;
-    padding: 0;
-    border: none;
-    background: none;
-    transition-duration: 200ms;
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  padding: 0;
+  border: none;
+  background: none;
+  transition-duration: 200ms;
 }
 
 .info_button:hover {
-    opacity: 0.8;
-    transition-duration: 200ms;
+  opacity: 0.8;
+  transition-duration: 200ms;
 }

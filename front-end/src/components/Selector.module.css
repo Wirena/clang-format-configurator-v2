@@ -1,13 +1,20 @@
 .selector {
-    width: 200px;
-    margin: 2px;
-    padding: 4px;
-    -webkit-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
+  width: 200px;
+  margin: 2px;
+  padding: 4px 12px;
+  border-radius: 5px;
+  border-width: 1px;
+  float: right;
+  background-color: rgb(233, 233, 233);
+  -ms-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  -webkit-box-sizing: content-box;
+  box-sizing: content-box;
+  font: -moz-pull-down-menu;
 }
 
-.selectorText{
-    width: 3px;
+
+.dropdownOptionDefault {
+    font-style: italic;
+    background-color: rgb(184, 184, 184);
 }
