@@ -62,7 +62,7 @@ def rst_to_html_docstring(text: str) -> str:
 
     # multiline code and paragraphs
     #  group 3 - language, group 4 - code, group 6 - paragraph
-    text=text.strip()
+    text = text.strip()
     text = re.sub(r'(?P<indent>  +)(\.\. code-block:: (.*?)\s+$)((\n|(?P=indent)  .*)+)|(^.+?\n)',
                   repl, text, 0, re.MULTILINE)
     # single line code
@@ -117,15 +117,18 @@ def parse_rst(rst: str):
     return options_list
 
 
-def parse_defaults(optionList, version: str):
-    configs = next(os.walk('defaults/dumps'), (None, None, []))[2]
+def parse_defaults(path: str, optionList, version: str):
+    configs = next(os.walk(path), (None, None, []))[2]
     configs = list(
         filter(lambda filename: filename.find(version) != -1, configs))
     styles = {}
     for styleFileName in configs:
-        f = open(f"defaults/dumps/{styleFileName}", "r")
-        styles[styleFileName.split("_")[1]] = yaml.safe_load(f.read())
-        f.close()
+        try:
+            f = open(f"{path}/{styleFileName}", "r")
+            styles[styleFileName.split("_")[1]] = yaml.safe_load(f.read())
+            f.close()
+        except FileNotFoundError:
+            sys.sterr.write(f"Failed to open file {path}/{styleFileName}, continueing")
 
     for optionIndex in range(len(optionList)):
         if len(optionList[optionIndex]["values"]) == 1:
@@ -142,7 +145,7 @@ def parse_defaults(optionList, version: str):
                 defaults = {}
                 for styleName, defaultsList in styles.items():
                     if optionList[optionIndex]["title"] not in defaultsList or \
-                    values[valuesIndex]["title"] not in defaultsList[optionList[optionIndex]["title"]]:
+                            values[valuesIndex]["title"] not in defaultsList[optionList[optionIndex]["title"]]:
                         continue
                     defaults[styleName] = {
                         "value": defaultsList[optionList[optionIndex]["title"]][values[valuesIndex]["title"]]}
@@ -150,17 +153,17 @@ def parse_defaults(optionList, version: str):
 
 
 if __name__ == "__main__":
-    if not os.getcwd().endswith("llvm"):
-        sys.stderr.write("launch from llvm directory\n")
-        exit(1)
-    files = next(os.walk('docs/'), (None, None, []))[2]  # [] if no file
+    if len(sys.argv) != 3:
+        print("2 args expected: path to dir with rst docs, path to dir with defaults")
+    files = next(os.walk(sys.argv[1]), (None, None, []))[2]  # [] if no file
     optionList = {}
     for filename in files:
-        version = filename.replace(".x.rst", "")
+        print(filename)
+        version = filename.replace(".rst", "")
         current_version = "clang-format-" + version
-        f = open('docs/'+filename, "r")
+        f = open(f"{sys.argv[1]}/{filename}", "r")
         optionList[current_version] = parse_rst(f.read())
-        parse_defaults(optionList[current_version],version)
+        parse_defaults(sys.argv[2], optionList[current_version], version)
 
     fo = open("options.json", "w")
     fo.write(json.dumps(optionList))

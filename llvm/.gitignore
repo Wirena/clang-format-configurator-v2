@@ -1,4 +1,6 @@
 *
 !.gitignore
-!build-options-config.py
-!llvm-stuff.sh
+!build-config.py
+!requirements.txt
+!prepare.sh
+!Dockerfile
