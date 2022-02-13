@@ -128,7 +128,7 @@ def parse_defaults(path: str, optionList, version: str):
             styles[styleFileName.split("_")[1]] = yaml.safe_load(f.read())
             f.close()
         except FileNotFoundError:
-            sys.sterr.write(f"Failed to open file {path}/{styleFileName}, continueing")
+            sys.sterr.write(f"Failed to open file {path}/{styleFileName}, continuing")
 
     for optionIndex in range(len(optionList)):
         if len(optionList[optionIndex]["values"]) == 1:
@@ -153,18 +153,17 @@ def parse_defaults(path: str, optionList, version: str):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("2 args expected: path to dir with rst docs, path to dir with defaults")
+    if len(sys.argv) != 4:
+        print("3 args expected: path to dir with rst docs, path to dir with defaults, output file path")
     files = next(os.walk(sys.argv[1]), (None, None, []))[2]  # [] if no file
     optionList = {}
     for filename in files:
-        print(filename)
         version = filename.replace(".rst", "")
         current_version = "clang-format-" + version
         f = open(f"{sys.argv[1]}/{filename}", "r")
         optionList[current_version] = parse_rst(f.read())
         parse_defaults(sys.argv[2], optionList[current_version], version)
 
-    fo = open("options.json", "w")
+    fo = open(sys.argv[3], "w")
     fo.write(json.dumps(optionList))
     fo.close()

@@ -11,14 +11,14 @@ GREEN="$(tput setaf 2)"
 
 WORKDIR="/workdir"
 #destination directory on host for clang-format binaries
-BINS_DESTINATION_DIR="clang-format"
+BINS_HOST_DIR="../server/third-party/clang-format"
 #directory in container with clang-format binaries after build
-BINS_SOURCE_DIR="/workdir/clang-format"
+BINS_CONTAINER_DIR="/workdir/clang-format"
 
 #path on host for config file
-CONFIG_DESTINATION="config.json"
+CONFIG_HOST="config.json"
 #config file location in container
-CONFIG_SOURCE="/workdir/config.json"
+CONFIG_CONTAINTER="/workdir/config.json"
 
 #print red error message
 function echerror() {
@@ -30,20 +30,32 @@ function echstage() {
     echo "${GREEN}$1 ${NORMAL}"
 }
 
+function displaytime {
+    local T=$1
+    local D=$((T / 60 / 60 / 24))
+    local H=$((T / 60 / 60 % 24))
+    local M=$((T / 60 % 60))
+    local S=$((T % 60))
+    (($D > 0)) && printf '%d days ' $D
+    (($H > 0)) && printf '%d hours ' $H
+    (($M > 0)) && printf '%d minutes ' $M
+    (($D > 0 || $H > 0 || $M > 0)) && printf 'and '
+    printf '%d seconds\n' $S
+}
+
 function get-version-from-branch() {
     echo $1 | grep -oP '(?<=release\/)(\d+)(?=\.x)'
 }
 
 #build clang-format and config file in container
 function build-artifacts() {
-    echstage "Creating container"
-    if ! docker inspect --format="empty" ${DOCKER_IMAGE_TAG} >/dev/null 2>&1; then
+    if ! docker inspect --format="empty" ${DOCKER_IMAGE_TAG} 1>/dev/null 2>&1; then
         echerror "Couldn't find image named ${DOCKER_IMAGE_TAG}"
         exit 1
     fi
-    echstage "Entering container"
-    docker rm --force ${DOCKER_CONTAINER_NAME} 2>/dev/null 2>&1
-    if ! docker create -i --name ${DOCKER_CONTAINER_NAME} ${DOCKER_IMAGE_TAG}; then
+    echstage "Running container"
+    docker rm --force ${DOCKER_CONTAINER_NAME} 1>/dev/null 2>&1
+    if ! docker run -t --name ${DOCKER_CONTAINER_NAME} ${DOCKER_IMAGE_TAG} ./prepare.sh --inside-container --all; then
         echerror "Failed to create container"
         exit $?
     fi
@@ -63,15 +75,20 @@ function debug-container() {
 #copy artifacts from container to host
 function copy-artifacts() {
     echstage "Copying from container"
-    if ! docker cp ${DOCKER_CONTAINER_NAME}:${BINS_SOURCE_DIR} ${BINS_DESTINATION_DIR}; then
+    mkdir -p ${BINS_HOST_DIR}
+    if ! docker cp ${DOCKER_CONTAINER_NAME}:${BINS_CONTAINER_DIR} ${BINS_HOST_DIR}; then
         echerror "Failed to copy compiled binaries from container"
         exit $?
+    else
+        echo "Binaries copied"
     fi
-    if ! docker cp ${DOCKER_CONTAINER_NAME}:${CONFIG_SOURCE} ${CONFIG_DESTINATION}; then
+    if ! docker cp ${DOCKER_CONTAINER_NAME}:${CONFIG_CONTAINTER} ${CONFIG_HOST}; then
         echerror "Failed to copy config from container"
         exit $?
+    else
+        echo "Config copied"
     fi
-    echstage "Obtained binaries and config"
+    echstage "Done"
 }
 
 #build image for building
@@ -87,8 +104,8 @@ function build-image() {
 function clear() {
     echstage "Clearing all"
     remove-image
-    rm -rf ${BINS_DESTINATION_DIR}
-    rm ${CONFIG_DESTINATION}
+    rm -rf ${BINS_HOST_DIR}
+    rm ${CONFIG_HOST}
     echstage "Done clearing all"
 }
 
@@ -109,9 +126,8 @@ function inside-container() (
     #destination for unprocessed default style configs
     DEFAULTS_DIR="${WORKDIR}/defaults"
     CORE_COUNT=$(nproc)
-    declare -a BRANCHES=("release/13.x" "release/9.x")
-    #eclare -a BRANCHES=("release/13.x" "release/12.x" "release/11.x" "release/10.x"
-    #  "release/9.x")
+    declare -a BRANCHES=("release/13.x" "release/12.x" "release/11.x" "release/10.x"
+        "release/9.x" "release/8.x" "release/7.x")
 
     function clone-repo() {
         URL="https://github.com/llvm/llvm-project.git"
@@ -145,7 +161,7 @@ function inside-container() (
                 echerror "Failed to build clang-format-${BRANCH}"
                 continue
             )
-            mkdir -p ${BINS_SOURCE_DIR} && cp --force ./build/bin/clang-format "${BINS_SOURCE_DIR}/clang-format-${VERSION_NUMBER}"
+            mkdir -p ${BINS_CONTAINER_DIR} && cp --force ./build/bin/clang-format "${BINS_CONTAINER_DIR}/clang-format-${VERSION_NUMBER}"
         done
         cd ${WORKDIR}
         echstage "Finished building"
@@ -169,13 +185,17 @@ function inside-container() (
         declare -a STYLES=(
             'LLVM' 'Google' 'Chromium' 'Mozilla' 'WebKit' 'Microsoft' 'GNU')
         echstage "Dumping default style configs"
-        cd ${BINS_SOURCE_DIR}
+        cd ${BINS_CONTAINER_DIR}
         mkdir -p ${DEFAULTS_DIR}
         for FILENAME in $(find * -maxdepth 1 -type f); do
             VERSION_NUMBER=$(echo "${FILENAME}" cut -d- -f 3)
             for STYLE in ${STYLES[@]}; do
-                ./${FILENAME} --style=${STYLE} --dump-config >"${DEFAULTS_DIR}/${FILENAME}_${STYLE}" ||
-                    echerror "Failed to get config for style ${STYLE} for version ${FILENAME} VERSION}"
+                ./${FILENAME} --style=${STYLE} --dump-config >"${DEFAULTS_DIR}/${FILENAME}_${STYLE}" &&
+                    echo "Got ${STYLE} config for ${FILENAME}" || (
+                    rm "${DEFAULTS_DIR}/${FILENAME}_${STYLE}"
+                    echerror "Failed to get config for style ${STYLE} for ${FILENAME}"
+                )
+
             done
         done
         cd ${WORKDIR}
@@ -183,14 +203,19 @@ function inside-container() (
     }
 
     function build-config() {
-        32
+        python3 build-config.py ${DOCS_DIR} ${DEFAULTS_DIR} ${CONFIG_CONTAINTER}
     }
 
     function all() {
+        TIME_START=$SECONDS
         clone-repo
         build-clang-format
         docs
         defaults
+        build-config
+        DURATION=$((SECONDS - start))
+        echstage "Time taken in container:"
+        displaytime ${DURATION}
     }
 
     if [[ "$1" = "--all" ]]; then
@@ -204,14 +229,19 @@ function inside-container() (
     elif [[ "$1" = "--defaults" ]]; then
         defaults
     elif [[ "$1" = "--build-config" ]]; then
-        build-artifacts
+        build-config
     fi
 )
 
 function all() {
-    buildimage
+    TIME_START=$SECONDS
+    build-image
     build-artifacts
     copy-artifacts
+    DURATION=$((SECONDS - start))
+    echstage "Time taken in total:"
+    displaytime ${DURATION}
+
 }
 
 workdir="$(pwd)"

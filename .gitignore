@@ -17,4 +17,6 @@
 .vscode/*
 
 server/bin/*
+server/third-party/*
+
 front-end/.prettierrc
