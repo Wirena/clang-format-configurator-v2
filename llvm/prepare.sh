@@ -14,6 +14,13 @@ WORKDIR="/workdir"
 BINS_HOST_DIR="../server/third-party/clang-format"
 #directory in container with clang-format binaries after build
 BINS_CONTAINER_DIR="/workdir/clang-format"
+#destination for unprocessed .rst docs files
+DOCS_DIR_CONT="${WORKDIR}/docs"
+DOCS_DIR_HOST="docs"
+#destination for unprocessed default style configs
+DEFAULTS_DIR_CONT="${WORKDIR}/defaults"
+DEFAULTS_DIR_HOST="defaults"
+
 
 #path on host for config file
 CONFIG_HOST="config.json"
@@ -88,6 +95,20 @@ function copy-artifacts() {
     else
         echo "Config copied"
     fi
+    if ! docker cp ${DOCKER_CONTAINER_NAME}:${DEFAULTS_DIR_CONT} ${DEFAULTS_DIR_HOST}; then
+        echerror "Failed to copy defaults from container"
+        exit $?
+    else
+        echo "Defaults copied"
+    fi
+
+    if ! docker cp ${DOCKER_CONTAINER_NAME}:${DOCS_DIR_CONT} ${DOCS_DIR_HOST}; then
+        echerror "Failed to copy docs from container"
+        exit $?
+    else
+        echo "docs copied"
+    fi
+
     echstage "Done"
 }
 
@@ -121,10 +142,7 @@ function remove-image() {
 #functions to run inside container
 function inside-container() (
     REPOSITORY_DIR="${WORKDIR}/llvm"
-    #destination for unprocessed .rst docs files
-    DOCS_DIR="${WORKDIR}/docs"
-    #destination for unprocessed default style configs
-    DEFAULTS_DIR="${WORKDIR}/defaults"
+
     CORE_COUNT=$(nproc)
     declare -a BRANCHES=("release/13.x" "release/12.x" "release/11.x" "release/10.x"
         "release/9.x" "release/8.x" "release/7.x")
@@ -174,7 +192,7 @@ function inside-container() (
         for BRANCH in ${BRANCHES[@]}; do
             VERSION_NUMBER=$(get-version-from-branch ${BRANCH})
             git checkout --force ${BRANCH} &&
-                mkdir -p ${DOCS_DIR} && cp --force ${DOC_FILE} "${DOCS_DIR}/${VERSION_NUMBER}.rst" && echstage "Docs for ${BRANCH} copied" ||
+                mkdir -p ${DOCS_DIR_CONT} && cp --force ${DOC_FILE} "${DOCS_DIR_CONT}/${VERSION_NUMBER}.rst" && echstage "Docs for ${BRANCH} copied" ||
                 echerror "Failed to copy doc file for branch ${BRANCH}"
         done
         cd ${WORKDIR}
@@ -186,13 +204,13 @@ function inside-container() (
             'LLVM' 'Google' 'Chromium' 'Mozilla' 'WebKit' 'Microsoft' 'GNU')
         echstage "Dumping default style configs"
         cd ${BINS_CONTAINER_DIR}
-        mkdir -p ${DEFAULTS_DIR}
+        mkdir -p ${DEFAULTS_DIR_CONT}
         for FILENAME in $(find * -maxdepth 1 -type f); do
             VERSION_NUMBER=$(echo "${FILENAME}" cut -d- -f 3)
             for STYLE in ${STYLES[@]}; do
-                ./${FILENAME} --style=${STYLE} --dump-config >"${DEFAULTS_DIR}/${FILENAME}_${STYLE}" &&
+                ./${FILENAME} --style=${STYLE} --dump-config >"${DEFAULTS_DIR_CONT}/${FILENAME}_${STYLE}" &&
                     echo "Got ${STYLE} config for ${FILENAME}" || (
-                    rm "${DEFAULTS_DIR}/${FILENAME}_${STYLE}"
+                    rm "${DEFAULTS_DIR_CONT}/${FILENAME}_${STYLE}"
                     echerror "Failed to get config for style ${STYLE} for ${FILENAME}"
                 )
 
@@ -203,7 +221,7 @@ function inside-container() (
     }
 
     function build-config() {
-        python3 build-config.py ${DOCS_DIR} ${DEFAULTS_DIR} ${CONFIG_CONTAINTER}
+        python3 build-config.py ${DOCS_DIR_CONT} ${DEFAULTS_DIR_CONT} ${CONFIG_CONTAINTER}
     }
 
     function all() {
