@@ -11,7 +11,7 @@ GREEN="$(tput setaf 2)"
 
 WORKDIR="/workdir"
 #destination directory on host for clang-format binaries
-BINS_HOST_DIR="../server/third-party/clang-format"
+BINS_HOST_DIR="../server/third-party"
 #directory in container with clang-format binaries after build
 BINS_CONTAINER_DIR="/workdir/clang-format"
 #destination for unprocessed .rst docs files
