@@ -32,11 +32,11 @@ elif [[ "$1" = "--stop" || "$1" = "-s" ]]; then
 elif [[ "$1" = "--all" || "$1" = "-a" ]]; then
     all
 else
-    echo "Use --wait N as last arg to give debugger N seconds to start before VS Code will try to attach"
+    echo "Use --wait N as the last arg to give debugger N seconds to start before VS Code will try to attach"
     echo "-b --build: build debug image"
     echo "-r --run:   run new debug container, stop one beforehand if it's already running"
     echo "-a --all:   do all of listed above"
-    echo "-s --stop:   stop debug container"
+    echo "-s --stop:  stop debug container"
     return 0
 fi
 
