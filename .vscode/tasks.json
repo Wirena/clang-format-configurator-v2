@@ -1,0 +1,28 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "start_server_debugger",
+			"command": "./debug-script.sh",
+			"args": [
+				"--all",
+				"--wait"
+			],
+			"type": "shell",
+			"options": {
+				"cwd": "${workspaceFolder}/server/"
+			}
+		},
+		{
+			"label": "stop_container",
+			"command": "./debug-script.sh",
+			"args": [
+				"--stop"
+			],
+			"type": "shell",
+			"options": {
+				"cwd": "${workspaceFolder}/server/"
+			}
+		}
+	]
+}
