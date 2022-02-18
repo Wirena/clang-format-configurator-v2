@@ -15,7 +15,7 @@
             "trace": "verbose",
             "showLog": true,
             "preLaunchTask": "start_server_debugger",
-            "postDebugTask": "stop_container"
+            
         }
     ]
 }

@@ -23,6 +23,8 @@ function all() {
     build && run || echo "Something went wrong"
 }
 
+WAIT_TIME=40
+
 if [[ "$1" = "--build" || "$1" = "-b" ]]; then
     build
 elif [[ "$1" = "--run" || "$1" = "-r" ]]; then
@@ -32,7 +34,7 @@ elif [[ "$1" = "--stop" || "$1" = "-s" ]]; then
 elif [[ "$1" = "--all" || "$1" = "-a" ]]; then
     all
 else
-    echo "Use --wait N as the last arg to give debugger N seconds to start before VS Code will try to attach"
+    echo "Use --wait N as the last arg to give debugger N seconds to start before VS Code will try to attach(${WAIT_TIME} by default)"
     echo "-b --build: build debug image"
     echo "-r --run:   run new debug container, stop one beforehand if it's already running"
     echo "-a --all:   do all of listed above"
@@ -40,7 +42,6 @@ else
     return 0
 fi
 
-WAIT_TIME=5
 if [[ $2 = "--wait" ]]; then
     if [[ -n "$3" ]]; then
         WAIT_TIME=$3

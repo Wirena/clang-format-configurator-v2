@@ -6,7 +6,8 @@
 			"command": "./debug-script.sh",
 			"args": [
 				"--all",
-				"--wait"
+				"--wait",
+				"15"
 			],
 			"type": "shell",
 			"options": {
