@@ -2,23 +2,30 @@ package main
 
 import (
 	"github.com/BurntSushi/toml"
+	"github.com/Wirena/clang-format-configurator-v2/internal/app/config"
+	"github.com/Wirena/clang-format-configurator-v2/internal/app/formatter"
 	"github.com/Wirena/clang-format-configurator-v2/internal/app/server"
-	arg "github.com/alexflint/go-arg"
+	"github.com/alexflint/go-arg"
 	log "github.com/sirupsen/logrus"
 )
 
 func main() {
-	cmdArgs := server.NewCmdArgs()
-	arg.MustParse(cmdArgs)
-	if len(cmdArgs.ConfigPath) != 0 {
-		_, err := toml.DecodeFile(cmdArgs.ConfigPath, &cmdArgs.Config)
+	config := config.NewConfig()
+	arg.MustParse(config)
+	if len(config.ConfigPath) != 0 {
+		_, err := toml.DecodeFile(config.ConfigPath, &config)
 		if err != nil {
 			log.Info("Failed to parse config file", err)
 		}
 	}
-	error := server.Start(&cmdArgs.Config)
-	if error != nil {
-		log.Fatal("Failed to start server", error)
+	log.Infof(`Parsed parameters:\n 
+	Bind address: %s\n
+	Log level: %s`, config.BindAddr, config.LogLevel)
+	formatter, err := formatter.NewFormatter(&config.Versions)
+	if err != nil {
+		log.Fatal(err)
 	}
-
+	s := server.NewServer(formatter, config.BindAddr)
+	err = s.Start()
+	log.Fatal(err)
 }
