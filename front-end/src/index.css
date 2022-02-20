@@ -12,14 +12,16 @@ body {
 
 .left_side {
   width: 50vw;
-
+  
   border-right-style: solid;
+  
 }
 
-.optionList_container {
-  max-height: calc(100vh - 44px);
-  overflow: scroll;
+.optionList_container{
+    max-height: calc(100vh - 44px);
+    overflow: scroll;
   overflow-x: hidden;
+
 }
 
 .right_side {

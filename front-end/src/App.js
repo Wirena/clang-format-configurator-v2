@@ -1,16 +1,17 @@
 import Header from "./components/Header";
 import OptionList from "./components/OptionList";
-import optionsConfig from "./components/options.json";
-import Option from "./components/Option";
 import { Resizable } from "re-resizable";
 import AceEditor from "react-ace";
 import React from "react";
 
+
+// Resizing performanse sucks on Firefox redo this later
 function App() {
   return (
     <div>
       <Header />
       <div className="pane_container">
+        
         <Resizable
           className="left_side"
           defaultSize={{ width: "50%" }}

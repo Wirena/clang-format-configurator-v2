@@ -16,7 +16,7 @@ const Option = ({ option, currentStyle, selected, onChange, ...props }) => {
           <img
             className={styles.info_button}
             alt="show info"
-            src="/questionIcon.svg"
+            src="./questionIcon.svg"
           />
         </button>
         <span className={styles.title}>{option.title}</span>
