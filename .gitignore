@@ -14,8 +14,11 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
+.vscode/*
+!.vscode/launch.json
+!.vsode/tasks.json
 
-server/bin/*
+server/bin
 server/third-party/*
 
 front-end/.prettierrc
