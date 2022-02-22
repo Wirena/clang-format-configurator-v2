@@ -2,14 +2,57 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "start_server_debugger",
+			"label": "start_server_remote_debugger",
 			"command": "./debug-script.sh",
 			"args": [
 				"--all",
-				"--wait",
-				"15"
+			],
+			"isBackground": true,
+			"problemMatcher": {
+				"owner": "custom",
+                "pattern":[
+                    {
+                        "regexp": "(.*):(\\d+:\\d+):(.*)",
+                        "file": 1,
+                        "location": 2,
+                        "message": 3
+                    }
+                ],
+				"background": {
+					"activeOnStart": false,
+					"beginsPattern":"Sending build.*",
+					"endsPattern": "API server listening at.*"
+				},
+			},
+			"type": "shell",
+			"options": {
+				"cwd": "${workspaceFolder}/server/"
+			}
+		},
+		{
+			"label": "start_server_local_debugger",
+			"command": "./debug-script.sh",
+			"args": [
+				"--run-local"
 			],
 			"type": "shell",
+			"isBackground": true,
+			"problemMatcher": {
+				"owner": "custom",
+                "pattern":[
+                    {
+                        "regexp": "(.*):(\\d+:\\d+):(.*)",
+                        "file": 1,
+                        "location": 2,
+                        "message": 3
+                    }
+                ],
+				"background": {
+					"activeOnStart": false,
+					"beginsPattern":"Starting local debugger",
+					"endsPattern": "API server listening at.*"
+				},
+			},
 			"options": {
 				"cwd": "${workspaceFolder}/server/"
 			}
