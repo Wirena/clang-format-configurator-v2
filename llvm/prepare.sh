@@ -21,7 +21,6 @@ DOCS_DIR_HOST="docs"
 DEFAULTS_DIR_CONT="${WORKDIR}/defaults"
 DEFAULTS_DIR_HOST="defaults"
 
-
 #path on host for config file
 CONFIG_HOST="config.json"
 #config file location in container
@@ -72,11 +71,11 @@ function build-artifacts() {
 #run container in interactive mode
 function debug-container() {
     echstage "Running container"
-    docker run -it ${DOCKER_IMAGE_TAG} bash && echstage "Done" || (
+    docker run -it ${DOCKER_IMAGE_TAG} bash || (
         echerror "Failed to run container"
         return $?
     )
-
+    echstage "Done"
 }
 
 #copy artifacts from container to host
@@ -173,13 +172,18 @@ function inside-container() (
         for BRANCH in ${BRANCHES[@]}; do
             VERSION_NUMBER=$(get-version-from-branch ${BRANCH})
             git checkout --force ${BRANCH}
+            rm -rf build
+            #fixes 44217 bug in 8.x
+            if [[ ${BRANCH} = "release/8.x" ]]; then
+                sed -i '1s/^/#include<string>\n#include<cstdint>\n /' "llvm/include/llvm/Demangle/MicrosoftDemangleNodes.h"
+            fi
             echstage "Building clang-format-${VERSION_NUMBER}"
-            cmake -G Ninja -S llvm -B build -DCMAKE_BUILD_TYPE=MinSizeRel -DLLVM_ENABLE_PROJECTS=clang -DLLVM_ENABLE_ASSERTIONS=No &&
-                cmake --build build -j${CORE_COUNT} --target clang-format || (
-                echerror "Failed to build clang-format-${BRANCH}"
-                continue
-            )
-            mkdir -p ${BINS_CONTAINER_DIR} && cp --force ./build/bin/clang-format "${BINS_CONTAINER_DIR}/clang-format-${VERSION_NUMBER}"
+            if cmake -G Ninja -S llvm -B build -DCMAKE_BUILD_TYPE=MinSizeRel -DLLVM_ENABLE_PROJECTS=clang -DLLVM_ENABLE_ASSERTIONS=No &&
+                cmake --build build -j${CORE_COUNT} --target clang-format; then
+                mkdir -p ${BINS_CONTAINER_DIR} && cp --force ./build/bin/clang-format "${BINS_CONTAINER_DIR}/clang-format-${VERSION_NUMBER}"
+            else
+                echerror "Failed to build clang-format-${VERSION_NUMBER}"
+            fi
         done
         cd ${WORKDIR}
         echstage "Finished building"

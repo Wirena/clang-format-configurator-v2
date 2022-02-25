@@ -4,7 +4,6 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
         {
             "name": "Golang-remote-debug",
             "type": "go",
@@ -16,7 +15,6 @@
             "trace": "verbose",
             "showLog": true,
             "preLaunchTask": "start_server_remote_debugger",
-            
         },
         {
             "name": "Golang-local-debug",
@@ -29,7 +27,6 @@
             "trace": "verbose",
             "showLog": true,
             "preLaunchTask": "start_server_local_debugger"
-            
-        }
+        }   
     ]
 }
