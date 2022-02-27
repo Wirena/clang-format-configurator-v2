@@ -1,7 +1,9 @@
 package main
 
 import (
-	"github.com/BurntSushi/toml"
+	"encoding/json"
+	"os"
+
 	"github.com/Wirena/clang-format-configurator-v2/internal/app/config"
 	"github.com/Wirena/clang-format-configurator-v2/internal/app/formatter"
 	"github.com/Wirena/clang-format-configurator-v2/internal/app/server"
@@ -13,10 +15,14 @@ func main() {
 	config := config.NewConfig()
 	arg.MustParse(config)
 	if len(config.ConfigPath) != 0 {
-		_, err := toml.DecodeFile(config.ConfigPath, &config)
+		jsonReader, err := os.Open(config.ConfigPath)
 		if err != nil {
-			log.Info("Failed to parse config file", err)
+			log.Errorf("Failed to read config %s : %s", config.ConfigPath, err)
+		} else {
+			decoder := json.NewDecoder(jsonReader)
+			decoder.Decode(&config)
 		}
+		jsonReader.Close()
 	}
 	log.Infof(`Parsed parameters:\n 
 	Bind address: %s\n

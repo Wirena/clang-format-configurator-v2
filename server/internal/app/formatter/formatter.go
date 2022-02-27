@@ -1,13 +1,30 @@
 package formatter
 
 import (
+	"bytes"
 	"errors"
+	"fmt"
 	"os/exec"
 	"strconv"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
 )
+
+type InternalError struct {
+}
+
+func (er *InternalError) Error() string {
+	return "Internal error"
+}
+
+type InputError struct {
+	what string
+}
+
+func (er *InputError) Error() string {
+	return er.what
+}
 
 type Formatter struct {
 	executables map[int]string
@@ -32,7 +49,7 @@ func transformMap(inmap *map[string]string) (map[int]string, error) {
 	return transformedMap, err
 }
 
-func (f *Formatter) checkAndSetExecs(versions *map[string]string) error {
+func (frmt *Formatter) checkAndSetExecs(versions *map[string]string) error {
 	execs, err := transformMap(versions)
 	if err != nil {
 		return err
@@ -44,7 +61,7 @@ func (f *Formatter) checkAndSetExecs(versions *map[string]string) error {
 		cmd.Stdout = output
 		err := cmd.Run()
 		if err != nil {
-			log.Warningf("%s exited with code %s\n stdout:\n%s", execPath, err, output.String())
+			log.Errorf("%s exited with code %s\n stdout:\n%s", execPath, err, output.String())
 			delete(execs, version)
 		}
 		log.Infof("%s --version output:\n%s", execPath, output.String())
@@ -54,7 +71,7 @@ func (f *Formatter) checkAndSetExecs(versions *map[string]string) error {
 	if len(execs) == 0 {
 		err = errors.New("failed to run every single clang-format version")
 	} else {
-		f.executables = execs
+		frmt.executables = execs
 	}
 	return err
 }
@@ -65,6 +82,36 @@ func NewFormatter(versions *map[string]string) (*Formatter, error) {
 	return f, err
 }
 
-func (f *Formatter) Format(ver string, rules string, code []byte) {
+func (frmt *Formatter) VersionAvailable(version int) bool {
+	_, present := frmt.executables[version]
+	return present
+}
 
+func buildCmdOptions(filenameExt string, style *string) []string {
+	return []string{fmt.Sprintf("-style=%s", *style), fmt.Sprintf("--assume-filename='%s'", filenameExt)}
+}
+
+func (frmt *Formatter) Format(ver int, filenameExt string, code, style *string) ([]byte, error) {
+	executable, ok := frmt.executables[ver]
+	if !ok {
+		return nil, errors.New("no such version")
+	}
+	cmd := exec.Command(executable, buildCmdOptions(filenameExt, style)...)
+	reader := strings.NewReader(*code)
+	cmd.Stdin = reader
+	var output bytes.Buffer
+	var stderr bytes.Buffer
+	cmd.Stdout = &output
+	cmd.Stderr = &stderr
+	err := cmd.Run()
+	if err != nil {
+		log.Warningf("Failed to format: %s", stderr.String())
+		if _, ok := err.(*exec.ExitError); ok {
+			return nil, &InputError{"Clang-format returned non zero code"}
+		} else {
+			return nil, &InternalError{}
+		}
+	}
+
+	return output.Bytes(), nil
 }

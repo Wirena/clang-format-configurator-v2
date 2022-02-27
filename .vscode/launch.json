@@ -27,6 +27,6 @@
             "trace": "verbose",
             "showLog": true,
             "preLaunchTask": "start_server_local_debugger"
-        }   
+        }
     ]
 }

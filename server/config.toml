@@ -1,5 +1,0 @@
-bind_addr = ":8080"
-log_level = "debug"
-database_url = ""
-database_user = "user"
-database_password = "pswd"
