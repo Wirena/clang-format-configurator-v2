@@ -1,5 +1,4 @@
 import React from "react";
-import sourceOptionList from "./options.json";
 import Option from "./Option";
 
 class OptionList extends React.Component {
@@ -10,7 +9,8 @@ class OptionList extends React.Component {
 
   constructor(props) {
     super(props);
-    this.sortedVersions = Object.keys(sourceOptionList).sort(
+    this.sourceOptionList = props.options
+    this.sortedVersions = Object.keys(this.sourceOptionList).sort(
       (a, b) => parseInt(b.split("-")[2]) - parseInt(a.split("-")[2])
     );
     this.state.selectedVersion = this.sortedVersions[0];
@@ -49,8 +49,8 @@ class OptionList extends React.Component {
         <hr />
         {/*BasedOnStyle option */}
         <Option
-          key={sourceOptionList[this.state.selectedVersion][0].title}
-          option={sourceOptionList[this.state.selectedVersion][0]}
+          key={this.sourceOptionList[this.state.selectedVersion][0].title}
+          option={this.sourceOptionList[this.state.selectedVersion][0]}
           selected={this.state.chosenOptions.BasedOnStyle}
           onChange={({ newValue } = {}) => {
             /*  if empty selected, clear all options
@@ -63,7 +63,7 @@ class OptionList extends React.Component {
             }
             let st = this.state;
             st.chosenOptions.BasedOnStyle = newValue;
-            sourceOptionList[this.state.selectedVersion]
+            this.sourceOptionList[this.state.selectedVersion]
               .slice(1)
               .forEach((option) => {
                 if (
@@ -92,7 +92,7 @@ class OptionList extends React.Component {
             this.setState(st);
           }}
         />
-        {sourceOptionList[this.state.selectedVersion].slice(1).map((option) => (
+        {this.sourceOptionList[this.state.selectedVersion].slice(1).map((option) => (
           <Option
             key={option.title}
             option={option}

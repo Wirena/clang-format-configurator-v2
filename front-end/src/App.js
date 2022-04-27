@@ -1,17 +1,23 @@
 import Header from "./components/Header";
 import OptionList from "./components/OptionList";
 import { Resizable } from "re-resizable";
-import AceEditor from "react-ace";
+import Editor from "./components/Editor";
+import Formatter from "./components/Formatter"
 import React from "react";
-
+import config from "./config.json";
 
 // Resizing performanse sucks on Firefox redo this later
 function App() {
+  let formatter;
+  const [text, setText] = React.useState()
+  //React.useEffect(() => {
+  //  formatter = Formatter(() => console.log("helo"), config)
+  //}, []);
   return (
     <div>
       <Header />
       <div className="pane_container">
-        
+
         <Resizable
           className="left_side"
           defaultSize={{ width: "50%" }}
@@ -28,21 +34,11 @@ function App() {
           }}
         >
           <div className="optionList_container">
-            <OptionList />
+            <OptionList options={config} />
           </div>
         </Resizable>
         <section className="right_side">
-          <AceEditor
-            mode="java"
-            theme="github"
-            name="UNIQUE_ID_OF_DIV"
-            editorProps={{ $blockScrolling: true }}
-            setOptions={{
-              enableBasicAutocompletion: true,
-              enableLiveAutocompletion: true,
-              enableSnippets: true,
-            }}
-          />
+          <Editor/>
         </section>
       </div>
     </div>
