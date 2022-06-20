@@ -11,7 +11,7 @@ known_types = ["bool", "unsigned", "std::string", "std::vector<std::string>", "i
                "std::vector<IncludeCategory>", "std::vector<RawStringFormat>"]
 
 
-def parse_nested(text: str):
+def parse_nested_conf_flags(text: str):
     # group 1 - type, group 2 - name
     matches = re.finditer(r'^  \* ``(.*?) (.*?)``', text, re.MULTILINE)
     nopts = []
@@ -48,12 +48,12 @@ def parse_based_on_style(header: str, body: str):
     typeVariants = list(map(lambda m: m.group(1).replace("``", ""),
                             variants_matches))
     typeVariants.insert(0, '')
-    return {"title": header_match.group(1), "docstring": rst_to_html_docstring(body).replace("`_", ""),
+    return {"title": header_match.group(1), "docstring": rst_docstring_to_html_codeblock(body).replace("`_", ""),
             "values": [{"title": header_match.group(1), "argument_type": header_match.group(2),
                        "arg_val_enum": typeVariants}]}
 
 
-def rst_to_html_docstring(text: str) -> str:
+def rst_docstring_to_html_codeblock(text: str) -> str:
     def repl(match):
         if match.group(4) is not None:
             return '<pre>'+match.group(4).replace('<', "&lt;").replace('>', "&gt;")+'</pre>'
@@ -91,11 +91,11 @@ def parse_rst(rst: str):
 
         i += 1
         cur_opt = {"title": opt_header_match.group(
-            1), "docstring": rst_to_html_docstring(options[i]), "values": []}
+            1), "docstring": rst_docstring_to_html_codeblock(options[i]), "values": []}
         values = []
 
         if "Nested configuration flags:" in options[i]:
-            nestedOpts = parse_nested(options[i])
+            nestedOpts = parse_nested_conf_flags(options[i])
             if nestedOpts is None:
                 sys.stderr.write(f'Error parsing nested options:{options[i]}')
             else:
