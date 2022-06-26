@@ -4,6 +4,7 @@ import sys
 import os
 import json
 import yaml
+from yaml.resolver import Resolver
 
 # TODO: rewrite this shit using rst2html or something
 
@@ -128,7 +129,8 @@ def parse_defaults(path: str, optionList, version: str):
             styles[styleFileName.split("_")[1]] = yaml.safe_load(f.read())
             f.close()
         except FileNotFoundError:
-            sys.sterr.write(f"Failed to open file {path}/{styleFileName}, continuing")
+            sys.sterr.write(
+                f"Failed to open file {path}/{styleFileName}, continuing")
 
     for optionIndex in range(len(optionList)):
         if len(optionList[optionIndex]["values"]) == 1:
@@ -157,6 +159,13 @@ if __name__ == "__main__":
         print("3 args expected: path to dir with rst docs, path to dir with defaults, output file path")
     files = next(os.walk(sys.argv[1]), (None, None, []))[2]  # [] if no file
     optionList = {}
+    for ch in "OoYyNn":
+        if len(Resolver.yaml_implicit_resolvers[ch]) == 1:
+            del Resolver.yaml_implicit_resolvers[ch]
+        else:
+            Resolver.yaml_implicit_resolvers[ch] = [
+                x for x in Resolver.yaml_implicit_resolvers[ch] if x[0] != 'tag:yaml.org,2002:bool']
+
     for filename in files:
         version = filename.replace(".rst", "")
         current_version = "clang-format-" + version
