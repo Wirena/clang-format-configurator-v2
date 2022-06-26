@@ -1,8 +1,10 @@
 #!/bin/python3
+from email.policy import default
 import re
 import sys
 import os
 import json
+import functools
 import yaml
 from yaml.resolver import Resolver
 
@@ -154,21 +156,34 @@ def parse_defaults(path: str, optionList, version: str):
                 values[valuesIndex]["defaults"] = defaults
 
 
+def docFileNameVersionComparator(a: str, b: str):
+    a_ver = a.split('.')[0]
+    b_ver = b.split('.')[0]
+    return int(b_ver) - int(a_ver)
+
+
 if __name__ == "__main__":
     if len(sys.argv) != 4:
         print("3 args expected: path to dir with rst docs, path to dir with defaults, output file path")
-    files = next(os.walk(sys.argv[1]), (None, None, []))[2]  # [] if no file
-    optionList = {}
+    files = sorted(next(os.walk(sys.argv[1]), (None, None, []))[2],
+                   key=functools.cmp_to_key(docFileNameVersionComparator))
+    optionList = {"Versions":
+                  {"title": "Version", "docstring": "LLVM Version",
+                   "values": [{"arg_val_enum": [],
+                              "title": "Version",
+                               "argument_type": "",
+                               "defaults": []}]}}
     for ch in "OoYyNn":
         if len(Resolver.yaml_implicit_resolvers[ch]) == 1:
             del Resolver.yaml_implicit_resolvers[ch]
         else:
             Resolver.yaml_implicit_resolvers[ch] = [
                 x for x in Resolver.yaml_implicit_resolvers[ch] if x[0] != 'tag:yaml.org,2002:bool']
-
     for filename in files:
         version = filename.replace(".rst", "")
         current_version = "clang-format-" + version
+        optionList["Versions"]["values"][0]["arg_val_enum"].append(
+            current_version)
         f = open(f"{sys.argv[1]}/{filename}", "r")
         optionList[current_version] = parse_rst(f.read())
         parse_defaults(sys.argv[2], optionList[current_version], version)

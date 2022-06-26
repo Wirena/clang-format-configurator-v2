@@ -1,7 +1,4 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
         {
@@ -14,7 +11,7 @@
             "apiVersion": 2,
             "trace": "verbose",
             "showLog": true,
-            "preLaunchTask": "start_server_remote_debugger",
+            "preLaunchTask": "start_server_remote_debugger"
         },
         {
             "name": "Golang-local-debug",
@@ -27,6 +24,13 @@
             "trace": "verbose",
             "showLog": true,
             "preLaunchTask": "start_server_local_debugger"
+        },
+        {
+            "name": "Launch Chrome",
+            "request": "launch",
+            "type": "pwa-chrome",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceFolder}"
         }
     ]
 }
