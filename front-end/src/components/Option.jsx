@@ -1,10 +1,47 @@
 import React from "react";
 import Collapsible from "react-collapsible";
 import styles from "./Option.module.css";
-import Selector from "./Selector";
+import SingleSelector from "./SingleSelector";
+import MapSelector from "./MapSelector";
 
-const Option = ({ option, currentStyle, selected, onChange, ...props }) => {
+const Option = ({ optionInfo,
+  currentOptionValue,
+  currentStyle,
+  onChange
+}) => {
   const [showDocString, setShowDocString] = React.useState(false);
+
+  const placeSelector = () => {
+    const onChangeFunc = (newOptionValue) => { onChange(optionInfo.title, newOptionValue) }
+    switch (optionInfo.title) {
+      case "BraceWrapping":
+      case "SpacesInLineCommentPrefix":
+        return (<MapSelector
+          selectionInfo={optionInfo.values}
+          currentOptionValue={currentOptionValue}
+          currentStyle={currentStyle}
+          onChange={onChangeFunc}
+        />)
+      case "IncludeCategories":
+        break;
+      case "RawStringFormats":
+        break;
+      default:
+        if (optionInfo.values[0].argument_type === "std::vector<std::string>") {
+
+        } else {
+          return (<SingleSelector
+            key={optionInfo.title}
+            selectionInfo={optionInfo.values[0]}
+            currentStyle={currentStyle}
+            currentOptionValue={currentOptionValue}
+            onChange={onChangeFunc}
+          />)
+        }
+    }
+  }
+
+
   return (
     <section className={styles.option}>
       <span className={styles.title_container}>
@@ -19,62 +56,20 @@ const Option = ({ option, currentStyle, selected, onChange, ...props }) => {
             src="./questionIcon.svg"
           />
         </button>
-        <span className={styles.title}>{option.title}</span>
+        <span className={styles.title}>{optionInfo.title}</span>
         <Collapsible open={showDocString} transitionTime={100}>
           <div
             className={styles.docstring}
             dangerouslySetInnerHTML={{
-              __html: option.docstring,
+              __html: optionInfo.docstring,
             }}
           ></div>
         </Collapsible>
       </span>
-
-      {option.values.length === 1 ? (
-        <Selector
-          key={option.values[0].title}
-          selectionInfo={option.values[0]}
-          selectedValue={selected || ""}
-          onChange={(event) => {
-            let newVal = event.target.value;
-            if (newVal.toString() === "") newVal = undefined;
-            onChange({
-              title: option.title,
-              newValue: newVal,
-            });
-          }}
-          currentStyle={currentStyle}
-        />
-      ) : (
-        <span className={styles.nested_container}>
-          {option.values.map((value) => {
-            return (
-              <div key={value.title}>
-                <span className={styles.title_nested}>{value.title}</span>
-                <Selector
-                  selectionInfo={value}
-                  selectedValue={
-                    selected === undefined ? "" : selected[value.title]
-                  }
-                  onChange={(event) => {
-                    let newVal = event.target.value;
-                    if (newVal.toString() === "") newVal = undefined;
-                    //console.log(value.title + newVal)
-                    onChange({
-                      title: option.title,
-                      titleNested: value.title,
-                      newValue: newVal,
-                    });
-                  }}
-                  currentStyle={currentStyle}
-                />
-              </div>
-            );
-          })}
-        </span>
-      )}
+      {placeSelector()}
     </section>
   );
-};
+}
+
 
 export default Option;

@@ -2,22 +2,33 @@ import Header from "./components/Header";
 import OptionList from "./components/OptionList";
 import { Resizable } from "re-resizable";
 import Editor from "./components/Editor";
-import Formatter from "./components/Formatter"
-import React from "react";
+import { useEffect, useState } from "react";
 import config from "./config.json";
 
-// Resizing performanse sucks on Firefox redo this later
-function App() {
-  let formatter;
-  const [text, setText] = React.useState()
-  //React.useEffect(() => {
-  //  formatter = Formatter(() => console.log("helo"), config)
-  //}, []);
+
+
+const App = () => {
+
+  const formatCode = () => {
+
+    console.log(options)
+  };
+
+  const [options, setOptionsList] = useState(
+    { selectedVersion: config.Versions.values[0].arg_val_enum[0], BasedOnStyle: undefined });
+  const [text, setText] = useState("");
+  const [autoUpdateFormatting, setAutoUpdateFormatting] = useState(true);
+
+  useEffect(() => { if (autoUpdateFormatting) formatCode(options) }, [text, options]);
+
   return (
     <div>
-      <Header />
+      <Header
+        autoUpdate={autoUpdateFormatting}
+        onUpdate={formatCode}
+        onAutoUpdateChange={(val) => setAutoUpdateFormatting(val)}
+      />
       <div className="pane_container">
-
         <Resizable
           className="left_side"
           defaultSize={{ width: "50%" }}
@@ -34,15 +45,24 @@ function App() {
           }}
         >
           <div className="optionList_container">
-            <OptionList options={config} />
+            <OptionList
+              config={config}
+              options={options}
+              llvmVersionOption={config.Versions}
+              onOptionChange={setOptionsList}
+            />
           </div>
         </Resizable>
         <section className="right_side">
-          <Editor/>
+          <Editor
+            onTextChange={(newText) => setText(newText)}
+            editorText={text}
+          />
         </section>
       </div>
     </div>
   );
 }
+
 
 export default App;

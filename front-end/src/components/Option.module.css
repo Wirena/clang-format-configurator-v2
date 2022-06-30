@@ -6,7 +6,8 @@
 }
 
 .title {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: sans-serif;
+  font-stretch:70%;
   font-weight: bold;
   font-size: 17px;
   overflow: hidden;
@@ -26,22 +27,6 @@
   border: 1px solid #e3e3e3;
   border-radius: 4px;
   font-size: 14px;
-}
-
-.nested_container{
-    padding: 5px 0px 5px 5px;
-    width: 226px;
-    border-width: 1px;
-    border-style: solid;
-    border-radius: 5px;
-    border-color: #c0c0c0;
-}
-
-.title_nested {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 17px;
-  display: inline-block;
-  margin: 5px 0px;
 }
 
 code {

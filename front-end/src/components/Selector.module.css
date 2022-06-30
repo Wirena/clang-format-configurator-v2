@@ -18,3 +18,19 @@
     font-style: italic;
     background-color: rgb(184, 184, 184);
 }
+
+.nested_container{
+  padding: 5px 0px 5px 5px;
+  width: 226px;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 5px;
+  border-color: #c0c0c0;
+}
+
+.title_nested {
+font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 17px;
+display: inline-block;
+margin: 5px 0px;
+}

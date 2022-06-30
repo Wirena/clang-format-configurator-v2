@@ -1,0 +1,14 @@
+.ace{
+    size: 100%;
+    margin-top: 0px;
+    padding-top: 0px;
+}
+
+.tab_button{
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+    border-bottom-width: 0px;
+    border-bottom-style: none;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+}

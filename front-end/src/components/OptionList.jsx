@@ -1,6 +1,88 @@
 import React from "react";
 import Option from "./Option";
 
+const OptionList = ({ config, options,llvmVersionOption, onOptionChange }) => {
+
+  return (
+    <div className="OptionList">
+      <Option //LLVM version option
+        key="LLVM Version"
+        optionInfo={llvmVersionOption}
+        currentOptionValue={options.selectedVersion}
+        onChange={(optionTitle, newSelectedVersion) =>
+          // clear all selected options and update version field
+          onOptionChange({ selectedVersion: newSelectedVersion })
+        }
+      />
+      <hr />
+      <Option //BasedOnStyle option
+        key={config[options.selectedVersion][0].title}
+        optionInfo={config[options.selectedVersion][0]}
+        currentOptionValue={options.BasedOnStyle}
+        onChange={(optionTitle, newOptionValue) => {
+          /* if empty style selected, clear all options
+            else set all option values to defaults  */
+          if (newOptionValue == "") {
+            onOptionChange({
+              selectedVersion: options.selectedVersion,
+              BasedOnStyle: undefined
+            })
+            return;
+          }
+
+          let st = {
+            selectedVersion: options.selectedVersion,
+            BasedOnStyle: newOptionValue
+          }
+          config[st.selectedVersion]
+            .slice(1).forEach((option) => {
+              if (
+                option.values.length === 1 &&
+                option.values[0].defaults[newOptionValue] !== undefined
+              ) {
+                st[option.title] =
+                  option.values[0].defaults[newOptionValue].value;
+              } else {
+                // set all option values to selected style defaults
+                // inluding nested ones
+                // filter out options without defaults for this style
+                option.values.filter((element) => element.defaults[newOptionValue] !== undefined)
+                  .forEach((nestedOption) => {
+                    if (st[option.title] == undefined)
+                      st[option.title] = {}
+                    st[option.title][nestedOption.title] =
+                      nestedOption.defaults[newOptionValue].value
+                  }
+                  );
+              }
+            });
+          onOptionChange(st);
+        }}
+      />
+      {config[options.selectedVersion].slice(1).map((option) => (
+        <Option
+          key={option.title}
+          optionInfo={option}
+          currentStyle={options.BasedOnStyle}
+          currentOptionValue={options[option.title]}
+          onChange={(optionTitle, newOptionValue) => 
+            onOptionChange({
+              ...options,
+              [optionTitle]: newOptionValue
+            })
+          }
+        />
+      ))}
+    </div>
+  )
+
+}
+
+
+
+
+
+/*
 class OptionList extends React.Component {
   state = {
     selectedVersion: "",
@@ -9,8 +91,9 @@ class OptionList extends React.Component {
 
   constructor(props) {
     super(props);
-    this.sourceOptionList = props.options
-    this.sortedVersions = Object.keys(this.sourceOptionList).sort(
+    this.onOptionChange = props.onOptionChange
+    this.config = props.options
+    this.sortedVersions = Object.keys(this.config).sort(
       (a, b) => parseInt(b.split("-")[2]) - parseInt(a.split("-")[2])
     );
     this.state.selectedVersion = this.sortedVersions[0];
@@ -31,84 +114,69 @@ class OptionList extends React.Component {
   };
 
   render() {
+
     return (
       <div className="OptionList">
         <Option //LLVM version option
           key="LLVM Version"
-          option={this.llvmVersionOption}
-          selected={this.state.selectedVersion}
-          onChange={({ newValue } = {}) => {
+          optionInfo={this.llvmVersionOption}
+          currentOptionValue={this.state.selectedVersion}
+          onChange={(optionTitle, newOptionValue) =>
             // clear all selected option and update version field
-            this.setState({ chosenOptions: {} });
-            this.setState({
-              selectedVersion: newValue,
-            });
-            console.log(newValue);
-          }}
+            this.setState({ chosenOptions: {}, selectedVersion: newOptionValue })
+          }
         />
         <hr />
-        {/*BasedOnStyle option */}
-        <Option
-          key={this.sourceOptionList[this.state.selectedVersion][0].title}
-          option={this.sourceOptionList[this.state.selectedVersion][0]}
-          selected={this.state.chosenOptions.BasedOnStyle}
-          onChange={({ newValue } = {}) => {
-            /*  if empty selected, clear all options
-                            else set all option values to defaults
-                        */
-
-            if (newValue == "" || newValue === undefined) {
+        <Option //BasedOnStyle option
+          key={this.config[this.state.selectedVersion][0].title}
+          optionInfo={this.config[this.state.selectedVersion][0]}
+          currentOptionValue={this.state.chosenOptions.BasedOnStyle}
+          onChange={(optionTitle, newOptionValue) => {
+            /* if empty style selected, clear all options
+              else set all option values to defaults  
+            if (newOptionValue == "" || newOptionValue === undefined) {
               this.setState({ chosenOptions: {} });
               return;
             }
-            let st = this.state;
-            st.chosenOptions.BasedOnStyle = newValue;
-            this.sourceOptionList[this.state.selectedVersion]
-              .slice(1)
-              .forEach((option) => {
+
+            let st = { selectedVersion: this.state.selectedVersion, chosenOptions: { BasedOnStyle: newOptionValue } }
+            this.config[this.state.selectedVersion]
+              .slice(1).forEach((option) => {
                 if (
                   option.values.length === 1 &&
-                  option.values[0].defaults[newValue] !== undefined
+                  option.values[0].defaults[newOptionValue] !== undefined
                 ) {
                   st.chosenOptions[option.title] =
-                    option.values[0]["defaults"][newValue].value;
+                    option.values[0]["defaults"][newOptionValue].value;
                 } else {
                   // set all option values to selected style defaults
                   // inluding nested ones
-                  st.chosenOptions[option.title] = {};
-                  option.values
-                    .filter(
-                      //filter out options without defaults for this style
-                      (element) => element.defaults[newValue] !== undefined
-                    )
-                    .forEach(
-                      (nestedOption) =>
-                        (st.chosenOptions[option.title][nestedOption.title] =
-                          nestedOption.defaults[newValue].value)
+                  // filter out options without defaults for this style
+                  option.values.filter((element) => element.defaults[newOptionValue] !== undefined)
+                    .forEach((nestedOption) => {
+                      if (st.chosenOptions[option.title] == undefined)
+                        st.chosenOptions[option.title] = {}
+                      st.chosenOptions[option.title][nestedOption.title] =
+                        nestedOption.defaults[newOptionValue].value
+                    }
                     );
                 }
               });
-
             this.setState(st);
+            this.onOptionChange(st.chosenOptions);
           }}
         />
-        {this.sourceOptionList[this.state.selectedVersion].slice(1).map((option) => (
+        {this.config[this.state.selectedVersion].slice(1).map((option) => (
           <Option
             key={option.title}
-            option={option}
+            optionInfo={option}
             currentStyle={this.state.chosenOptions.BasedOnStyle}
-            selected={this.state.chosenOptions[option.title]}
-            onChange={({ title, titleNested, newValue } = {}) => {
+            currentOptionValue={this.state.chosenOptions[option.title]}
+            onChange={(optionTitle, newOptionValue) => {
               let st = this.state;
-              if (newValue != "") {
-                if (titleNested === undefined)
-                  st.chosenOptions[title] = newValue;
-                else st.chosenOptions[title][titleNested] = newValue;
-              } else
-                delete (newValue === undefined
-                  ? st.chosenOptions[title]
-                  : st.chosenOptions[title][titleNested]);
+              st.chosenOptions[optionTitle] = newOptionValue;
               this.setState(st);
+              this.onOptionChange();
             }}
           />
         ))}
@@ -116,5 +184,5 @@ class OptionList extends React.Component {
     );
   }
 }
-
+*/
 export default OptionList;

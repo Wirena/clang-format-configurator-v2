@@ -12,8 +12,10 @@ const Header = ({ autoUpdate, onAutoUpdateChange, onUpdate }) => {
                     onChange={(event) => onAutoUpdateChange(event.currentTarget.checked)}
                 />
                 <label>Autoformat on changes</label>
-                {autoUpdate ? null : <button>Update</button>}
-                
+                <button onClick={onUpdate}>
+                    Update
+                </button>
+
                 <button type={"button"}>
                     Download
                 </button>
