@@ -61,10 +61,17 @@ pre {
   padding: 0;
   border: none;
   background: none;
-  transition-duration: 200ms;
+  transition-duration: 100ms;
+  opacity: 0.9;
 }
 
 .info_button:hover {
   opacity: 0.8;
-  transition-duration: 200ms;
+  transition-duration: 100ms;
 }
+
+.info_button:active {
+  opacity: 1;
+  transition-duration: 20ms;
+}
+

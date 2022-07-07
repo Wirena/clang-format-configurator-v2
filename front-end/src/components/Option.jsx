@@ -3,6 +3,8 @@ import Collapsible from "react-collapsible";
 import styles from "./Option.module.css";
 import SingleSelector from "./SingleSelector";
 import MapSelector from "./MapSelector";
+import ArraySelector from "./ArraySelector";
+
 
 const Option = ({ optionInfo,
   currentOptionValue,
@@ -17,23 +19,24 @@ const Option = ({ optionInfo,
       case "BraceWrapping":
       case "SpacesInLineCommentPrefix":
         return (<MapSelector
-          selectionInfo={optionInfo.values}
+          selectorInfo={optionInfo.values}
           currentOptionValue={currentOptionValue}
           currentStyle={currentStyle}
           onChange={onChangeFunc}
         />)
-      case "IncludeCategories":
-        break;
-      case "RawStringFormats":
-        break;
       default:
-        if (optionInfo.values[0].argument_type === "std::vector<std::string>") {
-
+        if (optionInfo.values[0].argument_type.includes("std::vector<")) {
+          return (<ArraySelector
+            selectorInfo={optionInfo.values[0]}
+            currentStyle={currentStyle}
+            currentOptionValue={currentOptionValue}
+            onChange={onChangeFunc}
+          />)
         } else {
           return (<SingleSelector
             key={optionInfo.title}
-            selectionInfo={optionInfo.values[0]}
-            currentStyle={currentStyle}
+            selectorInfo={optionInfo.values[0]}
+            defaultValue={optionInfo.values[0].defaults[currentStyle]}
             currentOptionValue={currentOptionValue}
             onChange={onChangeFunc}
           />)

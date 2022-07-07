@@ -21,6 +21,7 @@ body {
     max-height: calc(100vh - 44px);
     overflow: scroll;
   overflow-x: hidden;
+  scrollbar-width: none;
 
 }
 
