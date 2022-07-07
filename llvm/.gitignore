@@ -1,0 +1,6 @@
+*
+!.gitignore
+!build-config.py
+!requirements.txt
+!prepare.sh
+!Dockerfile

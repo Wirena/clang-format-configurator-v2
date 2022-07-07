@@ -1,0 +1,13 @@
+{
+    "bind-addr": ":8080",
+    "log-level": "debug",
+    "versions": {
+        "7": "./third-party/clang-format/clang-format-7",
+        "8": "./third-party/clang-format/clang-format-8",
+        "9": "./third-party/clang-format/clang-format-9",
+        "10" : "./third-party/clang-format/clang-format-10",
+        "11" : "./third-party/clang-format/clang-format-11",
+        "12" : "./third-party/clang-format/clang-format-12",
+        "13" : "./third-party/clang-format/clang-format-13"
+    }
+}

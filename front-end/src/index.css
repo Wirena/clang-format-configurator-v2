@@ -1,0 +1,31 @@
+body {
+  margin: 0;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 200;
+}
+
+.pane_container {
+  display: flex;
+}
+
+.left_side {
+  width: 50vw;
+  
+  border-right-style: solid;
+  
+}
+
+.optionList_container{
+    max-height: calc(100vh - 44px);
+    overflow: scroll;
+  overflow-x: hidden;
+  scrollbar-width: none;
+
+}
+
+.right_side {
+  width: 50vw;
+  overflow: hidden;
+}

@@ -1,0 +1,36 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Golang-remote-debug",
+            "type": "go",
+            "request": "attach",
+            "mode": "remote",
+            "port": 2345,
+            "host": "127.0.0.1",
+            "apiVersion": 2,
+            "trace": "verbose",
+            "showLog": true,
+            "preLaunchTask": "start_server_remote_debugger"
+        },
+        {
+            "name": "Golang-local-debug",
+            "type": "go",
+            "request": "attach",
+            "mode": "remote",
+            "port": 2345,
+            "host": "127.0.0.1",
+            "apiVersion": 2,
+            "trace": "verbose",
+            "showLog": true,
+            "preLaunchTask": "start_server_local_debugger"
+        },
+        {
+            "name": "Launch Chrome",
+            "request": "launch",
+            "type": "pwa-chrome",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceFolder}"
+        }
+    ]
+}
