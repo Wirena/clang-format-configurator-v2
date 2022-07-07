@@ -47,7 +47,7 @@ Request
 Method: POST
 Query string:
 version:  major version of clang-format, integer
-filename: filename extension to assume language
+filext: filename extension to assume language
 Body, content-type application/json, charset utf-8:
 code:  piece of code to format, string
 style: contents of .clang-format file, string
@@ -73,11 +73,11 @@ func (srv *Server) formatHandler(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if !req.URL.Query().Has("filename") {
-		http.Error(rw, "No filename parameter in query", http.StatusBadRequest)
+	if !req.URL.Query().Has("filext") {
+		http.Error(rw, "No filext parameter in query", http.StatusBadRequest)
 		return
 	}
-	filenameExt := req.URL.Query().Get("filename")
+	filenameExt := req.URL.Query().Get("filext")
 
 	if !srv.formatter.VersionAvailable(version) {
 		http.Error(rw, "No such version", http.StatusBadRequest)
