@@ -1,4 +1,5 @@
 //Ripped off github.com/zed0/clang-format-configurator
+
 #include <iostream>
 #include <algorithm>
 #include <functional>

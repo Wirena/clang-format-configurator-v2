@@ -4,6 +4,9 @@ export function Format(code, yamlStyle, version, language, onFormat, onError) {
     case "c_cpp":
       filext = "cpp"
       break;
+    case "java":
+      filext = "java"
+      break
   }
 
   const body = { code: code, style: yamlStyle }

@@ -12,20 +12,38 @@ body {
 
 .left_side {
   width: 50vw;
-  
   border-right-style: solid;
-  
 }
 
-.optionList_container{
-    max-height: calc(100vh - 44px);
-    overflow: scroll;
+.optionList_container {
+  max-height: calc(100vh - 44px);
+  overflow: scroll;
   overflow-x: hidden;
   scrollbar-width: none;
-
 }
 
 .right_side {
   width: 50vw;
   overflow: hidden;
 }
+
+
+.popup-content {
+  position: absolute;
+  top: -35%;
+  margin: auto;
+  border-color: black;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 5px;
+  background: rgb(255, 255, 255);
+  width: 55%;
+  padding: 0px;
+  margin: 0px;
+}
+
+
+.popup-overlay  {
+  background: rgba(0, 0, 0, 0.13);
+}
+
