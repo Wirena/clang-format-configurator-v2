@@ -2,38 +2,60 @@ import Header from "./components/Header";
 import OptionList from "./components/OptionList";
 import { Resizable } from "re-resizable";
 import Editor from "./components/Editor";
-import { useEffect, useState } from "react";
+import Error from "./components/Error";
+import { useEffect, useState, useRef } from "react";
 import config from "./config.json";
 import { buildYamlCmdString } from "./Yaml&ConfigStuff"
 import { Format } from "./API"
+import Popup from 'reactjs-popup';
 
 
 const App = () => {
 
   const formatCode = () => {
     const yamlStr = buildYamlCmdString(options, config)
-   Format(text, yamlStr, options.selectedVersion, currentLang, (code)=>setText(code), ()=>{console.log("error")})
+    Format(text, yamlStr, options.selectedVersion, currentLang, (code) => { if (code !== "") setText(code) },
+      (errortext) => {
+        setActiveErrorPopup(true)
+        errorText.current = errortext
+      })
   };
-
+  // text either formatting or file parsing error
+  const errorText = useRef("")
+  const [activeErrorPopup, setActiveErrorPopup] = useState(false)
   const [options, setOptionsList] = useState(
     { selectedVersion: config.Versions.values[0].arg_val_enum[0], BasedOnStyle: undefined });
+  // code editor text
   const [text, setText] = useState("");
+  // autoupdate formatting on option or code change
   const [autoUpdateFormatting, setAutoUpdateFormatting] = useState(true);
   const [currentLang, setCurrentLang] = useState("c_cpp")
   /*
   List of options that were modified manually 
   Used to ease removing options, which values match default values fro selected style
   */
-  const [modifiedOptions, setModifiedOptions] = useState([])
+  const modifiedOptions= useRef([])
 
   useEffect(() => { if (autoUpdateFormatting) formatCode(options) }, [text, options]);
+
   return (
     <div>
       <Header
         autoFormat={autoUpdateFormatting}
         onUpdate={formatCode}
-        onAutoFormatChange={(val) => setAutoUpdateFormatting(val)}
+        onAutoFormatChange={setAutoUpdateFormatting}
       />
+      <Popup
+        open={activeErrorPopup}
+        modal={true}
+        closeOnEscape={true}
+        position="top center"
+        closeOnDocumentClick
+        onClose={() => setActiveErrorPopup(false)}>
+        <Error
+          errorText={errorText.current}
+        />
+      </Popup>
       <div className="pane_container">
         <Resizable
           className="left_side"
@@ -58,8 +80,10 @@ const App = () => {
               onOptionChange={setOptionsList}
               updateModifiedList={(title) => {
                 if (title === undefined)
-                  setModifiedOptions([])
-                else setModifiedOptions((arr) => { if (!arr.includes(title)) arr.push(title); return arr })
+                  modifiedOptions.current = []
+                else {
+                  if (!modifiedOptions.current.includes(title)) modifiedOptions.current.push(title)
+                }
               }}
             />
           </div>
@@ -68,7 +92,7 @@ const App = () => {
           <Editor
             setCurrentLang={setCurrentLang}
             currentLang={currentLang}
-            onTextChange={(newText) => setText(newText)}
+            onTextChange={setText}
             editorText={text}
           />
         </section>

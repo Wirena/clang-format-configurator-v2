@@ -1,0 +1,17 @@
+.error{
+    padding: 0px;
+    margin: 0px;
+}
+
+.error_header{
+    text-align: center;
+    font-weight: 400;
+    margin: 5px;
+}
+
+.error_message{
+    text-align: center;
+    font-weight: 400;
+    font-family: monospace;
+    margin: 5px;
+}

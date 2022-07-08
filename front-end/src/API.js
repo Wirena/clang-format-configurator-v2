@@ -16,7 +16,9 @@ export function Format(code, yamlStyle, version, language, onFormat, onError) {
     method: 'POST'
   })
     .then(response => {
-      if (response.ok) response.text().then(onFormat)
-      else response.text().then(onError)
-    }).catch(onError)
+      if (response.ok)
+        response.text().then(onFormat)
+      else
+        response.text().then(onError)
+    }).catch((errorObject) => {onError(errorObject.toString())})
 }
