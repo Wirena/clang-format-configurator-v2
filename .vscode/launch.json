@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Golang-remote-debug",
+            "name": "Golang Remote Debug",
             "type": "go",
             "request": "attach",
             "mode": "remote",
@@ -14,7 +14,7 @@
             "preLaunchTask": "start_server_remote_debugger"
         },
         {
-            "name": "Golang-local-debug",
+            "name": "Golang Local Debug",
             "type": "go",
             "request": "attach",
             "mode": "remote",
@@ -26,9 +26,10 @@
             "preLaunchTask": "start_server_local_debugger"
         },
         {
-            "name": "Launch Chrome",
+            "name": "Debug React App",
             "request": "launch",
-            "type": "pwa-chrome",
+            "type": "chrome",
+            "preLaunchTask": "start_npm_dev_server",
             "url": "http://localhost:3000",
             "webRoot": "${workspaceFolder}"
         }

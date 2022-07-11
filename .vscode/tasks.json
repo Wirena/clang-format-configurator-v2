@@ -5,24 +5,24 @@
 			"label": "start_server_remote_debugger",
 			"command": "./debug-script.sh",
 			"args": [
-				"--all",
+				"--all"
 			],
 			"isBackground": true,
 			"problemMatcher": {
 				"owner": "custom",
-                "pattern":[
-                    {
-                        "regexp": "(.*):(\\d+:\\d+):(.*)",
-                        "file": 1,
-                        "location": 2,
-                        "message": 3
-                    }
-                ],
+				"pattern": [
+					{
+						"regexp": "(.*):(\\d+:\\d+):(.*)",
+						"file": 1,
+						"location": 2,
+						"message": 3
+					}
+				],
 				"background": {
 					"activeOnStart": false,
-					"beginsPattern":"Sending build.*",
+					"beginsPattern": "Sending build.*",
 					"endsPattern": "API server listening at.*"
-				},
+				}
 			},
 			"type": "shell",
 			"options": {
@@ -39,19 +39,19 @@
 			"isBackground": true,
 			"problemMatcher": {
 				"owner": "custom",
-                "pattern":[
-                    {
-                        "regexp": "(.*):(\\d+:\\d+):(.*)",
-                        "file": 1,
-                        "location": 2,
-                        "message": 3
-                    }
-                ],
+				"pattern": [
+					{
+						"regexp": "(.*):(\\d+:\\d+):(.*)",
+						"file": 1,
+						"location": 2,
+						"message": 3
+					}
+				],
 				"background": {
 					"activeOnStart": false,
-					"beginsPattern":"Starting local debugger",
+					"beginsPattern": "Starting local debugger",
 					"endsPattern": "API server listening at.*"
-				},
+				}
 			},
 			"options": {
 				"cwd": "${workspaceFolder}/server/"
@@ -67,6 +67,34 @@
 			"options": {
 				"cwd": "${workspaceFolder}/server/"
 			}
+		},
+		{
+			"type": "npm",
+			"script": "start",
+			"path": "front-end",
+			"isBackground": true,
+			"label": "start_npm_dev_server",
+			"problemMatcher": {
+				"owner": "custom",
+				"pattern": [
+					{
+						"regexp": "(.*):(\\d+:\\d+):(.*)",
+						"file": 1,
+						"location": 2,
+						"message": 3
+					}
+				],
+				"background": {
+					"activeOnStart": false,
+					"beginsPattern": "Starting the development server*",
+					"endsPattern": "Compiled successfully!"
+				}
+			},
+			"detail": "BROWSER=chrome react-scripts start",
+			"options": {
+				"cwd": "${workspaceFolder}/front-end/"
+			}
+
 		}
 	]
 }
