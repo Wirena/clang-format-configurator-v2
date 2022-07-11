@@ -165,6 +165,7 @@ def docFileNameVersionComparator(a: str, b: str):
 if __name__ == "__main__":
     if len(sys.argv) != 4:
         print("3 args expected: path to dir with rst docs, path to dir with defaults, output file path")
+        exit()
     files = sorted(next(os.walk(sys.argv[1]), (None, None, []))[2],
                    key=functools.cmp_to_key(docFileNameVersionComparator))
     optionList = {"FormatApiUrl": "http://localhost:8080/format?",

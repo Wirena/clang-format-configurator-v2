@@ -263,7 +263,6 @@ function all() {
     DURATION=$((SECONDS - start))
     echstage "Time taken in total:"
     displaytime ${DURATION}
-
 }
 
 workdir="$(pwd)"
