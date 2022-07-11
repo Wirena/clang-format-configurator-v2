@@ -26,7 +26,6 @@ function stop() {
 }
 
 function all() {
-    echo "CatchPhrase"
     build && run-remote || echo "Something went wrong"
 }
 
@@ -47,7 +46,7 @@ else
     echo "-b --build:      build debug image"
     echo "-r --run-remote: run new debug container, stop one beforehand if it's already running"
     echo "-l --run-local:  build server and run debugger localy"
-    echo "-a --all:        do all of listed above"
+    echo "-a --all:        build and run remote"
     echo "-s --stop:       stop debug container"
     return 0
 fi
