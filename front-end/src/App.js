@@ -5,25 +5,19 @@ import Editor from "./components/Editor";
 import Error from "./components/Error";
 import { useEffect, useState, useRef } from "react";
 import config from "./config.json";
-import { buildYamlCmdString } from "./Yaml&ConfigStuff"
+import { buildYamlCmdString, buildYamlConfigFile, loadOptionsFromFile } from "./Yaml&ConfigStuff"
 import { Format } from "./API"
 import Popup from 'reactjs-popup';
+import { saveAs } from 'file-saver';
+import { debounce } from "lodash";
 
 
 const App = () => {
 
-  const formatCode = () => {
-    const yamlStr = buildYamlCmdString(options, config)
-    Format(text, yamlStr, options.selectedVersion, currentLang, (code) => { if (code !== "") setText(code) },
-      (errortext) => {
-        setActiveErrorPopup(true)
-        errorText.current = errortext
-      })
-  };
-  // text either formatting or file parsing error
   const errorText = useRef("")
   const [activeErrorPopup, setActiveErrorPopup] = useState(false)
-  const [options, setOptionsList] = useState(
+
+  const [options, setOptions] = useState(
     { selectedVersion: config.Versions.values[0].arg_val_enum[0], BasedOnStyle: undefined });
   // code editor text
   const [text, setText] = useState("");
@@ -34,15 +28,62 @@ const App = () => {
   List of options that were modified manually 
   Used to ease removing options, which values match default values fro selected style
   */
-  const modifiedOptions= useRef([])
+  const modifiedOptionTitles = useRef([])
+  /*
+  Options object with defaults for selected style set, without user input modifications
+  */
+  const unmodifiedOptions = useRef({})
 
-  useEffect(() => { if (autoUpdateFormatting) formatCode(options) }, [text, options]);
+  function formatCode(options, text, currentLang) {
+    const yamlStr = buildYamlCmdString(options, config)
+    Format(text, yamlStr, options.selectedVersion, currentLang, (code) => { if (code !== "") setText(code) },
+      (errortext) => {
+        errorText.current = errortext
+        setActiveErrorPopup(true)
+      })
+  };
+
+  useEffect(() => { if (autoUpdateFormatting) formatCode(options, text, currentLang) }, [text]);
+
+  // Another useeffect for options because of debouncing
+  const formatCodeDebounced = useRef(debounce(formatCode, 1000, { leading: false, trailing: true })).current
+  useEffect(() => { if (autoUpdateFormatting) formatCodeDebounced(options, text, currentLang) }, [options]);
 
   return (
     <div>
       <Header
         autoFormat={autoUpdateFormatting}
-        onUpdate={formatCode}
+        onUpdate={() => { formatCode(options, text, currentLang) }}
+        onDownload={() => {
+          const conf = buildYamlConfigFile(options, modifiedOptionTitles.current, unmodifiedOptions.current)
+          const blob = new Blob([conf], { type: 'text/plain;charset=utf-8' })
+          saveAs(blob, ".clang-format")
+        }}
+        onUpload={() => {
+          const input = document.createElement('input');
+          input.type = 'file';
+          input.onchange = (e) => {
+            try {
+              /* 
+                SHITCODE WARNING
+                Since i use 'modifiedOptionTitles' and 'unmodifiedOptions'
+                i have to generate them in 'loadOptionsFromFile' function
+              */
+              loadOptionsFromFile(e.target.files[0], config, options.selectedVersion,
+                ({ newOptions, _unmodifiedOptions, _modifiedOptionTitles }) => {
+                  if (newOptions === undefined)
+                    return
+                  modifiedOptionTitles.current = _modifiedOptionTitles
+                  unmodifiedOptions.current = _unmodifiedOptions
+                  setOptions(newOptions)
+                })
+            } catch (e) {
+              errorText.current = e.message
+              setActiveErrorPopup(true)
+            }
+          }
+          input.click()
+        }}
         onAutoFormatChange={setAutoUpdateFormatting}
       />
       <Popup
@@ -76,13 +117,14 @@ const App = () => {
             <OptionList
               config={config}
               options={options}
+              onFreshGeneratedOptions={(options) => { unmodifiedOptions.current = options }}
               llvmVersionOption={config.Versions}
-              onOptionChange={setOptionsList}
+              onOptionChange={setOptions}
               updateModifiedList={(title) => {
                 if (title === undefined)
-                  modifiedOptions.current = []
+                  modifiedOptionTitles.current = []
                 else {
-                  if (!modifiedOptions.current.includes(title)) modifiedOptions.current.push(title)
+                  if (!modifiedOptionTitles.current.includes(title)) modifiedOptionTitles.current.push(title)
                 }
               }}
             />

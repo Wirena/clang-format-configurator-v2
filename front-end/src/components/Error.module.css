@@ -10,6 +10,7 @@
 }
 
 .error_message{
+    white-space: pre-wrap;
     text-align: center;
     font-weight: 400;
     font-family: monospace;

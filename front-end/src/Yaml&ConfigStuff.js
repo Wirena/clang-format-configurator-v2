@@ -1,21 +1,52 @@
 import yaml from "yaml"
-import { cloneDeepWith, isEmpty, isNumber, isObject } from "lodash";
+import { cloneDeepWith, cloneDeep, isEmpty, isEqual, isNumber, isObject } from "lodash";
 
 
+function removeOptionsDuplicatingStyleDefs(options, modifiedOptionTitles, unmodifiedOptions) {
+  for (const [key1, value1] of Object.entries(options)) {
 
-export function buildYamlConfigFile() {
+    if (key1 === "BasedOnStyle") continue
 
-}
-
-
-function removeOptionsDuplicatingStyleDefs(chosenOptions, config) {
-  const selVerConf = config[chosenOptions.selectedVersion]
-  delete chosenOptions.selectedVersion
-  for (const element in selVerConf) {
-    if (chosenOptions[element.title] === undefined)
+    if (!modifiedOptionTitles.includes(key1)) {
+      delete options[key1]
       continue
+    }
+
+    if (Array.isArray(value1)) {
+      if (isEqual(value1, unmodifiedOptions[key1]))
+        delete options[key1]
+      continue
+    }
+
+    // if object, compare its properties and delete those that match unmodified defaults
+    if (isObject(value1)) {
+      for (const [key2, value2] of Object.entries(value1))
+        if (value2 === unmodifiedOptions[key1][key2])
+          delete options[key1][key2]
+      if (Object.entries(options[key1]).length === 0)
+        delete options[key1]
+      continue
+    }
+
+    if (value1 === unmodifiedOptions[key1])
+      delete options[key1]
   }
+  return options
 }
+
+export function buildYamlConfigFile(chosenOptions, modifiedOptionTitles, unmodifiedOptions) {
+  let options = cloneDeep(chosenOptions)
+  if (options.BasedOnStyle !== undefined)
+    options = removeOptionsDuplicatingStyleDefs(options, modifiedOptionTitles, unmodifiedOptions)
+  delete options.selectedVersion
+  const doc = new yaml.Document();
+  doc.contents = options
+  const YamlOptions = {
+    directives: true
+  }
+  return doc.toString(YamlOptions)
+}
+
 
 
 function removeEmpty(obj) {
@@ -24,7 +55,7 @@ function removeEmpty(obj) {
       //remove empty objects from array
       obj[k] = v.filter(n => Object.entries(Object.fromEntries(
         Object.entries(n).filter(([_, v]) => v != null))).length)
-      if (obj[k].length == 0)
+      if (obj[k].length === 0)
         delete obj[k]
     } else if (isEmpty(v)) obj[k] = undefined; else v = removeEmpty(v)
   })
@@ -70,9 +101,72 @@ export function buildYamlCmdString(chosenOptions, config) {
   delete doc.contents.selectedVersion
   const YamlOptions = {
     collectionStyle: 'flow', indentSeq: false,
-    // false, true and other values has to be strings for the same reason as numbers
+    // false, true and other values have to be strings for the same reason as numbers
     falseStr: "'false'", trueStr: "'true'", defaultStringType: 'QUOTE_SINGLE',
     defaultKeyType: 'PLAIN',
   }
   return doc.toString(YamlOptions)
+}
+
+
+
+
+export function loadOptionsFromFile(fileName, config, selectedVersion, onLoaded) {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const options = yaml.parse(e.target.result)
+
+    const BasedOnStyle = options.BasedOnStyle
+
+    if (BasedOnStyle === undefined) {
+      options.selectedVersion = selectedVersion
+      onLoaded(options)
+      return
+    }
+
+    // check if config is compatible with selected version
+    // values might also differ for same key from version to version but this solution is ok for now
+    const listOfOptionTitles = config[selectedVersion].map(el => el.title)
+    Object.entries(options).forEach(([k, v]) => {
+      if (!listOfOptionTitles.includes(k)) {throw new Error("Config contains keys that are incompatible with selected clang-format version") }
+    })
+
+
+    // fill optionsWithDefaults with default values for selected style
+    let unmodifiedOptions = {
+      selectedVersion: selectedVersion,
+      BasedOnStyle: BasedOnStyle
+    }
+
+    config[unmodifiedOptions.selectedVersion]
+      .slice(1).forEach((option) => {
+        if (
+          option.values.length === 1 &&
+          option.values[0].defaults[BasedOnStyle] !== undefined
+        ) {
+          unmodifiedOptions[option.title] =
+            option.values[0].defaults[BasedOnStyle].value;
+        } else {
+          // set all option values to selected style defaults
+          // inluding nested ones
+          // filter out options without defaults for this style
+          option.values.filter((element) => element.defaults[BasedOnStyle] !== undefined)
+            .forEach((nestedOption) => {
+              if (unmodifiedOptions[option.title] == undefined)
+                unmodifiedOptions[option.title] = {}
+              unmodifiedOptions[option.title][nestedOption.title] =
+                nestedOption.defaults[BasedOnStyle].value
+            }
+            );
+        }
+      });
+    let modifedOptions = cloneDeep(unmodifiedOptions)
+    let modifiedOptionTitles = []
+    Object.entries(options).forEach(([k, v]) => { modifedOptions[k] = v; modifiedOptionTitles.push(k) })
+    onLoaded({
+      newOptions: modifedOptions, _unmodifiedOptions: unmodifiedOptions,
+      _modifiedOptionTitles: modifiedOptionTitles
+    })
+  }
+  reader.readAsText(fileName)
 }

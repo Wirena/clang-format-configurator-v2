@@ -3,15 +3,19 @@ import AceEditor from "react-ace";
 import styles from './Editor.module.css'
 import cppCode from '../code_snippets/cppCode.cpp'
 import javaCode from '../code_snippets/javaCode.java'
-import 'ace-builds/webpack-resolver'
-import 'ace-builds/src-noconflict/ext-language_tools'
+import "ace-builds/src-noconflict/mode-java";
+import "ace-builds/src-noconflict/snippets/c_cpp";
+import "ace-builds/src-noconflict/snippets/java";
+import "ace-builds/src-noconflict/mode-c_cpp";
+import "ace-builds/src-noconflict/theme-textmate";
+import "ace-builds/src-noconflict/ext-language_tools";
+import ace from "react-ace";
 
 
 
 const Editor = ({ editorText, onTextChange, currentLang, setCurrentLang }) => {
   const cppCodeString = React.useRef("")
   const javaCodeString = React.useRef("")
-
   React.useEffect(() => {
     //Load Cpp snippet
     fetch(cppCode)

@@ -1,7 +1,8 @@
 import React from "react";
 import Option from "./Option";
+import { cloneDeep } from "lodash";
 
-const OptionList = ({ config, options, llvmVersionOption, onOptionChange, updateModifiedList }) => {
+const OptionList = ({ config, options, llvmVersionOption, onOptionChange, updateModifiedList, onFreshGeneratedOptions }) => {
 
   return (
     <div className="OptionList">
@@ -12,8 +13,9 @@ const OptionList = ({ config, options, llvmVersionOption, onOptionChange, update
         onChange={(optionTitle, newSelectedVersion) => {
           // clear all selected options and update version field
           updateModifiedList(undefined)
-          onOptionChange({ selectedVersion: newSelectedVersion })
-
+          const opts = { selectedVersion: newSelectedVersion }
+          onFreshGeneratedOptions(opts)
+          onOptionChange(opts)
         }
         }
       />
@@ -26,11 +28,13 @@ const OptionList = ({ config, options, llvmVersionOption, onOptionChange, update
           updateModifiedList(undefined)
           /* if empty style selected, clear all options
             else set all option values to defaults  */
-          if (newOptionValue == "") {
-            onOptionChange({
+          if (newOptionValue === "") {
+            const opts = {
               selectedVersion: options.selectedVersion,
               BasedOnStyle: undefined
-            })
+            }
+            onFreshGeneratedOptions(opts)
+            onOptionChange(opts)
             return;
           }
 
@@ -60,6 +64,7 @@ const OptionList = ({ config, options, llvmVersionOption, onOptionChange, update
                   );
               }
             });
+          onFreshGeneratedOptions(cloneDeep(st))
           onOptionChange(st);
         }}
       />
