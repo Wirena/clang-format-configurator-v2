@@ -1,18 +1,19 @@
+import config from "./config.json";
+
 export function Format(code, yamlStyle, version, language, onFormat, onError) {
   let filext = "";
   switch (language) {
     case "c_cpp":
-      filext = "cpp"
+      filext = ".cpp"
       break;
     case "java":
-      filext = "java"
+      filext = ".java"
       break
   }
-
   const body = { code: code, style: yamlStyle }
-  fetch('http://localhost:8080/format?' + new URLSearchParams({
+  fetch(config.FormatApiUrl + new URLSearchParams({
     version: version.split('-')[2],
-    filext: "cpp"
+    filext: filext
   }), {
     body: JSON.stringify(body),
     mode: 'cors',

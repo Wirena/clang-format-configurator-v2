@@ -24,14 +24,23 @@ func main() {
 		}
 		jsonReader.Close()
 	}
-	log.Infof(`Parsed parameters:\n 
-	Bind address: %s\n
-	Log level: %s`, config.BindAddr, config.LogLevel)
+	log.Infof("Configuration:\n%+v", config)
+	ll, err := log.ParseLevel(config.LogLevel)
+	if err != nil {
+		log.Fatalf("Failed to parse log level from config")
+	}
+	log.SetLevel(ll)
 	formatter, err := formatter.NewFormatter(&config.Versions)
 	if err != nil {
 		log.Fatal(err)
 	}
 	s := server.NewServer(formatter, config.BindAddr)
-	err = s.Start()
+	if len(config.CertFile) == 0 || len(config.PKeyFile) == 0 {
+		log.Info("Staring HTTP server")
+		err = s.Start()
+	} else {
+		log.Info("Staring HTTPS server")
+		err = s.StartTLS(config.CertFile, config.PKeyFile)
+	}
 	log.Fatal(err)
 }

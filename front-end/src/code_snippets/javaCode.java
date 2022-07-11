@@ -15,6 +15,11 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.toList;
 
 public class Main {
+
+    @Partial                
+    @Mock
+    DataLoad loader;
+
     /**
      * Merges two given sorted arrays into one
      *

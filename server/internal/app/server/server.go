@@ -8,6 +8,8 @@ import (
 	"github.com/Wirena/clang-format-configurator-v2/internal/app/formatter"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type Server struct {
@@ -20,6 +22,10 @@ type Server struct {
 
 func (srv *Server) Start() error {
 	return http.ListenAndServe(srv.bindAddr, srv)
+}
+
+func (srv *Server) StartTLS(certFile, keyFile string) error {
+	return http.ListenAndServeTLS(srv.bindAddr, certFile, keyFile, srv)
 }
 
 func (srv *Server) configureRouter() {
@@ -62,24 +68,29 @@ type formatRequestBody struct {
 }
 
 func (srv *Server) formatHandler(rw http.ResponseWriter, req *http.Request) {
+
 	if !req.URL.Query().Has("version") {
+		log.Debug("No version parameter in query")
 		http.Error(rw, "No version parameter in query", http.StatusBadRequest)
 		return
 	}
 	versionString := req.URL.Query().Get("version")
 	version, err := strconv.Atoi(versionString)
 	if err != nil {
+		log.Debug("Failed to Atoi version number")
 		http.Error(rw, "Failed to Atoi version number", http.StatusBadRequest)
 		return
 	}
 
 	if !req.URL.Query().Has("filext") {
+		log.Debug("No filext parameter in query")
 		http.Error(rw, "No filext parameter in query", http.StatusBadRequest)
 		return
 	}
 	filenameExt := req.URL.Query().Get("filext")
 
 	if !srv.formatter.VersionAvailable(version) {
+		log.Debugf("Specified version not available %i", version)
 		http.Error(rw, "No such version", http.StatusBadRequest)
 		return
 	}
@@ -88,6 +99,7 @@ func (srv *Server) formatHandler(rw http.ResponseWriter, req *http.Request) {
 	decoder := json.NewDecoder(req.Body)
 	err = decoder.Decode(&body)
 	if err != nil {
+		log.Debugf("Failed to decode request body:\n%s", req.Body)
 		http.Error(rw, "Failed to decode request body", http.StatusBadRequest)
 		return
 	}
@@ -103,4 +115,5 @@ func (srv *Server) formatHandler(rw http.ResponseWriter, req *http.Request) {
 	rw.WriteHeader(http.StatusOK)
 	rw.Header().Set("Content-Type", "application/json")
 	rw.Write(formattedCode)
+	log.Debug("Request successfully served")
 }

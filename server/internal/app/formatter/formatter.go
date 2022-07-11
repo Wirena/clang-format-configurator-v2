@@ -88,10 +88,11 @@ func (frmt *Formatter) VersionAvailable(version int) bool {
 }
 
 func buildCmdOptions(filenameExt string, style *string) []string {
-	return []string{fmt.Sprintf("-style=%s", *style), fmt.Sprintf("--assume-filename='%s'", filenameExt)}
+	return []string{fmt.Sprintf("-style=%s", *style), fmt.Sprintf("--assume-filename=%s", filenameExt)}
 }
 
 func (frmt *Formatter) Format(ver int, filenameExt string, code, style *string) ([]byte, error) {
+	log.Debugf("Start formatting\nversion:%d\nfilenameExt: %s\nCode:\n %s\n\n\nStyle:\n%s\n\n\n", ver, filenameExt, *code, *style)
 	executable, ok := frmt.executables[ver]
 	if !ok {
 		return nil, errors.New("no such version")
@@ -107,11 +108,12 @@ func (frmt *Formatter) Format(ver int, filenameExt string, code, style *string) 
 	if err != nil {
 		log.Warningf("Failed to format: %s", stderr.String())
 		if _, ok := err.(*exec.ExitError); ok {
-			return nil, &InputError{"Clang-format returned non zero code"}
+			return nil, &InputError{fmt.Sprintf("Clang-format returned non zero code\n%s", stderr.String())}
 		} else {
+			log.Debug("Internal Error")
 			return nil, &InternalError{}
 		}
 	}
-
+	log.Debugf("Finished formatting. Result:\n%s\n\n\n", output.String())
 	return output.Bytes(), nil
 }

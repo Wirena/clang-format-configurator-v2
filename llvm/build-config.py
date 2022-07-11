@@ -167,7 +167,8 @@ if __name__ == "__main__":
         print("3 args expected: path to dir with rst docs, path to dir with defaults, output file path")
     files = sorted(next(os.walk(sys.argv[1]), (None, None, []))[2],
                    key=functools.cmp_to_key(docFileNameVersionComparator))
-    optionList = {"Versions":
+    optionList = {"FormatApiUrl": "http://localhost:8080/format?",
+                  "Versions":
                   {"title": "Version", "docstring": "LLVM Version",
                    "values": [{"arg_val_enum": [],
                               "title": "Version",
