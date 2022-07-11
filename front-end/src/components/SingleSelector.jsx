@@ -1,5 +1,7 @@
 import React from "react";
 import styles from "./Selector.module.css";
+import Popup from "reactjs-popup"
+import 'reactjs-popup/dist/index.css';
 
 
 
@@ -85,26 +87,36 @@ const SingleSelector = ({ selectorInfo, onChange, defaultValue,
             disabled={currentOptionValue === undefined}
             value={currentOptionValue || ""}
             onChange={(event) => onChange(event.target.value)} />
-          <button
-            onClick={() => {
-              /*
-              on button click swap activeness state
-              If current value is undefined then activate option
-              by set empty string as new value
-              else deactivate it and set "undefined"
-              */
-              onChange(currentOptionValue === undefined ?
-                "" : undefined
-              )
-            }}
-            className={styles.button_activeness}>
-            <img
-              alt={currentOptionValue === undefined ?
-                "option inactive" : "option active"}
-              src={currentOptionValue === undefined ?
-                "./inactiveFieldIcon.svg" : "./activeFieldIcon.svg"}
-            ></img>
-          </button>
+
+
+          <Popup
+            trigger={
+              <button
+                onClick={() => {
+                  /*
+                  on button click swap activeness state
+                  If current value is undefined then activate option
+                  by set empty string as new value
+                  else deactivate it and set "undefined"
+                  */
+                  onChange(currentOptionValue === undefined ?
+                    "" : undefined
+                  )
+                }}
+                className={styles.button_activeness}>
+                <img
+                  alt={currentOptionValue === undefined ?
+                    "option inactive" : "option active"}
+                  src={currentOptionValue === undefined ?
+                    "./inactiveFieldIcon.svg" : "./activeFieldIcon.svg"}
+                ></img>
+              </button>
+            }
+            on={['hover']}
+            position="right center" closeOnDocumentClick>
+            <span> {currentOptionValue === undefined? "Activate Option" : "Set value to undefined"} </span>
+          </Popup>
+
         </div>
       );
     default:
