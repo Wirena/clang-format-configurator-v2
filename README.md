@@ -2,6 +2,8 @@
 
 Interactively create a clang-format configuration while watching how the changes affect your code.
 
+Not available online yet
+
 Clang-format-configurator-v2 is a written from scratch successor of [clang-format-configurator](https://github.com/zed0/clang-format-configurator) with following bugs fixed and new features implemented:
 
 - Newer clang-format versions are available
