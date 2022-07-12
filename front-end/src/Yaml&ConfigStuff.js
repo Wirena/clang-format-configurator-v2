@@ -115,12 +115,16 @@ export function loadOptionsFromFile(fileName, config, selectedVersion, onLoaded)
   const reader = new FileReader();
   reader.onload = (e) => {
     const options = yaml.parse(e.target.result)
-
     const BasedOnStyle = options.BasedOnStyle
 
     if (BasedOnStyle === undefined) {
+      const modifiedOptionTitles = Object.entries(options).map(([k, v]) => { return k })
+      console.log(modifiedOptionTitles)
       options.selectedVersion = selectedVersion
-      onLoaded(options)
+      onLoaded({
+        newOptions: options, _unmodifiedOptions: undefined,
+        _modifiedOptionTitles: modifiedOptionTitles
+      })
       return
     }
 
@@ -128,7 +132,7 @@ export function loadOptionsFromFile(fileName, config, selectedVersion, onLoaded)
     // values might also differ for same key from version to version but this solution is ok for now
     const listOfOptionTitles = config[selectedVersion].map(el => el.title)
     Object.entries(options).forEach(([k, v]) => {
-      if (!listOfOptionTitles.includes(k)) {throw new Error("Config contains keys that are incompatible with selected clang-format version") }
+      if (!listOfOptionTitles.includes(k)) { throw new Error("Config contains keys that are incompatible with selected clang-format version") }
     })
 
 
@@ -163,6 +167,7 @@ export function loadOptionsFromFile(fileName, config, selectedVersion, onLoaded)
     let modifedOptions = cloneDeep(unmodifiedOptions)
     let modifiedOptionTitles = []
     Object.entries(options).forEach(([k, v]) => { modifedOptions[k] = v; modifiedOptionTitles.push(k) })
+    console.log(modifedOptions)
     onLoaded({
       newOptions: modifedOptions, _unmodifiedOptions: unmodifiedOptions,
       _modifiedOptionTitles: modifiedOptionTitles
