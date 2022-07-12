@@ -87,7 +87,7 @@
 				"background": {
 					"activeOnStart": false,
 					"beginsPattern": "Starting the development server*",
-					"endsPattern": "Compiled successfully!"
+					"endsPattern": "compiled"
 				}
 			},
 			"detail": "BROWSER=chrome react-scripts start",
