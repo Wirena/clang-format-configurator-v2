@@ -63,7 +63,7 @@ const ArraySelector = ({ selectorInfo, onChange, currentStyle, currentOptionValu
                 alt="Delete array element"
                 onClick={() => {
                   if (currentOptionValue.length === 1)
-                    onChange(undefined)
+                    onChange([])
                   else
                     onChange(currentOptionValue.filter((val, filterIndex) =>
                       index !== filterIndex))

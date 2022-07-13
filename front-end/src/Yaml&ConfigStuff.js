@@ -119,7 +119,6 @@ export function loadOptionsFromFile(fileName, config, selectedVersion, onLoaded)
 
     if (BasedOnStyle === undefined) {
       const modifiedOptionTitles = Object.entries(options).map(([k, v]) => { return k })
-      console.log(modifiedOptionTitles)
       options.selectedVersion = selectedVersion
       onLoaded({
         newOptions: options, _unmodifiedOptions: undefined,
@@ -166,8 +165,17 @@ export function loadOptionsFromFile(fileName, config, selectedVersion, onLoaded)
       });
     let modifedOptions = cloneDeep(unmodifiedOptions)
     let modifiedOptionTitles = []
-    Object.entries(options).forEach(([k, v]) => { modifedOptions[k] = v; modifiedOptionTitles.push(k) })
-    console.log(modifedOptions)
+    Object.entries(options).forEach(([k, v]) => {
+      if (isObject(modifedOptions[k]))
+        /*if value is object such as BraceWrapping i.e. has nested options
+         then simply doing modifedOptions[k] = v; will undefine those properties
+        which were not declared in user selected .clang-format file
+        */
+        Object.assign(modifedOptions[k], v)
+      else
+        modifedOptions[k] = v;
+      modifiedOptionTitles.push(k)
+    })
     onLoaded({
       newOptions: modifedOptions, _unmodifiedOptions: unmodifiedOptions,
       _modifiedOptionTitles: modifiedOptionTitles
