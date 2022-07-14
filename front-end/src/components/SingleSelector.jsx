@@ -114,7 +114,7 @@ const SingleSelector = ({ selectorInfo, onChange, defaultValue,
             }
             on={['hover']}
             position="right center" closeOnDocumentClick>
-            <span> {currentOptionValue === undefined? "Activate Option" : "Set value to undefined"} </span>
+            <span> {currentOptionValue === undefined ? "Activate Option" : "Set value to undefined"} </span>
           </Popup>
 
         </div>

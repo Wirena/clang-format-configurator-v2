@@ -16,7 +16,8 @@ const App = () => {
 
   const errorText = useRef("")
   const [activeErrorPopup, setActiveErrorPopup] = useState(false)
-
+  const [darkThemeActive, setDarkThemeActive] = useState(window.matchMedia("(prefers-color-scheme: dark)").matches)
+  useEffect(() => { if (darkThemeActive) document.body.className = "dark"; else document.body.className = "" }, [darkThemeActive])
   const [options, setOptions] = useState(
     { selectedVersion: config.Versions.values[0].arg_val_enum[0], BasedOnStyle: undefined });
   // code editor text
@@ -53,6 +54,8 @@ const App = () => {
     <div>
       <Header
         autoFormat={autoUpdateFormatting}
+        darkTheme={darkThemeActive}
+        onDarkThemeChange={() => { setDarkThemeActive(!darkThemeActive) }}
         onUpdate={() => { formatCode(options, text, currentLang) }}
         onDownload={() => {
           const conf = buildYamlConfigFile(options, modifiedOptionTitles.current, unmodifiedOptions.current)
@@ -136,6 +139,7 @@ const App = () => {
             currentLang={currentLang}
             onTextChange={setText}
             editorText={text}
+            darkTheme={darkThemeActive}
           />
         </section>
       </div>

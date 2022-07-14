@@ -8,12 +8,11 @@ import "ace-builds/src-noconflict/snippets/c_cpp";
 import "ace-builds/src-noconflict/snippets/java";
 import "ace-builds/src-noconflict/mode-c_cpp";
 import "ace-builds/src-noconflict/theme-textmate";
+import "ace-builds/src-noconflict/theme-idle_fingers";
 import "ace-builds/src-noconflict/ext-language_tools";
-import ace from "react-ace";
 
 
-
-const Editor = ({ editorText, onTextChange, currentLang, setCurrentLang }) => {
+const Editor = ({ editorText, onTextChange, currentLang, setCurrentLang, darkTheme }) => {
   const cppCodeString = React.useRef("")
   const javaCodeString = React.useRef("")
   React.useEffect(() => {
@@ -59,8 +58,8 @@ const Editor = ({ editorText, onTextChange, currentLang, setCurrentLang }) => {
         onChange={onTextChange}
         value={editorText}
         mode={currentLang}
-        theme="textmate"
-        fontSize={12}
+        theme={darkTheme ? "idle_fingers" : "textmate"}
+        fontSize={14}
         debounceChangePeriod={1000}
         setOptions={{
           enableBasicAutocompletion: true,

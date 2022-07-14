@@ -7,10 +7,14 @@
 
 .title {
   font-family: sans-serif;
-  font-stretch:70%;
+  font-stretch: 70%;
   font-weight: bold;
   font-size: 17px;
   overflow: hidden;
+}
+
+:global(.dark) .title {
+  color: #cfcec4;
 }
 
 .title_container {
@@ -29,6 +33,12 @@
   font-size: 14px;
 }
 
+:global(.dark) .docstring {
+  background-color: #2b2e32;
+  border-color: #141414;
+  color: #d0cec5;
+}
+
 code {
   padding: 2px 4px;
   font-size: 90%;
@@ -36,6 +46,11 @@ code {
   background-color: #f9f2f4;
   border-radius: 4px;
   font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+:global(.dark) code {
+  background-color: rgb(79, 44, 53);
+  color: rgb(245, 95, 133);
 }
 
 pre {
@@ -52,6 +67,12 @@ pre {
   padding-top: 10px;
   font-weight: 200;
   font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+:global(.dark) pre {
+  background-color: #434343;
+  scrollbar-color: dark;
+  border-color: #1a1a1a;
 }
 
 .info_button {
@@ -74,4 +95,3 @@ pre {
   opacity: 1;
   transition-duration: 20ms;
 }
-

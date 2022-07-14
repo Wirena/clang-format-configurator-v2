@@ -3,6 +3,11 @@
     margin: 0px;
 }
 
+:global(.dark) .error{
+    background-color: #313131;
+    color: rgb(226, 226, 226);
+}
+
 .error_header{
     text-align: center;
     font-weight: 400;

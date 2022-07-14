@@ -8,7 +8,7 @@ const IncludeCategoriesSelector = ({ selectorInfo, onChange, currentStyle,
   return (
     <div key={selectorInfo.title}
       className={styles.nested_container}>
-      <div>Regex</div>
+      <div className={styles.title_nested}>Regex</div>
       <SingleSelector
         selectorInfo={{ argument_type: "std::string" }}
         currentOptionValue={currentOptionValue.Regex}
@@ -19,7 +19,7 @@ const IncludeCategoriesSelector = ({ selectorInfo, onChange, currentStyle,
           onChange(val)
         }}
       />
-      <div>Priority</div>
+      <div className={styles.title_nested}>Priority</div>
       <SingleSelector
         selectorInfo={{ argument_type: "int" }}
         currentOptionValue={currentOptionValue.Priority}
@@ -30,7 +30,7 @@ const IncludeCategoriesSelector = ({ selectorInfo, onChange, currentStyle,
           onChange(val)
         }}
       />
-      <div>CaseSensitive</div>
+      <div className={styles.title_nested}>CaseSensitive</div>
       <SingleSelector
         selectorInfo={{ argument_type: "bool" }}
         currentOptionValue={currentOptionValue.CaseSensitive}
@@ -41,7 +41,7 @@ const IncludeCategoriesSelector = ({ selectorInfo, onChange, currentStyle,
           onChange(val)
         }}
       />
-      <div>SortPriority</div>
+      <div className={styles.title_nested}>SortPriority</div>
       <SingleSelector
         selectorInfo={{ argument_type: "int" }}
         currentOptionValue={currentOptionValue.SortPriority}

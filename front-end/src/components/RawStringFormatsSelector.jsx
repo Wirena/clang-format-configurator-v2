@@ -8,66 +8,66 @@ const RawStringFormatsSelector = ({ selectorInfo, onChange, currentStyle,
   return (
     <div key={selectorInfo.title}
       className={styles.nested_container}>
-      <div>Language</div>
+      <div className={styles.title_nested}>Language</div>
       <SingleSelector
         selectorInfo={{ argument_type: "std::string" }}
         currentOptionValue={currentOptionValue.Language}
         defaultValue={selectorInfo.defaults[currentStyle]}
-        onChange={(newValue)=>{
-          let val={...currentOptionValue}
-          val.Language=newValue
+        onChange={(newValue) => {
+          let val = { ...currentOptionValue }
+          val.Language = newValue
           onChange(val)
         }}
       />
-      <div>EnclosingFunctions</div>
+      <div className={styles.title_nested}>EnclosingFunctions</div>
       <ArraySelector
         selectorInfo={{
           title: "EnclosingFunctions", argument_type: "std::string",
           defaults: selectorInfo.defaults
         }}
         onChange={(newValue) => {
-          let val={...currentOptionValue}
-          val.EnclosingFunctions=newValue
+          let val = { ...currentOptionValue }
+          val.EnclosingFunctions = newValue
           onChange(val)
-         }}
+        }}
         currentOptionValue={currentOptionValue.EnclosingFunctions}
         currentStyle={currentStyle}
       />
-      <div>BasedOnStyle</div>
+      <div className={styles.title_nested}>BasedOnStyle</div>
       <SingleSelector
         selectorInfo={{ argument_type: "std::string" }}
         currentOptionValue={currentOptionValue.BasedOnStyle}
         defaultValue={selectorInfo.defaults[currentStyle]}
         currentStyle={currentStyle}
-        onChange={(newValue)=>{
-          let val={...currentOptionValue}
-          val.BasedOnStyle=newValue
+        onChange={(newValue) => {
+          let val = { ...currentOptionValue }
+          val.BasedOnStyle = newValue
           onChange(val)
         }}
       />
-      <div>Delimeters</div>
+      <div className={styles.title_nested}>Delimeters</div>
       <ArraySelector
         selectorInfo={{
           title: "Delimeters", argument_type: "std::string",
           defaults: selectorInfo.defaults
         }}
         onChange={(newValue) => {
-          let val={...currentOptionValue}
-          val.Delimiters=newValue
+          let val = { ...currentOptionValue }
+          val.Delimiters = newValue
           onChange(val)
-         }}
+        }}
         currentOptionValue={currentOptionValue.Delimiters}
         currentStyle={currentStyle}
       />
-      <div>CanonicalDelimiter</div>
+      <div className={styles.title_nested}>CanonicalDelimiter</div>
       <SingleSelector
         selectorInfo={{ argument_type: "std::string" }}
         currentOptionValue={currentOptionValue.CanonicalDelimiter}
         defaultValue={selectorInfo.defaults[currentStyle]}
         currentStyle={currentStyle}
-        onChange={(newValue)=>{
-          let val={...currentOptionValue}
-          val.CanonicalDelimiter=newValue
+        onChange={(newValue) => {
+          let val = { ...currentOptionValue }
+          val.CanonicalDelimiter = newValue
           onChange(val)
         }}
       />

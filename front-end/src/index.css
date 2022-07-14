@@ -6,6 +6,10 @@ body {
   font-weight: 200;
 }
 
+body.dark{
+  background-color: rgb(34, 34, 38)
+}
+
 .pane_container {
   display: flex;
 }
@@ -13,6 +17,10 @@ body {
 .left_side {
   width: 50vw;
   border-right-style: solid;
+}
+
+.dark .left_side{
+  border-right-color: #5b5b5b;
 }
 
 .optionList_container {
@@ -31,15 +39,19 @@ body {
 .popup-content {
   position: absolute;
   top: -35%;
-  margin: auto;
   border-color: black;
   border-style: solid;
   border-width: 1px;
   border-radius: 5px;
-  background: rgb(255, 255, 255);
   width: 55%;
   padding: 0px;
   margin: 0px;
+}
+
+.dark .popup-content{
+  background-color: #313131;
+  border-color: #000000;
+  border-width: 2px;
 }
 
 
@@ -47,3 +59,13 @@ body {
   background: rgba(0, 0, 0, 0.13);
 }
 
+.dark ::-webkit-scrollbar {
+  height: 12px;
+  width: 9px;
+  background: rgb(59, 59, 59);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #262626;
+  border-color: black;
+}
