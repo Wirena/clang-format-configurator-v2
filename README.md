@@ -11,7 +11,7 @@ Clang-format-configurator-v2 is a written from scratch successor of [clang-forma
 - Support for complex options such as arrays, BraceWrapping, IncludeCategories, RawStringFormats etc
 - Readable error desription on invalid option value instead of "Bad Request"
 - Support for multiple programming languages
-- For complex options config file is correctly(?) generated non
+- For complex options config file is correctly(?) generated now
 - Uncomprehensible front-end shitcode and idiotic config generation algorithm
 - Fix of critical "Not invented here" bug
 
