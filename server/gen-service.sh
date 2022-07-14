@@ -1,6 +1,6 @@
 #!/bin/bash
 
-EXECSTART="$(pwd)/clang-format-configurator"
+EXECSTART="$(pwd)/bin/clang-format-configurator"
 WORKINGDIR=$(pwd)
 USER=""
 SERVICEFILE="clang-format-configurator.service"

@@ -4,7 +4,12 @@ IMAGE_NAME="cfc-debug-image"
 CONTAINER_NAME="cfc-debug-cont"
 DOCKERFILE_PATH="debug.Dockerfile"
 
-function build() {
+function build-binary() {
+    go build -o ./bin/ ./cmd/clang-format-configurator 
+    return $?
+}
+
+function build-image() {
     docker build -f ${DOCKERFILE_PATH} . --tag ${IMAGE_NAME}
     return $?
 }
@@ -26,13 +31,15 @@ function stop() {
 }
 
 function all() {
-    build && run-remote || echo "Something went wrong"
+    build-image && run-remote || echo "Something went wrong"
 }
 
 WAIT_TIME=40
 
-if [[ "$1" = "--build" || "$1" = "-b" ]]; then
-    build
+if [[ "$1" = "--build-image" || "$1" = "-i" ]]; then
+    build-image
+elif [[ "$1" = "--build" || "$1" = "-b" ]]; then
+    build-binary
 elif [[ "$1" = "--run-remote" || "$1" = "-r" ]]; then
     run-remote
 elif [[ "$1" = "--run-local" || "$1" = "-l" ]]; then
@@ -43,11 +50,12 @@ elif [[ "$1" = "--all" || "$1" = "-a" ]]; then
     all
 else
     echo "Use --wait N as the last arg to give debugger N seconds to start before VS Code will try to attach(${WAIT_TIME} by default)"
-    echo "-b --build:      build debug image"
-    echo "-r --run-remote: run new debug container, stop one beforehand if it's already running"
-    echo "-l --run-local:  build server and run debugger localy"
-    echo "-a --all:        build and run remote"
-    echo "-s --stop:       stop debug container"
+    echo "-b --build:       build binary"
+    echo "-i --build-image: build debug image"
+    echo "-r --run-remote:  run new debug container, stop one beforehand if it's already running"
+    echo "-l --run-local:   build server and run debugger localy"
+    echo "-a --all:         build and run remote"
+    echo "-s --stop:        stop debug container"
     return 0
 fi
 

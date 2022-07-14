@@ -20,5 +20,6 @@
 
 server/bin
 server/third-party/*
+server/*.service
 
 front-end/.prettierrc
