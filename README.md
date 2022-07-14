@@ -2,16 +2,16 @@
 
 Interactively create a clang-format configuration while watching how the changes affect your code.
 
-Not available online yet
+Check it out at https://clang-format-configurator.site/
 
 Clang-format-configurator-v2 is a written from scratch successor of [clang-format-configurator](https://github.com/zed0/clang-format-configurator) with following bugs fixed and new features implemented:
 
 - Newer clang-format versions are available
 - Options show default values instead of "Default" when BasedOnStyle is selected
-- Support for complex options such as BraceWrapping, IncludeCategories, RawStringFormats etc and arrays
+- Support for complex options such as arrays, BraceWrapping, IncludeCategories, RawStringFormats etc
 - Readable error desription on invalid option value instead of "Bad Request"
 - Support for multiple programming languages
-- Correctly(?) generated config file for complex options
+- For complex options config file is correctly(?) generated non
 - Uncomprehensible front-end shitcode and idiotic config generation algorithm
 - Fix of critical "Not invented here" bug
 
@@ -31,14 +31,27 @@ Requirements: docker, nodejs
    ```
    Clang-format binaries are placed in ``server/third-party/`` direcotry, docs and defaults are in ``llvm/docs/`` and ``llvm/defaults/`` respectively and config is written into ``llvm/config.json``. ``front-end/src/config.json`` is a soft link to ``llvm/config.json``
 
+   Install JS dependencies
+
+   ```
+   cd front-end
+   npm install
+   ```
+
 2. Configure server and client
    
    - Set URL of Format endpoint in ``front-end/src/config.json`` using ``FormatApiUrl`` key, or keep ``http://localhost:8080/format?`` by default
    - Set server bind address in ``server/config.json`` using key ``bind-addr``
-   - Set path to TLS key and certificate in ``server/config.json`` using keys ``certificate-file`` and ``key-file``
+   - Set path to TLS key and certificate in ``server/config.json`` using keys ``certificate-file`` and ``key-file`` or leave it empty to run plain HTTP server without encryption
   
 3. Run and Debug with VS Code
    
    - Run "Debug React App" to debug front-end
    - Run "Golang Remote Debug" to debug server in docker container
    - Run "Golang Local Debug" to debug server locally if you have golang installed
+
+
+## TODOs:
+   - Add undefined state for arrays
+   - Dark theme
+   - Code examples for Protobuf, C# and Objective C
