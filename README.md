@@ -54,4 +54,8 @@ Requirements: docker, nodejs
 ## TODOs:
    - Add undefined state for arrays :heavy_check_mark:
    - Dark theme :heavy_check_mark:
+   - Small user guide
+   - Clang 14 and 15 support
+   - Better C++ and Java code examples that show effect of selecting different formatting options
    - Code examples for Protobuf, C# and Objective C
+   - Ability to choose whether to remove options duplicating style defaults from downloading config file or leave them as is 
