@@ -52,6 +52,6 @@ Requirements: docker, nodejs
 
 
 ## TODOs:
-   - Add undefined state for arrays
-   - Dark theme
+   - Add undefined state for arrays :heavy_check_mark:
+   - Dark theme :heavy_check_mark:
    - Code examples for Protobuf, C# and Objective C

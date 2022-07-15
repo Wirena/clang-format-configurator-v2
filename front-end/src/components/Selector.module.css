@@ -67,7 +67,7 @@
 }
 
 .button_array {
-  width: 220px;
+  width: 225px;
   height: 27px;
   margin: auto;
   display: block;
@@ -124,4 +124,9 @@
 
 input[type=number] {
   -moz-appearance: textfield;
+}
+
+:global(.dark) .popup_hint{
+  color: #e2e1d8;
+  border-color: #202020;
 }
