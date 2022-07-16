@@ -21,14 +21,19 @@ const Header = ({ autoFormat, onAutoFormatChange, darkTheme, onDarkThemeChange, 
         <button className={styles.button} onClick={onUpload}>
           Upload
         </button>
+        <button className={styles.button}
+          onClick={() => window.open("https://github.com/Wirena/clang-format-configurator-v2#user-guide",
+            '_blank').focus()}>
+          Guide
+        </button>
         <button className={styles.button} onClick={onDarkThemeChange}>
           {darkTheme ? "White Theme" : " DarkTheme"}
         </button>
         <button
           className={styles.button}
           onClick={() => window.open("https://github.com/Wirena/clang-format-configurator-v2",
-            '_blank').focus()}
-        >Contribute</button>
+            '_blank').focus()}>
+        Contribute</button>
       </span>
     </header>
   )
