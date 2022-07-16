@@ -10,6 +10,7 @@
         "10" : "./third-party/clang-format/clang-format-10",
         "11" : "./third-party/clang-format/clang-format-11",
         "12" : "./third-party/clang-format/clang-format-12",
-        "13" : "./third-party/clang-format/clang-format-13"
+        "13" : "./third-party/clang-format/clang-format-13",
+        "14" : "./third-party/clang-format/clang-format-14"
     }
 }

@@ -13,6 +13,11 @@ from yaml.resolver import Resolver
 known_types = ["bool", "unsigned", "std::string", "std::vector<std::string>", "int",
                "std::vector<IncludeCategory>", "std::vector<RawStringFormat>"]
 
+new_type_naming_map = {"Boolean": "bool", "Unsigned": "unsigned", "String": "std::string",
+                       "Integer": "int", "List of Strings": "std::vector<std::string>",
+                       "List of RawStringFormats": "std::vector<RawStringFormat>",
+                       "List of IncludeCategories": "std::vector<IncludeCategory>"}
+
 
 def parse_nested_conf_flags(text: str):
     # group 1 - type, group 2 - name
@@ -21,7 +26,10 @@ def parse_nested_conf_flags(text: str):
 
     for m in matches:
         variants = []
-        if m.group(1) not in known_types:
+        typename = m.group(1)
+        if typename in new_type_naming_map:
+            typename = new_type_naming_map[typename]
+        if typename not in known_types:
             variants.insert(0, "")
             matches1 = re.finditer(
                 r'^    \* ``.*`` \(in configuration: ``(.*)``', text, re.MULTILINE)
@@ -29,8 +37,8 @@ def parse_nested_conf_flags(text: str):
             for m1 in matches1:
                 variants.append(m1.group(1))
 
-        nopts.append({"title": m.group(2), "argument_type": m.group(
-            1), "arg_val_enum": variants})
+        nopts.append(
+            {"title": m.group(2), "argument_type": typename, "arg_val_enum": variants})
     return nopts
 
 
@@ -51,7 +59,8 @@ def parse_based_on_style(header: str, body: str):
     typeVariants = list(map(lambda m: m.group(1).replace("``", ""),
                             variants_matches))
     typeVariants.insert(0, '')
-    return {"title": header_match.group(1), "docstring": rst_docstring_to_html_codeblock(body).replace("`_", ""),
+    return {"title": header_match.group(1), "docstring":
+            rst_docstring_to_html_codeblock(body).replace("`_", ""),
             "values": [{"title": header_match.group(1), "argument_type": header_match.group(2),
                        "arg_val_enum": typeVariants}]}
 
@@ -69,7 +78,7 @@ def rst_docstring_to_html_codeblock(text: str) -> str:
     text = re.sub(r'(?P<indent>  +)(\.\. code-block:: (.*?)\s+$)((\n|(?P=indent)  .*)+)|(^.+?\n)',
                   repl, text, 0, re.MULTILINE)
     # single line code
-    text = re.sub(r'``(.+?)``', r'<code>\g<1></code>', text, 0, re.MULTILINE)
+    text = re.sub(r'`{1,2}(.+?)`{1,2}', r'<code>\g<1></code>', text, 0, re.MULTILINE)
     return text.strip()
 
 
@@ -94,7 +103,10 @@ def parse_rst(rst: str):
 
         i += 1
         cur_opt = {"title": opt_header_match.group(
-            1), "docstring": rst_docstring_to_html_codeblock(options[i]), "values": []}
+            1), "docstring": rst_docstring_to_html_codeblock(options[i])
+            # yep, bringing closer the global warming and the heat death of the universe by calling a replace method
+            # on a version 7-13  docstring that is guaranteed not to have a singe occurrence of ":versionbadge:"
+            .replace(":versionbadge:", "Introduced in:"), "values": []}
         values = []
 
         if "Nested configuration flags:" in options[i]:
@@ -105,14 +117,18 @@ def parse_rst(rst: str):
                 values = nestedOpts
         else:
             arg_enum = []
-            if opt_header_match.group(2) not in known_types:
+            typename = opt_header_match.group(2)
+            if typename in new_type_naming_map:
+                typename = new_type_naming_map[typename]
+
+            if typename not in known_types:
                 arg_enum = parse_unknown_arg_type(options[i])
                 if arg_enum is None:
                     sys.stderr.write(
                         f'Error parsing type variants:{options[i]}')
                     arg_enum = []
-            values.append({"title": cur_opt["title"], "argument_type": opt_header_match.group(
-                2), "arg_val_enum": arg_enum})
+            values.append(
+                {"title": cur_opt["title"], "argument_type": typename, "arg_val_enum": arg_enum})
 
         cur_opt["values"] = values
         options_list.append(cur_opt)

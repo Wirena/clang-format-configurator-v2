@@ -17,6 +17,7 @@ const Option = ({ optionInfo,
     const onChangeFunc = (newOptionValue) => { onChange(optionInfo.title, newOptionValue) }
     switch (optionInfo.title) {
       case "BraceWrapping":
+      case "SpaceBeforeParensOptions":
       case "SpacesInLineCommentPrefix":
         return (<MapSelector
           selectorInfo={optionInfo.values}

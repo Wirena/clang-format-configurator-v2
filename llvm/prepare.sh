@@ -15,10 +15,10 @@ BINS_HOST_DIR="../server/third-party"
 #directory in container with clang-format binaries after build
 BINS_CONTAINER_DIR="/workdir/clang-format"
 #destination for unprocessed .rst docs files
-DOCS_DIR_CONT="${WORKDIR}/docs"
+DOCS_DIR_CONT="${WORKDIR}/docs/"
 DOCS_DIR_HOST="docs"
 #destination for unprocessed default style configs
-DEFAULTS_DIR_CONT="${WORKDIR}/defaults"
+DEFAULTS_DIR_CONT="${WORKDIR}/defaults/"
 DEFAULTS_DIR_HOST="defaults"
 
 #path on host for config file
@@ -94,14 +94,14 @@ function copy-artifacts() {
     else
         echo "Config copied"
     fi
-    if ! docker cp ${DOCKER_CONTAINER_NAME}:${DEFAULTS_DIR_CONT} ${DEFAULTS_DIR_HOST}; then
+    if ! docker cp ${DOCKER_CONTAINER_NAME}:${DEFAULTS_DIR_CONT} "./"; then
         echerror "Failed to copy defaults from container"
         exit $?
     else
         echo "Defaults copied"
     fi
 
-    if ! docker cp ${DOCKER_CONTAINER_NAME}:${DOCS_DIR_CONT} ${DOCS_DIR_HOST}; then
+    if ! docker cp ${DOCKER_CONTAINER_NAME}:${DOCS_DIR_CONT} "./"; then
         echerror "Failed to copy docs from container"
         exit $?
     else
@@ -143,7 +143,7 @@ function inside-container() (
     REPOSITORY_DIR="${WORKDIR}/llvm"
 
     CORE_COUNT=$(nproc)
-    declare -a BRANCHES=("release/13.x" "release/12.x" "release/11.x" "release/10.x"
+    declare -a BRANCHES=("release/14.x" "release/13.x" "release/12.x" "release/11.x" "release/10.x"
         "release/9.x" "release/8.x" "release/7.x")
 
     function clone-repo() {
