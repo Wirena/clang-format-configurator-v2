@@ -9,18 +9,36 @@ Clang-format-configurator-v2 is a written from scratch successor of [clang-forma
 - Newer clang-format versions are available
 - Options show default values instead of "Default" when BasedOnStyle is selected
 - Support for complex options such as arrays, BraceWrapping, IncludeCategories, RawStringFormats etc
-- Readable error desription on invalid option value instead of "Bad Request"
+- Readable error description on invalid option value instead of "Bad Request"
 - Support for multiple programming languages
 - For complex options config file is correctly(?) generated now
-- Uncomprehensible front-end shitcode and idiotic config generation algorithm
+- Incomprehensible front-end shitcode and idiotic config generation algorithm
 - Fix of critical "Not invented here" bug
 
 ## User guide
    
+   So, besides intuitive things such as config download/upload, array add/remove element buttons, options' title, documentation and selector, there is something worth mentioning. 
+
+   The semantics of selected values is a bit different compared to the zed0's tool: the **defined** values you see is not what is written or read from your .clang-format file, but a final set of rules which ClangFormat formatting will be based on, with the exception of ``BraceWrapping`` and ``SpaceBeforeParensOptions``.
+
+   So, on uploading of this 4 line config
+   ```
+   ---
+   BasedOnStyle: LLVM
+   AlignAfterOpenBracket: DontAlign
+   AlignArrayOfStructures: Right
+   ```
+   the app will fill values not only for ``AlignAfterOpenBracket`` and ``AlignArrayOfStructures``, but every other option that is set in the specified ``BasedOnStyle``, in this case LLVM.
+
+   On downloading you will get the same 4 line config file, despite all options in UI have their values set.
+
+   Now, about the exception of ``BraceWrapping`` and ``SpaceBeforeParensOptions``. As the documentation for ``BraceWrapping``  says: *"If BreakBeforeBraces is set to BS_Custom, use this to specify how each individual brace case should be handled. Otherwise, this is ignored."* So, if you set ``BreakBeforeBraces`` to ``BS_Linux``, actuall ``BraceWrapping`` rules will differ from those that are displayed because I haven't found a way to get these values for each ``BreakBeforeBraces`` variant, so it works how it works.
+
+   I mentioned before that there are defined values, so, obviously there are undefined values. These undefined values are more of an initial design flaw than a feature. Basically, if some option is set to undefined (left blank for dropdows and numbers or greyed out for strings), then it simply won't end up in your config file. Which kinda breaks all of semantics described earlier: if ``BasedOnStyle`` is specified, then ClangFormat is setting undefined option's value to default value for selected ``BasedOnStyle``, which should be shown by the app instead of "Undefined". The default value for ``BasedOnStyle`` is LLVM. You can figure out what happens if ``BasedOnStyle`` is not specified. Yep, all undefined options fall back to LLVM style.
 
 ## Build and Development
 
-Requirements: docker, nodejs
+Requirements: docker, nodejs, linux or wsl
 
 1. Build clang-format binaries, dump styles and extract documentation and build config
    
@@ -57,8 +75,9 @@ Requirements: docker, nodejs
 ## TODOs:
    - Add undefined state for arrays :heavy_check_mark:
    - Dark theme :heavy_check_mark:
-   - Small user guide
-   - Clang 14 and 15 support
+   - Small user guide :heavy_check_mark:
+   - Clang 14 support :heavy_check_mark:
+   - Clang 15 support
    - Better C++ and Java code examples that show effect of selecting different formatting options
    - Code examples for Protobuf, C# and Objective C
    - Ability to choose whether to remove options duplicating style defaults from downloading config file or leave them as is 
