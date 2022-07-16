@@ -133,15 +133,16 @@ const App = () => {
             />
           </div>
         </Resizable>
-        <section className="right_side">
-          <Editor
-            setCurrentLang={setCurrentLang}
-            currentLang={currentLang}
-            onTextChange={setText}
-            editorText={text}
-            darkTheme={darkThemeActive}
-          />
-        </section>
+          <section className="right_side">
+            <Editor
+              setCurrentLang={setCurrentLang}
+              currentLang={currentLang}
+              onTextChange={setText}
+              editorText={text}
+              darkTheme={darkThemeActive}
+            />
+
+          </section>
       </div>
     </div>
   );

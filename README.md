@@ -15,6 +15,9 @@ Clang-format-configurator-v2 is a written from scratch successor of [clang-forma
 - Uncomprehensible front-end shitcode and idiotic config generation algorithm
 - Fix of critical "Not invented here" bug
 
+## User guide
+   
+
 ## Build and Development
 
 Requirements: docker, nodejs

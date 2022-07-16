@@ -31,8 +31,12 @@ body.dark{
 }
 
 .right_side {
-  width: 50vw;
+  flex-grow: 1;
   overflow: hidden;
+}
+
+.ace_content {
+  width: 100%;
 }
 
 
