@@ -63,6 +63,7 @@ const Option = ({ optionInfo,
         <span className={styles.title}>{optionInfo.title}</span>
         <Collapsible open={showDocString} transitionTime={100}>
           <div
+            hidden={showDocString ? "" : "hidden"}
             className={styles.docstring}
             dangerouslySetInnerHTML={{
               __html: optionInfo.docstring,
