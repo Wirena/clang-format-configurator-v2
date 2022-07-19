@@ -66,24 +66,26 @@ const App = () => {
           const input = document.createElement('input');
           input.type = 'file';
           input.onchange = (e) => {
-            try {
-              /* 
-                SHITCODE WARNING
-                Since i use 'modifiedOptionTitles' and 'unmodifiedOptions'
-                i have to generate them in 'loadOptionsFromFile' function
-              */
-              loadOptionsFromFile(e.target.files[0], config, options.selectedVersion,
-                ({ newOptions, _unmodifiedOptions, _modifiedOptionTitles }) => {
-                  if (newOptions === undefined)
-                    return
-                  modifiedOptionTitles.current = _modifiedOptionTitles
-                  unmodifiedOptions.current = _unmodifiedOptions
-                  setOptions(newOptions)
-                })
-            } catch (e) {
-              errorText.current = e.message
-              setActiveErrorPopup(true)
-            }
+
+            /* 
+              SHITCODE WARNING
+              Since i use 'modifiedOptionTitles' and 'unmodifiedOptions'
+              i have to generate them in 'loadOptionsFromFile' function
+            */
+            loadOptionsFromFile(e.target.files[0], config, options.selectedVersion,
+              (errorDescription) => {
+                errorText.current = errorDescription
+                setActiveErrorPopup(true)
+              },
+              ({ newOptions, _unmodifiedOptions, _modifiedOptionTitles }) => {
+                if (newOptions === undefined)
+                  return
+                modifiedOptionTitles.current = _modifiedOptionTitles
+                unmodifiedOptions.current = _unmodifiedOptions
+                setOptions(newOptions)
+              })
+
+
           }
           input.click()
         }}
@@ -133,16 +135,16 @@ const App = () => {
             />
           </div>
         </Resizable>
-          <section className="right_side">
-            <Editor
-              setCurrentLang={setCurrentLang}
-              currentLang={currentLang}
-              onTextChange={setText}
-              editorText={text}
-              darkTheme={darkThemeActive}
-            />
+        <section className="right_side">
+          <Editor
+            setCurrentLang={setCurrentLang}
+            currentLang={currentLang}
+            onTextChange={setText}
+            editorText={text}
+            darkTheme={darkThemeActive}
+          />
 
-          </section>
+        </section>
       </div>
     </div>
   );
