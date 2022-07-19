@@ -136,7 +136,7 @@ export function loadOptionsFromFile(fileName, config, selectedVersion, onError, 
       const listOfOptionTitles = config[selectedVersion].map(el => el.title)
       Object.entries(options).forEach(([k, v]) => {
         if (!listOfOptionTitles.includes(k)) {
-          throw new Error("Config contains keys that are incompatible with selected clang-format version")
+          throw new Error("Config contains key that is incompatible with selected clang-format version:\n"+k)
         }
       })
 
