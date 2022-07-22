@@ -4,12 +4,13 @@ import styles from './Editor.module.css'
 import cppCode from '../code_snippets/cppCode.cpp'
 import javaCode from '../code_snippets/javaCode.java'
 import "ace-builds/src-noconflict/mode-java";
+import "ace-builds/src-noconflict/mode-c_cpp";
 import "ace-builds/src-noconflict/snippets/c_cpp";
 import "ace-builds/src-noconflict/snippets/java";
-import "ace-builds/src-noconflict/mode-c_cpp";
 import "ace-builds/src-noconflict/theme-textmate";
-import "ace-builds/src-noconflict/theme-idle_fingers";
+import "ace-builds/src-noconflict/theme-clouds_midnight";
 import "ace-builds/src-noconflict/ext-language_tools";
+import "ace-builds/src-noconflict/ext-beautify"
 
 
 const Editor = ({ editorText, onTextChange, currentLang, setCurrentLang, darkTheme }) => {
@@ -58,9 +59,9 @@ const Editor = ({ editorText, onTextChange, currentLang, setCurrentLang, darkThe
         onChange={onTextChange}
         value={editorText}
         mode={currentLang}
-        theme={darkTheme ? "idle_fingers" : "textmate"}
+        theme={darkTheme ? "clouds_midnight" : "textmate"}
         fontSize={14}
-        debounceChangePeriod={1000}
+        debounceChangePeriod={5000}
         setOptions={{
           enableBasicAutocompletion: true,
           enableLiveAutocompletion: true,
