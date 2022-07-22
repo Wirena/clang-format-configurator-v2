@@ -43,8 +43,11 @@ button {
 }
 
 
-
 .label {
   color: #cecdcd;
   margin: 3px;
+}
+
+#theme_button {
+  width: 110px;
 }
