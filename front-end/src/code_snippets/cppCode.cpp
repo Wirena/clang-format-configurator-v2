@@ -15,11 +15,11 @@
 #include <vector>
 
 // AlignConsecutiveMacros
-#define SHORT_NAME       42
-#define LONGER_NAME      0x007f
+#define SHORT_NAME 42
+#define LONGER_NAME 0x007f
 #define EVEN_LONGER_NAME (2)
-#define fooo(x)          (x * x)
-#define baar(y, z)       (y + z)
+#define fooo(x) (x * x)
+#define baar(y, z) (y + z)
 
 // AlignEscapedNewlines
 #define PPP                                                                    \
@@ -61,7 +61,7 @@ private:
   int a = 1;                   // another variable
   // used for this, this, and that
   int longComplicatedName = 4;
-  int b                   = 3;
+  int b = 3;
 
 protected:
   // AlwaysBreakAfterReturnType, QualifierAlignment
@@ -95,7 +95,7 @@ public:
   // AllowAllParametersOfDeclarationOnNextLine BinPackParameters
   int myFunction(int aaaaaaaaaaaaa, int bbbbbbbbbbbbbbbbbbbbbbb,
                  int ccccccccccccc, int d, int e) {
-    int myvar       = aaaaaaaaaaaaa / 10;
+    int myvar = aaaaaaaaaaaaa / 10;
     long anothervaw = d % 2;
     // comment
     char *msg = "Hello all";
@@ -161,8 +161,8 @@ int main() {
   int aaaaaaaaaaaaaaaaaaa, bbbbbbbbbbb, ppppppppppp, eeeee;
   // AlignConsecutiveAssignments
   aaaaaaaaaaaaaaaaaaa = 6;
-  bbbbbbbbbbb         = 5;
-  ppppppppppp         = 10;
+  bbbbbbbbbbb = 5;
+  ppppppppppp = 10;
   LevelOneNamespace::LevelTwoNamespace::B b{
       1, 3, 4,
       // SpaceBeforeCpp11BracedList

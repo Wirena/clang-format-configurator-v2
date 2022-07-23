@@ -1,0 +1,15 @@
+.ace_content {
+    width: 100%;
+}
+
+.codeMarker {
+    background: #fff677;
+    position: absolute;
+    z-index: 100;
+}
+
+.dark .codeMarker {
+    background: #4c4c4b;
+    position: absolute;
+    z-index: 100;
+}

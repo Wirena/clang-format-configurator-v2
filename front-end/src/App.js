@@ -105,7 +105,7 @@ const App = () => {
       <div className="pane_container">
         <Resizable
           className="left_side"
-          defaultSize={{ width: "50%" }}
+          defaultSize={{ width: "45%" }}
           handleStyles={{ bottom: { backgroundColor: "#FF0000" } }}
           enable={{
             top: false,

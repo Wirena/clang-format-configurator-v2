@@ -6,7 +6,7 @@ body {
   font-weight: 200;
 }
 
-body.dark{
+body.dark {
   background-color: rgb(34, 34, 38)
 }
 
@@ -15,11 +15,11 @@ body.dark{
 }
 
 .left_side {
-  width: 50vw;
+  width: 60vw;
   border-right-style: solid;
 }
 
-.dark .left_side{
+.dark .left_side {
   border-right-color: #5b5b5b;
 }
 
@@ -33,11 +33,6 @@ body.dark{
   overflow: hidden;
 }
 
-.ace_content {
-  width: 100%;
-}
-
-
 .popup-content {
   position: absolute;
   top: -35%;
@@ -50,14 +45,14 @@ body.dark{
   margin: 0px;
 }
 
-.dark .popup-content{
+.dark .popup-content {
   background-color: #313131;
   border-color: #000000;
   border-width: 2px;
 }
 
 
-.popup-overlay  {
+.popup-overlay {
   background: rgba(0, 0, 0, 0.13);
 }
 

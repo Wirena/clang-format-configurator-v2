@@ -1,6 +1,9 @@
-.ace {
-  margin: 0px;
-  padding: 0px;
+
+.tab_container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box;
 }
 
 .tab_button {
@@ -10,4 +13,14 @@
   border-bottom-style: none;
   border-bottom-left-radius: 0px;
   border-bottom-right-radius: 0px;
+}
+
+#mode_button {
+  width: 110px;
+}
+
+.codeMarker {
+  background: #fff677;
+  position: absolute;
+  z-index: 20;
 }
