@@ -95,7 +95,7 @@ func (frmt *Formatter) Format(ver int, filenameExt string, code, style *string) 
 	log.Debugf("Start formatting\nversion:%d\nfilenameExt: %s\nCode:\n %s\n\n\nStyle:\n%s\n\n\n", ver, filenameExt, *code, *style)
 	executable, ok := frmt.executables[ver]
 	if !ok {
-		return nil, errors.New("no such version")
+		return nil, errors.New("selected version is not available")
 	}
 	cmd := exec.Command(executable, buildCmdOptions(filenameExt, style)...)
 	reader := strings.NewReader(*code)

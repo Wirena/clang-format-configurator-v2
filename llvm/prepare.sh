@@ -143,7 +143,7 @@ function inside-container() (
     REPOSITORY_DIR="${WORKDIR}/llvm"
 
     CORE_COUNT=$(nproc)
-    declare -a BRANCHES=("release/14.x" "release/13.x" "release/12.x" "release/11.x" "release/10.x"
+    declare -a BRANCHES=("release/15.x" "release/14.x" "release/13.x" "release/12.x" "release/11.x" "release/10.x"
         "release/9.x" "release/8.x" "release/7.x")
 
     function clone-repo() {

@@ -90,8 +90,8 @@ func (srv *Server) formatHandler(rw http.ResponseWriter, req *http.Request) {
 	filenameExt := req.URL.Query().Get("filext")
 
 	if !srv.formatter.VersionAvailable(version) {
-		log.Debugf("Specified version not available %i", version)
-		http.Error(rw, "No such version", http.StatusBadRequest)
+		log.Debugf("Specified version not available %d", version)
+		http.Error(rw, "Selected version is not available", http.StatusBadRequest)
 		return
 	}
 

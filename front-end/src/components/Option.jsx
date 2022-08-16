@@ -26,22 +26,30 @@ const Option = ({ optionInfo,
           onChange={onChangeFunc}
         />)
       default:
-        if (optionInfo.values[0].argument_type.includes("std::vector<")) {
+        if (optionInfo.values[0].argument_type.includes("std::vector<"))
           return (<ArraySelector
             selectorInfo={optionInfo.values[0]}
             currentStyle={currentStyle}
             currentOptionValue={currentOptionValue}
             onChange={onChangeFunc}
           />)
-        } else {
-          return (<SingleSelector
-            key={optionInfo.title}
-            selectorInfo={optionInfo.values[0]}
-            defaultValue={optionInfo.values[0].defaults[currentStyle]}
-            currentOptionValue={currentOptionValue}
-            onChange={onChangeFunc}
-          />)
-        }
+        else
+          if (optionInfo.values.length > 2)
+            return (<MapSelector
+              selectorInfo={optionInfo.values}
+              currentOptionValue={currentOptionValue}
+              currentStyle={currentStyle}
+              onChange={onChangeFunc}
+            />)
+          else
+            return (<SingleSelector
+              key={optionInfo.title}
+              selectorInfo={optionInfo.values[0]}
+              defaultValue={optionInfo.values[0].defaults[currentStyle]}
+              currentOptionValue={currentOptionValue}
+              onChange={onChangeFunc}
+            />)
+
     }
   }
 
