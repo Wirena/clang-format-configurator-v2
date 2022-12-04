@@ -52,6 +52,12 @@ Requirements: docker, nodejs, linux or wsl
    ```
    Clang-format binaries are placed in ``server/third-party/`` direcotry, docs and defaults are in ``llvm/docs/`` and ``llvm/defaults/`` respectively and config is written into ``llvm/config.json``. ``front-end/src/config.json`` is a soft link to ``llvm/config.json``
 
+   Generate config file by running following command:
+
+   ```
+   ./build-config.py docs default config.json
+   ``` 
+
    Install JS dependencies
 
    ```
