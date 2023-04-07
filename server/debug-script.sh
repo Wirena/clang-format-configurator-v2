@@ -21,7 +21,7 @@ function run-remote() {
 
 function run-local() {
     echo "Starting local debugger"
-    dlv debug ./cmd/clang-format-configurator/ --headless --listen=:2345 --api-version=2
+    export GOPATH=~/.go ; dlv debug ./cmd/clang-format-configurator/ --headless --listen=:2345 --api-version=2
     return $?
 }
 
