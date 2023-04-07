@@ -199,7 +199,7 @@ if __name__ == "__main__":
                 x for x in Resolver.yaml_implicit_resolvers[ch] if x[0] != 'tag:yaml.org,2002:bool']
     for filename in files:
         version = filename.replace(".rst", "")
-        current_version = "clang-format-" + version
+        current_version = version
         optionList["Versions"]["values"][0]["arg_val_enum"].append(
             current_version)
         f = open(f"{sys.argv[1]}/{filename}", "r")

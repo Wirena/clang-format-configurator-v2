@@ -1,9 +1,10 @@
 import React from "react";
 import Option from "./Option";
 import { cloneDeep } from "lodash";
+import { useCookies } from "react-cookie";
 
 const OptionList = ({ config, options, llvmVersionOption, onOptionChange, updateModifiedList, onFreshGeneratedOptions }) => {
-
+  const [_, setVersionCookie] = useCookies(["version"]); // ultra mega bruh
   return (
     <div className="OptionList">
       <Option //LLVM version option
@@ -16,6 +17,8 @@ const OptionList = ({ config, options, llvmVersionOption, onOptionChange, update
           const opts = { selectedVersion: newSelectedVersion }
           onFreshGeneratedOptions(opts)
           onOptionChange(opts)
+          console.log(newSelectedVersion)
+          setVersionCookie("value", newSelectedVersion, { path: "/" })
         }
         }
       />

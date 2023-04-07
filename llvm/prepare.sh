@@ -49,8 +49,8 @@ function displaytime {
     printf '%d seconds\n' $S
 }
 
-function get-version-from-branch() {
-    echo $1 | grep -oP '(?<=release\/)(\d+)(?=\.x)'
+function get-version-from-tag() {
+    echo $1 | grep -oP '(?<=llvmorg-)(.+)'
 }
 
 #build clang-format and config file in container
@@ -100,21 +100,21 @@ function copy-artifacts() {
     else
         echo "Defaults copied"
     fi
-
+    
     if ! docker cp ${DOCKER_CONTAINER_NAME}:${DOCS_DIR_CONT} "./"; then
         echerror "Failed to copy docs from container"
         exit $?
     else
         echo "docs copied"
     fi
-
+    
     echstage "Done"
 }
 
 #build image for building
 function build-image() {
     echstage "Building image"
-    if ! docker build . --tag ${DOCKER_IMAGE_TAG} --progress plain; then
+    if ! docker build . --tag ${DOCKER_IMAGE_TAG} ; then
         echerror "Failed to build image"
         exit $?
     fi
@@ -141,14 +141,15 @@ function remove-image() {
 #functions to run inside container
 function inside-container() (
     REPOSITORY_DIR="${WORKDIR}/llvm"
-
+    
     CORE_COUNT=$(nproc)
-    declare -a BRANCHES=("release/15.x" "release/14.x" "release/13.x" "release/12.x" "release/11.x" "release/10.x"
-        "release/9.x" "release/8.x" "release/7.x")
-
+    declare -a TAGS=("llvmorg-16.0.1" "llvmorg-16.0.0" "llvmorg-15.0.7"  "llvmorg-15.0.0" "llvmorg-14.0.6"
+        "llvmorg-14.0.0" "llvmorg-13.0.1" "llvmorg-12.0.1" "llvmorg-11.1.0" "llvmorg-11.0.1" "llvmorg-10.0.0"
+        "llvmorg-9.0.1" "llvmorg-8.0.1" "llvmorg-7.1.0" "llvmorg-7.0.1")
+    
     function clone-repo() {
         URL="https://github.com/llvm/llvm-project.git"
-
+        
         echstage "Cloning repo"
         mkdir -p ${REPOSITORY_DIR}
         cd ${REPOSITORY_DIR}
@@ -156,30 +157,30 @@ function inside-container() (
             echerror "Failed to configure git repo"
             exit 1
         )
-
-        for BRANCH in ${BRANCHES[@]}; do
-            echstage "Fetching branch ${BRANCH}"
-            git fetch --jobs=${CORE_COUNT} --depth=1 origin "${BRANCH}" ||
-                echerror "Failed to fetch branch ${BRANCH}"
+        
+        for TAG in ${TAGS[@]}; do
+            echstage "Fetching tag ${TAG}"
+            git fetch origin --jobs=${CORE_COUNT} --depth=1 tag "${TAG}"  --no-tags ||
+            echerror "Failed to fetch tag ${TAG}"
         done
         cd ${WORKDIR}
         echstage "Finished cloning repo"
     }
-
+    
     function build-clang-format() {
         echstage "Starting build process"
         cd ${REPOSITORY_DIR}
-        for BRANCH in ${BRANCHES[@]}; do
-            VERSION_NUMBER=$(get-version-from-branch ${BRANCH})
-            git checkout --force ${BRANCH}
+        for TAG in ${TAGS[@]}; do
+            VERSION_NUMBER=$(get-version-from-tag ${TAG})
+            git checkout --force ${TAG}
             rm -rf build
             #fixes 44217 bug in 8.x
-            if [[ ${BRANCH} = "release/8.x" ]]; then
+            if [[ ${TAG} = "llvmorg-8.0.1" ]]; then
                 sed -i '1s/^/#include<string>\n#include<cstdint>\n /' "llvm/include/llvm/Demangle/MicrosoftDemangleNodes.h"
             fi
             echstage "Building clang-format-${VERSION_NUMBER}"
             if cmake -G Ninja -S llvm -B build -DCMAKE_BUILD_TYPE=MinSizeRel -DLLVM_ENABLE_PROJECTS=clang -DLLVM_ENABLE_ASSERTIONS=No &&
-                cmake --build build -j${CORE_COUNT} --target clang-format; then
+            cmake --build build -j${CORE_COUNT} --target clang-format; then
                 mkdir -p ${BINS_CONTAINER_DIR} && cp --force ./build/bin/clang-format "${BINS_CONTAINER_DIR}/clang-format-${VERSION_NUMBER}"
             else
                 echerror "Failed to build clang-format-${VERSION_NUMBER}"
@@ -188,24 +189,24 @@ function inside-container() (
         cd ${WORKDIR}
         echstage "Finished building"
     }
-
+    
     function docs() {
         DOC_FILE="clang/docs/ClangFormatStyleOptions.rst"
         echstage "Copying docs"
         cd ${REPOSITORY_DIR}
-        for BRANCH in ${BRANCHES[@]}; do
-            VERSION_NUMBER=$(get-version-from-branch ${BRANCH})
-            git checkout --force ${BRANCH} &&
-                mkdir -p ${DOCS_DIR_CONT} && cp --force ${DOC_FILE} "${DOCS_DIR_CONT}/${VERSION_NUMBER}.rst" && echstage "Docs for ${BRANCH} copied" ||
-                echerror "Failed to copy doc file for branch ${BRANCH}"
+        for TAG in ${TAGS[@]}; do
+            VERSION_NUMBER=$(get-version-from-tag ${TAG})
+            git checkout --force ${TAG} &&
+            mkdir -p ${DOCS_DIR_CONT} && cp --force ${DOC_FILE} "${DOCS_DIR_CONT}/${VERSION_NUMBER}.rst" && echstage "Docs for ${TAG} copied" ||
+            echerror "Failed to copy doc file for tag ${TAG}"
         done
         cd ${WORKDIR}
         echstage "Finished copying docs"
     }
-
+    
     function defaults() {
         declare -a STYLES=(
-            'LLVM' 'Google' 'Chromium' 'Mozilla' 'WebKit' 'Microsoft' 'GNU')
+        'LLVM' 'Google' 'Chromium' 'Mozilla' 'WebKit' 'Microsoft' 'GNU')
         echstage "Dumping default style configs"
         cd ${BINS_CONTAINER_DIR}
         mkdir -p ${DEFAULTS_DIR_CONT}
@@ -213,21 +214,21 @@ function inside-container() (
             VERSION_NUMBER=$(echo "${FILENAME}" cut -d- -f 3)
             for STYLE in ${STYLES[@]}; do
                 ./${FILENAME} --style=${STYLE} --dump-config >"${DEFAULTS_DIR_CONT}/${FILENAME}_${STYLE}" &&
-                    echo "Got ${STYLE} config for ${FILENAME}" || (
+                echo "Got ${STYLE} config for ${FILENAME}" || (
                     rm "${DEFAULTS_DIR_CONT}/${FILENAME}_${STYLE}"
                     echerror "Failed to get config for style ${STYLE} for ${FILENAME}"
                 )
-
+                
             done
         done
         cd ${WORKDIR}
         echstage "Finished dumping default style configs"
     }
-
+    
     function build-config() {
         python3 build-config.py ${DOCS_DIR_CONT} ${DEFAULTS_DIR_CONT} ${CONFIG_CONTAINTER}
     }
-
+    
     function all() {
         TIME_START=$SECONDS
         clone-repo
@@ -239,18 +240,18 @@ function inside-container() (
         echstage "Time taken in container:"
         displaytime ${DURATION}
     }
-
+    
     if [[ "$1" = "--all" ]]; then
         all
-    elif [[ "$1" = "--clone-repo" ]]; then
+        elif [[ "$1" = "--clone-repo" ]]; then
         clone-repo
-    elif [[ "$1" = "--build-clang-format" ]]; then
+        elif [[ "$1" = "--build-clang-format" ]]; then
         build-clang-format
-    elif [[ "$1" = "--docs" ]]; then
+        elif [[ "$1" = "--docs" ]]; then
         docs
-    elif [[ "$1" = "--defaults" ]]; then
+        elif [[ "$1" = "--defaults" ]]; then
         defaults
-    elif [[ "$1" = "--build-config" ]]; then
+        elif [[ "$1" = "--build-config" ]]; then
         build-config
     fi
 )
@@ -273,21 +274,21 @@ fi
 
 if [[ "$1" = "--all" ]]; then
     all
-elif [[ "$1" = "--build-artifacts" ]]; then
+    elif [[ "$1" = "--build-artifacts" ]]; then
     build-artifacts
-elif [[ "$1" = "--debug-container" ]]; then
+    elif [[ "$1" = "--debug-container" ]]; then
     debug-container
-elif [[ "$1" = "--build-image" ]]; then
+    elif [[ "$1" = "--build-image" ]]; then
     build-image
-elif [[ "$1" = "--copy-artifacts" ]]; then
+    elif [[ "$1" = "--copy-artifacts" ]]; then
     copy-artifacts
-elif [[ "$1" = "--clear" ]]; then
+    elif [[ "$1" = "--clear" ]]; then
     clear
-elif [[ "$1" = "--remove-image" ]]; then
+    elif [[ "$1" = "--remove-image" ]]; then
     remove-image
-elif [[ "$1" = "--inside-container" ]]; then
+    elif [[ "$1" = "--inside-container" ]]; then
     inside-container $2
-elif [ -z "$1" ]; then
+    elif [ -z "$1" ]; then
     all
 else
     echo "Simply run ./prepare --all for all required stuff"

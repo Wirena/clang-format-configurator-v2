@@ -3,7 +3,6 @@ package server
 import (
 	"encoding/json"
 	"net/http"
-	"strconv"
 
 	"github.com/Wirena/clang-format-configurator-v2/internal/app/formatter"
 	"github.com/gorilla/handlers"
@@ -52,7 +51,7 @@ Format endpoint
 Request
 Method: POST
 Query string:
-version:  major version of clang-format, integer
+version: full version string, for example: 16.0.0-rc4
 filext: filename extension to assume language
 Body, content-type application/json, charset utf-8:
 code:  piece of code to format, string
@@ -74,13 +73,7 @@ func (srv *Server) formatHandler(rw http.ResponseWriter, req *http.Request) {
 		http.Error(rw, "No version parameter in query", http.StatusBadRequest)
 		return
 	}
-	versionString := req.URL.Query().Get("version")
-	version, err := strconv.Atoi(versionString)
-	if err != nil {
-		log.Debug("Failed to Atoi version number")
-		http.Error(rw, "Failed to Atoi version number", http.StatusBadRequest)
-		return
-	}
+	var version string = req.URL.Query().Get("version")
 
 	if !req.URL.Query().Has("filext") {
 		log.Debug("No filext parameter in query")
@@ -90,14 +83,14 @@ func (srv *Server) formatHandler(rw http.ResponseWriter, req *http.Request) {
 	filenameExt := req.URL.Query().Get("filext")
 
 	if !srv.formatter.VersionAvailable(version) {
-		log.Debugf("Specified version not available %d", version)
+		log.Debugf("Specified version not available %s", version)
 		http.Error(rw, "Selected version is not available", http.StatusBadRequest)
 		return
 	}
 
 	var body formatRequestBody
 	decoder := json.NewDecoder(req.Body)
-	err = decoder.Decode(&body)
+	err := decoder.Decode(&body)
 	if err != nil {
 		log.Debugf("Failed to decode request body:\n%s", req.Body)
 		http.Error(rw, "Failed to decode request body", http.StatusBadRequest)

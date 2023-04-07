@@ -1,17 +1,23 @@
 {
     "bind-addr": "0.0.0.0:8080",
     "log-level": "debug",
-    "certificate-file":"",
-    "key-file":"",
+    "certificate-file": "",
+    "key-file": "",
     "versions": {
-        "7": "./third-party/clang-format/clang-format-7",
-        "8": "./third-party/clang-format/clang-format-8",
-        "9": "./third-party/clang-format/clang-format-9",
-        "10" : "./third-party/clang-format/clang-format-10",
-        "11" : "./third-party/clang-format/clang-format-11",
-        "12" : "./third-party/clang-format/clang-format-12",
-        "13" : "./third-party/clang-format/clang-format-13",
-        "14" : "./third-party/clang-format/clang-format-14",
-        "15" : "./third-party/clang-format/clang-format-15"
+        "16.0.1": "./third-party/clang-format/clang-format-16.0.1",
+        "16.0.0": "./third-party/clang-format/clang-format-16.0.0",
+        "15.0.7": "./third-party/clang-format/clang-format-15.0.7",
+        "15.0.0": "./third-party/clang-format/clang-format-15.0.0",
+        "14.0.6": "./third-party/clang-format/clang-format-14.0.6",
+        "14.0.0": "./third-party/clang-format/clang-format-14.0.0",
+        "13.0.1": "./third-party/clang-format/clang-format-13.0.1",
+        "12.0.1": "./third-party/clang-format/clang-format-12.0.1",
+        "11.1.0": "./third-party/clang-format/clang-format-11.1.0",
+        "11.0.1": "./third-party/clang-format/clang-format-11.0.1",
+        "10.0.0": "./third-party/clang-format/clang-format-10.0.0",
+        "9.0.1": "./third-party/clang-format/clang-format-9.0.1",
+        "8.0.1": "./third-party/clang-format/clang-format-8.0.1",
+        "7.1.0": "./third-party/clang-format/clang-format-7.1.0",
+        "7.0.1": "./third-party/clang-format/clang-format-7.0.1"
     }
 }

@@ -15,6 +15,7 @@ const SingleSelector = ({ selectorInfo, onChange, defaultValue,
 
   switch (selectorInfo.argument_type) {
     case "unsigned":
+    case "int8_t":
     case "int":
       return (<div>
         <input

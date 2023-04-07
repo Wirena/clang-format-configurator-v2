@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"os/exec"
-	"strconv"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
@@ -27,51 +26,27 @@ func (er *InputError) Error() string {
 }
 
 type Formatter struct {
-	executables map[int]string
-}
-
-func transformMap(inmap *map[string]string) (map[int]string, error) {
-	var transformedMap map[int]string = make(map[int]string, len(*inmap))
-	var atLeastOneParsed = false
-	for key, value := range *inmap {
-		intKey, err := strconv.Atoi(key)
-		if err != nil {
-			log.Warningf("Invalid version number %s - %s", key, value)
-			continue
-		}
-		transformedMap[intKey] = value
-		atLeastOneParsed = true
-	}
-	var err error = nil
-	if !atLeastOneParsed {
-		err = errors.New("failed to parse every version number")
-	}
-	return transformedMap, err
+	executables map[string]string
 }
 
 func (frmt *Formatter) checkAndSetExecs(versions *map[string]string) error {
-	execs, err := transformMap(versions)
-	if err != nil {
-		return err
-	}
-
-	for version, execPath := range execs {
+	var err error
+	for version, execPath := range *versions {
 		cmd := exec.Command(execPath, "--version")
 		output := new(strings.Builder)
 		cmd.Stdout = output
-		err := cmd.Run()
+		err = cmd.Run()
 		if err != nil {
 			log.Errorf("%s exited with code %s\n stdout:\n%s", execPath, err, output.String())
-			delete(execs, version)
+			delete(*versions, version)
 		}
 		log.Infof("%s --version output:\n%s", execPath, output.String())
 	}
 
-	err = nil
-	if len(execs) == 0 {
+	if len(*versions) == 0 {
 		err = errors.New("failed to run every single clang-format version")
 	} else {
-		frmt.executables = execs
+		frmt.executables = *versions
 	}
 	return err
 }
@@ -82,7 +57,7 @@ func NewFormatter(versions *map[string]string) (*Formatter, error) {
 	return f, err
 }
 
-func (frmt *Formatter) VersionAvailable(version int) bool {
+func (frmt *Formatter) VersionAvailable(version string) bool {
 	_, present := frmt.executables[version]
 	return present
 }
@@ -91,8 +66,8 @@ func buildCmdOptions(filenameExt string, style *string) []string {
 	return []string{fmt.Sprintf("-style=%s", *style), fmt.Sprintf("--assume-filename=%s", filenameExt)}
 }
 
-func (frmt *Formatter) Format(ver int, filenameExt string, code, style *string) ([]byte, error) {
-	log.Debugf("Start formatting\nversion:%d\nfilenameExt: %s\nCode:\n %s\n\n\nStyle:\n%s\n\n\n", ver, filenameExt, *code, *style)
+func (frmt *Formatter) Format(ver string, filenameExt string, code, style *string) ([]byte, error) {
+	log.Debugf("Start formatting\nversion:%s\nfilenameExt: %s\nCode:\n %s\n\n\nStyle:\n%s\n\n\n", ver, filenameExt, *code, *style)
 	executable, ok := frmt.executables[ver]
 	if !ok {
 		return nil, errors.New("selected version is not available")
