@@ -7,19 +7,21 @@ import { useEffect, useState, useRef } from "react";
 import config from "./config.json";
 import { buildYamlCmdString, buildYamlConfigFile, loadOptionsFromFile } from "./Yaml&ConfigStuff"
 import { Format } from "./API"
+import { useCookies } from "react-cookie";
 import Popup from 'reactjs-popup';
 import { saveAs } from 'file-saver';
 import { debounce } from "lodash";
 
 
 const App = () => {
-
+  const [versionCookie, _] = useCookies(["version"]);
+  const [themeCookie, setThemeCookie] = useCookies(["theme"]);
   const errorText = useRef("")
   const [activeErrorPopup, setActiveErrorPopup] = useState(false)
-  const [darkThemeActive, setDarkThemeActive] = useState(window.matchMedia("(prefers-color-scheme: dark)").matches)
+  const [darkThemeActive, setDarkThemeActive] = useState(themeCookie.value == "dark" || themeCookie.value == "light" ? themeCookie.value == "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches)
   useEffect(() => { if (darkThemeActive) document.body.className = "dark"; else document.body.className = "" }, [darkThemeActive])
   const [options, setOptions] = useState(
-    { selectedVersion: config.Versions.values[0].arg_val_enum[0], BasedOnStyle: undefined });
+    { selectedVersion: config.Versions.values[0].arg_val_enum.includes(versionCookie.value) ? versionCookie.value : config.Versions.values[0].arg_val_enum[0], BasedOnStyle: undefined });
   // code editor text
   const [text, setText] = useState("");
   // autoupdate formatting on option or code change
@@ -49,13 +51,12 @@ const App = () => {
   // Another useeffect for options because of debouncing
   const formatCodeDebounced = useRef(debounce(formatCode, 1000, { leading: false, trailing: true })).current
   useEffect(() => { if (autoUpdateFormatting) formatCodeDebounced(options, text, currentLang) }, [options]);
-
   return (
     <div>
       <Header
         autoFormat={autoUpdateFormatting}
         darkTheme={darkThemeActive}
-        onDarkThemeChange={() => { setDarkThemeActive(!darkThemeActive) }}
+        onDarkThemeChange={() => { const newDarkThemeStatus = !darkThemeActive; setThemeCookie("value", newDarkThemeStatus ? "dark" : "light", { path: "/" }); setDarkThemeActive(newDarkThemeStatus) }}
         onUpdate={() => { formatCode(options, text, currentLang) }}
         onDownload={() => {
           const conf = buildYamlConfigFile(options, modifiedOptionTitles.current, unmodifiedOptions.current)

@@ -12,7 +12,7 @@ export function Format(code, yamlStyle, version, language, onFormat, onError) {
   }
   const body = { code: code, style: yamlStyle }
   fetch(config.FormatApiUrl + new URLSearchParams({
-    version: version.split('-')[2],
+    version: version,
     filext: filext
   }), {
     body: JSON.stringify(body),

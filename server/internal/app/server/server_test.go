@@ -8,7 +8,6 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"os"
-	"strconv"
 	"testing"
 
 	"github.com/Wirena/clang-format-configurator-v2/internal/app/config"
@@ -16,7 +15,7 @@ import (
 )
 
 type TestCase struct {
-	Version     int    `json:"version"`
+	Version     string `json:"version"`
 	Description string `json:"description"`
 	FileExt     string `json:"file_extension"`
 	Style       string `json:"style"`
@@ -49,7 +48,7 @@ func TestFormatEndpoint(t *testing.T) {
 			recorder := httptest.NewRecorder()
 			url, _ := url.Parse("/format")
 			query := url.Query()
-			query.Set("version", strconv.Itoa(testCase.Version))
+			query.Set("version", testCase.Version)
 			query.Set("filename", testCase.FileExt)
 			url.RawQuery = query.Encode()
 			body := formatRequestBody{Code: testCase.Code, Style: testCase.Style}

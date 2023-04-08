@@ -16,6 +16,17 @@ const Option = ({ optionInfo,
   const placeSelector = () => {
     const onChangeFunc = (newOptionValue) => { onChange(optionInfo.title, newOptionValue) }
     switch (optionInfo.title) {
+
+      case "AlignTrailingComments":
+        if (optionInfo.values.length == 1)
+          return (<SingleSelector
+            key={optionInfo.title}
+            selectorInfo={optionInfo.values[0]}
+            defaultValue={optionInfo.values[0].defaults[currentStyle]}
+            currentOptionValue={currentOptionValue}
+            onChange={onChangeFunc}
+          />)
+      // else fallthrough
       case "BraceWrapping":
       case "SpaceBeforeParensOptions":
       case "SpacesInLineCommentPrefix":
@@ -33,22 +44,22 @@ const Option = ({ optionInfo,
             currentOptionValue={currentOptionValue}
             onChange={onChangeFunc}
           />)
-        else
-          if (optionInfo.values.length > 2)
-            return (<MapSelector
-              selectorInfo={optionInfo.values}
-              currentOptionValue={currentOptionValue}
-              currentStyle={currentStyle}
-              onChange={onChangeFunc}
-            />)
-          else
-            return (<SingleSelector
-              key={optionInfo.title}
-              selectorInfo={optionInfo.values[0]}
-              defaultValue={optionInfo.values[0].defaults[currentStyle]}
-              currentOptionValue={currentOptionValue}
-              onChange={onChangeFunc}
-            />)
+
+        if (optionInfo.values.length > 2)
+          return (<MapSelector
+            selectorInfo={optionInfo.values}
+            currentOptionValue={currentOptionValue}
+            currentStyle={currentStyle}
+            onChange={onChangeFunc}
+          />)
+
+        return (<SingleSelector
+          key={optionInfo.title}
+          selectorInfo={optionInfo.values[0]}
+          defaultValue={optionInfo.values[0].defaults[currentStyle]}
+          currentOptionValue={currentOptionValue}
+          onChange={onChangeFunc}
+        />)
 
     }
   }
