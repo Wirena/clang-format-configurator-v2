@@ -11,6 +11,7 @@ const ArraySelector = ({ selectorInfo, onChange, currentStyle, currentOptionValu
     undefined : selectorInfo.defaults[currentStyle].value
 
   if (currentOptionValue === undefined)
+
     return (
       <span>
         <Popup
@@ -20,20 +21,23 @@ const ArraySelector = ({ selectorInfo, onChange, currentStyle, currentOptionValu
               className={styles.button_array}>
               <img
                 className={styles.image_button_array}
-                src="./activateArrayIcon.svg"
-                alt="Activate array option"
+                src="./addIcon.svg"
+                alt="Add element to the array"
                 onClick={() => {
-                  onChange([])
+                  const newArr = []
+                  newArr.push("")
+                  onChange(newArr)
                 }}
               />
             </button>
           }
           on={['hover']}
           position="right center" closeOnDocumentClick>
-          <span className={styles.popup_hint}> {"Activate Option"} </span>
+          <span className={styles.popup_hint}> {"Add element to the array"} </span>
         </Popup>
       </span>
     )
+
   return (
     <span>
       {currentOptionValue.map((value, index) => {
@@ -91,7 +95,7 @@ const ArraySelector = ({ selectorInfo, onChange, currentStyle, currentOptionValu
                     alt="Delete array element"
                     onClick={() => {
                       if (currentOptionValue.length === 1)
-                        onChange([])
+                        onChange(undefined)
                       else
                         onChange(currentOptionValue.filter((val, filterIndex) =>
                           index !== filterIndex))
@@ -132,28 +136,6 @@ const ArraySelector = ({ selectorInfo, onChange, currentStyle, currentOptionValu
         position="right center" closeOnDocumentClick>
         <span className={styles.popup_hint}> {"Add element to the array"} </span>
       </Popup>
-
-      {currentOptionValue.length === 0 ?
-        <Popup
-          mouseEnterDelay={1000}
-          trigger={
-            <button
-              className={styles.button_array}>
-              <img
-                className={styles.image_button_array}
-                src="./deactivateArrayIcon.svg"
-                alt="Deactivate array options"
-                onClick={() => {
-                  onChange(undefined)
-                }}
-              />
-            </button>
-          }
-          on={['hover']}
-          position="right center" closeOnDocumentClick>
-          <span className={styles.popup_hint}> {"Set value no undefined"} </span>
-        </Popup>
-        : undefined}
     </span>
   )
 }
