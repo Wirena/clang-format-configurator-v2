@@ -14,14 +14,14 @@ import { debounce } from "lodash";
 
 
 const App = () => {
-  const [versionCookie, _] = useCookies(["version"]);
-  const [themeCookie, setThemeCookie] = useCookies(["theme"]);
+  const [cookie, setCookie] = useCookies([])
+  
   const errorText = useRef("")
   const [activeErrorPopup, setActiveErrorPopup] = useState(false)
-  const [darkThemeActive, setDarkThemeActive] = useState(themeCookie.value == "dark" || themeCookie.value == "light" ? themeCookie.value == "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches)
+  const [darkThemeActive, setDarkThemeActive] = useState(cookie.theme == "dark" || cookie.theme == "light" ? cookie.theme == "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches)
   useEffect(() => { if (darkThemeActive) document.body.className = "dark"; else document.body.className = "" }, [darkThemeActive])
   const [options, setOptions] = useState(
-    { selectedVersion: config.Versions.values[0].arg_val_enum.includes(versionCookie.value) ? versionCookie.value : config.Versions.values[0].arg_val_enum[0], BasedOnStyle: undefined });
+    { selectedVersion: config.Versions.values[0].arg_val_enum.includes(cookie.version) ? cookie.version : config.Versions.values[0].arg_val_enum[0], BasedOnStyle: undefined });
   // code editor text
   const [text, setText] = useState("");
   // autoupdate formatting on option or code change
@@ -56,7 +56,7 @@ const App = () => {
       <Header
         autoFormat={autoUpdateFormatting}
         darkTheme={darkThemeActive}
-        onDarkThemeChange={() => { const newDarkThemeStatus = !darkThemeActive; setThemeCookie("value", newDarkThemeStatus ? "dark" : "light", { path: "/" }); setDarkThemeActive(newDarkThemeStatus) }}
+        onDarkThemeChange={() => { const newDarkThemeStatus = !darkThemeActive; setCookie("theme", newDarkThemeStatus ? "dark" : "light", { path: "/" }); setDarkThemeActive(newDarkThemeStatus) }}
         onUpdate={() => { formatCode(options, text, currentLang) }}
         onDownload={() => {
           const conf = buildYamlConfigFile(options, modifiedOptionTitles.current, unmodifiedOptions.current)
