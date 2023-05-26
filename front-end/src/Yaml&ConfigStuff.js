@@ -36,8 +36,6 @@ function removeOptionsDuplicatingStyleDefs(options, modifiedOptionTitles, unmodi
 
 export function buildYamlConfigFile(chosenOptions, modifiedOptionTitles, unmodifiedOptions) {
   let options = cloneDeep(chosenOptions)
-  if (options.BasedOnStyle !== undefined)
-    options = removeOptionsDuplicatingStyleDefs(options, modifiedOptionTitles, unmodifiedOptions)
   delete options.selectedVersion
   const doc = new yaml.Document();
   doc.contents = options
