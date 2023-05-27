@@ -78,7 +78,8 @@ def rst_docstring_to_html_codeblock(text: str) -> str:
     text = re.sub(r'(?P<indent>  +)(\.\. code-block:: (.*?)\s+$)((\n|(?P=indent)  .*)+)|(^.+?\n)',
                   repl, text, 0, re.MULTILINE)
     # single line code
-    text = re.sub(r'`{1,2}(.+?)`{1,2}', r'<code>\g<1></code>', text, 0, re.MULTILINE)
+    text = re.sub(r'`{1,2}(.+?)`{1,2}',
+                  r'<code>\g<1></code>', text, 0, re.MULTILINE)
     return text.strip()
 
 
@@ -89,7 +90,7 @@ def parse_rst(rst: str):
     options = re.split(r'(^\*{2}\w+\*{2} \(``.*``\))',
                        rst[0:end_index], 0, re.MULTILINE)
 
-    del(options[0])
+    del (options[0])
 
     options_list = [parse_based_on_style(options[0], options[1])]
 
@@ -173,8 +174,10 @@ def parse_defaults(path: str, optionList, version: str):
 
 
 def docFileNameVersionComparator(a: str, b: str):
-    a_ver = a.split('.')[0]
-    b_ver = b.split('.')[0]
+    a_splitted = a.split('.')
+    b_splitted = b.split('.')
+    a_ver = a_splitted[0] * 1000 + a_splitted[1] * 10 + a_splitted[2]
+    b_ver = b_splitted[0] * 1000 + b_splitted[1] * 10 + b_splitted[2]
     return int(b_ver) - int(a_ver)
 
 
