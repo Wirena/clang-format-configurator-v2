@@ -19,7 +19,8 @@
     "react-scripts": "5.0.0",
     "reactjs-popup": "^2.0.5",
     "web-vitals": "^2.1.4",
-    "yaml": "^2.2.2"
+    "yaml": "^2.2.2",
+    "html-webpack-plugin": "^5.5.0"
   },
   "scripts": {
     "start": "BROWSER=none react-scripts start",
@@ -47,5 +48,6 @@
   },
   "devDependencies": {
     "style-loader": "^3.3.1"
+    
   }
 }
