@@ -19,7 +19,7 @@
     "react-scripts": "5.0.0",
     "reactjs-popup": "^2.0.5",
     "web-vitals": "^2.1.4",
-    "yaml": "^2.1.1"
+    "yaml": "^2.2.2"
   },
   "scripts": {
     "start": "BROWSER=none react-scripts start",
