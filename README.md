@@ -87,7 +87,7 @@ Requirements: docker, nodejs, linux or wsl
    - Dark theme :heavy_check_mark:
    - Small user guide :heavy_check_mark:
    - Clang 16 support :heavy_check_mark:
-   - Clang 17 support
+   - Clang 17 support :heavy_check_mark:
    - Better C++ and Java code examples that show effect of selecting different formatting options
    - Code examples for Protobuf, C# and Objective C
    - Ability to choose whether to remove options duplicating style defaults from downloading config file or leave them as is 
