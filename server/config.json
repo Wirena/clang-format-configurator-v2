@@ -4,8 +4,8 @@
     "certificate-file": "",
     "key-file": "",
     "versions": {
-        "16.0.4": "./third-party/clang-format/clang-format-16.0.4",
-        "16.0.1": "./third-party/clang-format/clang-format-16.0.1",
+        "17.0.6": "./third-party/clang-format/clang-format-17.0.6",
+        "16.0.6": "./third-party/clang-format/clang-format-16.0.6",
         "16.0.0": "./third-party/clang-format/clang-format-16.0.0",
         "15.0.7": "./third-party/clang-format/clang-format-15.0.7",
         "15.0.0": "./third-party/clang-format/clang-format-15.0.0",
