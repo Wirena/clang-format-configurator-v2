@@ -57,12 +57,6 @@ Requirements: docker, nodejs, linux or wsl
    ```
    Clang-format binaries are placed in ``server/third-party/`` direcotry, docs and defaults are in ``llvm/docs/`` and ``llvm/defaults/`` respectively and config is written into ``llvm/config.json``. ``front-end/src/config.json`` is a soft link to ``llvm/config.json``
 
-   Generate config file by running following command:
-
-   ```
-   ./build-config.py docs default config.json
-   ``` 
-
    Install JS dependencies
 
    ```
@@ -85,9 +79,11 @@ Requirements: docker, nodejs, linux or wsl
 
 ## TODOs:
    - Dark theme :heavy_check_mark:
-   - Small user guide :heavy_check_mark:
-   - Clang 16 support :heavy_check_mark:
    - Clang 17 support :heavy_check_mark:
+   - Add favicon and status icon to show if code formatting is in process, succeded or failed
+   - Add config file UI page with .clang-format file preview, to Ctrl+C/Ctrl+V file without using file explorer, like described [here](https://github.com/Wirena/clang-format-configurator-v2/issues/7)
+   - Fix duplicating options removal - [bug](https://github.com/Wirena/clang-format-configurator-v2/issues/21)
+   - Preserve comments - [feature](https://github.com/Wirena/clang-format-configurator-v2/issues/21#issuecomment-1567945533)
    - Better C++ and Java code examples that show effect of selecting different formatting options
    - Code examples for Protobuf, C# and Objective C
-   - Ability to choose whether to remove options duplicating style defaults from downloading config file or leave them as is 
+   - Let user choose whether to remove options duplicating style defaults from downloading config file or leave them as is 
