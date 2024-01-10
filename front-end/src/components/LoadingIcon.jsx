@@ -21,7 +21,7 @@ class LoadingIcon extends React.Component {
         else if (this.loadingState === "success")
             image = (<img className={styles.loading_icon} alt="loading" src="./loadingFinishedIcon.svg" />);
         else if (this.loadingState === "error")
-            image = (<img className={styles.loading_icon} alt="loading" src="./loadingFailed.svg" />);
+            image = (<img className={styles.loading_icon} alt="loading" src="./loadingFailedIcon.svg" />);
         else {
             console.error("LoadingIcon.jsx: Invalid state value - " + this.loadingState)
             image = (<span></span>)
