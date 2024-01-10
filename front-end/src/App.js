@@ -3,6 +3,7 @@ import OptionList from "./components/OptionList";
 import { Resizable } from "re-resizable";
 import Editor from "./components/Editor";
 import Error from "./components/Error";
+import LoadingIcon from "./components/LoadingIcon";
 import { useEffect, useState, useRef } from "react";
 import config from "./config.json";
 import { buildYamlCmdString, buildYamlConfigFile, loadOptionsFromFile } from "./Yaml&ConfigStuff"
@@ -15,10 +16,10 @@ import { debounce } from "lodash";
 
 const App = () => {
   const [cookie, setCookie] = useCookies([])
-  
+
   const errorText = useRef("")
   const [activeErrorPopup, setActiveErrorPopup] = useState(false)
-  const [darkThemeActive, setDarkThemeActive] = useState(cookie.theme == "dark" || cookie.theme == "light" ? cookie.theme == "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches)
+  const [darkThemeActive, setDarkThemeActive] = useState(cookie.theme === "dark" || cookie.theme === "light" ? cookie.theme === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches)
   useEffect(() => { if (darkThemeActive) document.body.className = "dark"; else document.body.className = "" }, [darkThemeActive])
   const [options, setOptions] = useState(
     { selectedVersion: config.Versions.values[0].arg_val_enum.includes(cookie.version) ? cookie.version : config.Versions.values[0].arg_val_enum[0], BasedOnStyle: undefined });
@@ -38,26 +39,33 @@ const App = () => {
   const unmodifiedOptions = useRef({})
 
   function formatCode(options, text, currentLang) {
+    //window.loadingIcon.setLoadingState("loading")
     const yamlStr = buildYamlCmdString(options, config)
-    Format(text, yamlStr, options.selectedVersion, currentLang, (code) => { if (code !== "") setText(code) },
+    Format(text, yamlStr, options.selectedVersion, currentLang, (code) => { if (code !== "") { setText(code); window.loadingIcon.setLoadingState("success") } },
       (errortext) => {
+        window.loadingIcon.setLoadingState("error")
         errorText.current = errortext
         setActiveErrorPopup(true)
       })
   };
 
-  useEffect(() => { if (autoUpdateFormatting) formatCode(options, text, currentLang) }, [text]);
+  useEffect(() => { if (autoUpdateFormatting) { formatCode(options, text, currentLang) } }, [text]);
 
   // Another useeffect for options because of debouncing
   const formatCodeDebounced = useRef(debounce(formatCode, 1000, { leading: false, trailing: true })).current
-  useEffect(() => { if (autoUpdateFormatting) formatCodeDebounced(options, text, currentLang) }, [options]);
+  useEffect(() => {
+    if (autoUpdateFormatting) {
+      window.loadingIcon.setLoadingState("loading");
+      formatCodeDebounced(options, text, currentLang)
+    }
+  }, [options]);
   return (
     <div>
       <Header
         autoFormat={autoUpdateFormatting}
         darkTheme={darkThemeActive}
         onDarkThemeChange={() => { const newDarkThemeStatus = !darkThemeActive; setCookie("theme", newDarkThemeStatus ? "dark" : "light", { path: "/" }); setDarkThemeActive(newDarkThemeStatus) }}
-        onUpdate={() => { formatCode(options, text, currentLang) }}
+        onUpdate={() => { window.loadingIcon.setLoadingState("loading"); formatCode(options, text, currentLang) }}
         onDownload={() => {
           const conf = buildYamlConfigFile(options, modifiedOptionTitles.current, unmodifiedOptions.current)
           const blob = new Blob([conf], { type: 'text/plain;charset=utf-8' })
@@ -143,6 +151,7 @@ const App = () => {
             onTextChange={setText}
             editorText={text}
             darkTheme={darkThemeActive}
+            loadingIcon={<LoadingIcon />}
           />
 
         </section>
