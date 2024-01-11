@@ -18,7 +18,7 @@ const Option = ({ optionInfo,
     switch (optionInfo.title) {
 
       case "AlignTrailingComments":
-        if (optionInfo.values.length == 1)
+        if (optionInfo.values.length === 1)
           return (<SingleSelector
             key={optionInfo.title}
             selectorInfo={optionInfo.values[0]}
@@ -65,6 +65,7 @@ const Option = ({ optionInfo,
   }
 
 
+
   return (
     <section className={styles.option}>
       <span className={styles.title_container}>
@@ -79,7 +80,7 @@ const Option = ({ optionInfo,
             src="./questionIcon.svg"
           />
         </button>
-        <span className={styles.title}>{optionInfo.title}</span>
+        <span className={optionInfo.deprecated ? styles.title_deprecated : styles.title}>{optionInfo.title}</span>
         <Collapsible open={showDocString} transitionTime={100}>
           <div
             hidden={showDocString ? "" : "hidden"}
