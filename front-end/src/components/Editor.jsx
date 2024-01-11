@@ -15,9 +15,10 @@ import "ace-builds/src-noconflict/ext-language_tools";
 import "ace-builds/src-noconflict/ext-beautify"
 import "ace-builds/src-min-noconflict/ext-searchbox";
 import { debounce } from "lodash";
+import { edit } from "ace-builds";
 
 
-const Editor = ({ editorText, onTextChange, currentLang, setCurrentLang, darkTheme, loadingIcon }) => {
+const Editor = ({ editorText, onTextChange, currentLang, setCurrentLang, darkTheme, loadingIcon, columnLimitLine }) => {
   const cppCodeString = React.useRef("")
   const javaCodeString = React.useRef("")
   const [editorDiffMode, setEditorDiffMode] = React.useState(false)
@@ -56,9 +57,11 @@ const Editor = ({ editorText, onTextChange, currentLang, setCurrentLang, darkThe
       orientation={orientationBeside ? "beside" : "below"}
       fontSize={14}
       debounceChangePeriod={0}
+      showPrintMargin={true}
       onChange={([leftPaneText, rightPaneText]) => { window.loadingIcon.setLoadingState("loading"); onTextChangeDiffDebounced.current(leftPaneText, rightPaneText) }}
       value={[leftPaneText || "", editorText || ""]}
       setOptions={{
+        printMargin: columnLimitLine,
         useWorker: false,
         enableBasicAutocompletion: true,
         enableLiveAutocompletion: true,
@@ -77,8 +80,10 @@ const Editor = ({ editorText, onTextChange, currentLang, setCurrentLang, darkThe
     theme={darkTheme ? "clouds_midnight" : "textmate"}
     fontSize={14}
     debounceChangePeriod={0}
+    showPrintMargin={true}
     onChange={(text) => { window.loadingIcon.setLoadingState("loading"); onTextChangeSingleDebounced.current(text) }}
     setOptions={{
+      printMargin: columnLimitLine,
       enableBasicAutocompletion: true,
       enableLiveAutocompletion: true,
       enableSnippets: true,

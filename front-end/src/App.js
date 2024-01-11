@@ -152,6 +152,7 @@ const App = () => {
             editorText={text}
             darkTheme={darkThemeActive}
             loadingIcon={<LoadingIcon />}
+            columnLimitLine={Number(options.ColumnLimit)}
           />
 
         </section>
