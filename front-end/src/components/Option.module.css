@@ -19,7 +19,12 @@
   text-decoration: line-through
 }
 
+
 :global(.dark) .title {
+  color: #cfcec4;
+}
+
+:global(.dark) .title_deprecated {
   color: #cfcec4;
 }
 
