@@ -12,6 +12,13 @@
   overflow: hidden;
 }
 
+.title_deprecated {
+  font-family: sans-serif;
+  font-size: 17px;
+  overflow: hidden;
+  text-decoration: line-through
+}
+
 :global(.dark) .title {
   color: #cfcec4;
 }

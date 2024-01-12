@@ -9,6 +9,7 @@ import yaml
 from yaml.resolver import Resolver
 
 # TODO: rewrite this shit using rst2html or something
+# TODO: 2 years later: I no longer understand how this code works
 
 known_types = ["bool", "unsigned", "std::string", "std::vector<std::string>", "int",
                "std::vector<IncludeCategory>", "std::vector<RawStringFormat>"]
@@ -65,7 +66,7 @@ def parse_based_on_style(header: str, body: str):
                        "arg_val_enum": typeVariants}]}
 
 
-def rst_docstring_to_html_codeblock(text: str) -> str:
+def rst_docstring_to_html_codeblock(docstring: str) -> str:
     def repl(match):
         if match.group(4) is not None:
             return '<pre>'+match.group(4).replace('<', "&lt;").replace('>', "&gt;")+'</pre>'
@@ -74,14 +75,18 @@ def rst_docstring_to_html_codeblock(text: str) -> str:
 
     # multiline code and paragraphs
     #  group 3 - language, group 4 - code, group 6 - paragraph
-    text = text.strip()
-    text = re.sub(r'(?P<indent>  +)(\.\. code-block:: (.*?)\s+$)((\n|(?P=indent)  .*)+)|(^.+?\n)',
-                  repl, text, 0, re.MULTILINE)
+    docstring = docstring.strip()
+    docstring = re.sub(r'(?P<indent>  +)(\.\. code-block:: (.*?)\s+$)((\n|(?P=indent)  .*)+)|(^.+?\n)',
+                  repl, docstring, 0, re.MULTILINE)
     # single line code
-    text = re.sub(r'`{1,2}(.+?)`{1,2}',
-                  r'<code>\g<1></code>', text, 0, re.MULTILINE)
-    return text.strip()
+    docstring = re.sub(r'`{1,2}(.+?)`{1,2}',
+                  r'<code>\g<1></code>', docstring, 0, re.MULTILINE)
+    ## replate **deprecated** with 
+    docstring = docstring.replace("**deprecated**", "<b>DEPRECATED</b>")
+    return docstring.strip()
 
+def check_if_deprecated_by_docstring(docstring: str) -> bool:
+    return "**deprecated**" in docstring
 
 def parse_rst(rst: str):
 
@@ -102,12 +107,15 @@ def parse_rst(rst: str):
             sys.stderr.write(f'Error parsing option header:{options[i]}')
             continue
 
+
         i += 1
         cur_opt = {"title": opt_header_match.group(
             1), "docstring": rst_docstring_to_html_codeblock(options[i])
             # yep, bringing closer the global warming and the heat death of the universe by calling a replace method
             # on a version 7-13  docstring that is guaranteed not to have a singe occurrence of ":versionbadge:"
-            .replace(":versionbadge:", "Introduced in:"), "values": []}
+            .replace(":versionbadge:", "Introduced in:"), 
+            "deprecated": check_if_deprecated_by_docstring(options[i]),
+            "values": []}
         values = []
 
         if "Nested configuration flags:" in options[i]:
@@ -190,6 +198,7 @@ if __name__ == "__main__":
     optionList = {"FormatApiUrl": "http://localhost:8080/format?",
                   "Versions":
                   {"title": "Version", "docstring": "LLVM Version",
+                   "deprecated": False,
                    "values": [{"arg_val_enum": [],
                               "title": "Version",
                                "argument_type": "",

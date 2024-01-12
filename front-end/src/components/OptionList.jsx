@@ -5,6 +5,32 @@ import { useCookies } from "react-cookie";
 
 const OptionList = ({ config, options, llvmVersionOption, onOptionChange, updateModifiedList, onFreshGeneratedOptions }) => {
   const [_, setCookie] = useCookies([]); // ultra mega bruh
+
+  const deprecatedOptions = []
+  const nonDeprecatedOptions = config[options.selectedVersion].slice(1).map((option) => {
+    const optionWgt = (<Option
+      key={option.title}
+      optionInfo={option}
+      currentStyle={options.BasedOnStyle}
+      currentOptionValue={options[option.title]}
+      onChange={(optionTitle, newOptionValue) => {
+        updateModifiedList(optionTitle)
+        onOptionChange({
+          ...options,
+          [optionTitle]: newOptionValue
+        })
+      }
+      }
+    />
+    )
+    if (option.deprecated) {
+      deprecatedOptions.push(optionWgt)
+      return []
+    }
+    return optionWgt
+  })
+
+
   return (
     <div className="OptionList">
       <Option //LLVM version option
@@ -40,17 +66,17 @@ const OptionList = ({ config, options, llvmVersionOption, onOptionChange, update
             return;
           }
 
-          let st = {
+          let optionsStateTemplate = {
             selectedVersion: options.selectedVersion,
             BasedOnStyle: newOptionValue
           }
-          config[st.selectedVersion]
+          config[optionsStateTemplate.selectedVersion]
             .slice(1).forEach((option) => {
               if (
                 option.values.length === 1 &&
                 option.values[0].defaults[newOptionValue] !== undefined
               ) {
-                st[option.title] =
+                optionsStateTemplate[option.title] =
                   option.values[0].defaults[newOptionValue].value;
               } else {
                 // set all option values to selected style defaults
@@ -58,34 +84,20 @@ const OptionList = ({ config, options, llvmVersionOption, onOptionChange, update
                 // filter out options without defaults for this style
                 option.values.filter((element) => element.defaults[newOptionValue] !== undefined)
                   .forEach((nestedOption) => {
-                    if (st[option.title] == undefined)
-                      st[option.title] = {}
-                    st[option.title][nestedOption.title] =
+                    if (optionsStateTemplate[option.title] == undefined)
+                      optionsStateTemplate[option.title] = {}
+                    optionsStateTemplate[option.title][nestedOption.title] =
                       nestedOption.defaults[newOptionValue].value
                   }
                   );
               }
             });
-          onFreshGeneratedOptions(cloneDeep(st))
-          onOptionChange(st);
+          onFreshGeneratedOptions(cloneDeep(optionsStateTemplate))
+          onOptionChange(optionsStateTemplate);
         }}
       />
-      {config[options.selectedVersion].slice(1).map((option) => (
-        <Option
-          key={option.title}
-          optionInfo={option}
-          currentStyle={options.BasedOnStyle}
-          currentOptionValue={options[option.title]}
-          onChange={(optionTitle, newOptionValue) => {
-            updateModifiedList(optionTitle)
-            onOptionChange({
-              ...options,
-              [optionTitle]: newOptionValue
-            })
-          }
-          }
-        />
-      ))}
+      {nonDeprecatedOptions}
+      {deprecatedOptions}
     </div>
   )
 
