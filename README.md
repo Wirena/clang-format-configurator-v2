@@ -81,7 +81,7 @@ Requirements: docker, nodejs, linux or wsl
    - Dark theme :heavy_check_mark:
    - Clang 17 support :heavy_check_mark:
    - Add favicon and status icon to show if code formatting is in process, succeded or failed :heavy_check_mark:
-   - Indicate if option is deprecated
+   - Indicate if option is deprecated :heavy_check_mark:
    - Add config file UI page with .clang-format file preview, to Ctrl+C/Ctrl+V file without using file explorer, like described [here](https://github.com/Wirena/clang-format-configurator-v2/issues/7)
    - Fix duplicating options removal - [bug](https://github.com/Wirena/clang-format-configurator-v2/issues/21)
    - Preserve comments - [feature](https://github.com/Wirena/clang-format-configurator-v2/issues/21#issuecomment-1567945533)
