@@ -37,6 +37,7 @@ body.dark {
 .config_page_popup-content {
   height: 80vh;
   width: 70vw;
+  min-width: 900px;
 }
 
 .error_popup-content {
