@@ -1,7 +1,9 @@
 import React from 'react';
 import styles from './Header.module.css'
 
-const Header = ({ autoFormat, onAutoFormatChange, darkTheme, onDarkThemeChange, onUpdate, onDownload, onUpload }) => {
+
+
+const Header = ({ autoFormat, onAutoFormatChange, darkTheme, onDarkThemeChange, onUpdate, onConfigFile }) => {
   return (
     <header className={styles.header}>
       <h2 className={styles.title_text}>clang-format configurator v2</h2>
@@ -15,11 +17,8 @@ const Header = ({ autoFormat, onAutoFormatChange, darkTheme, onDarkThemeChange, 
         <button className={styles.button} onClick={onUpdate}>
           Format
         </button>
-        <button className={styles.button} onClick={onDownload}>
-          Download
-        </button>
-        <button className={styles.button} onClick={onUpload}>
-          Upload
+        <button className={styles.button} onClick={onConfigFile}>
+          Config File
         </button>
         <button className={styles.button}
           onClick={() => window.open("https://github.com/Wirena/clang-format-configurator-v2#user-guide",

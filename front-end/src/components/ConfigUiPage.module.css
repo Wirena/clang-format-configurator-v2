@@ -1,0 +1,39 @@
+.config_ui_page {
+    padding: 0px;
+    margin: 0px;
+    height: 100%;
+}
+
+.top_panel {
+    height: 10%;
+}
+
+.middle_panel {
+    width: 100%;
+    height: 80%;
+}
+
+.bottom_panel {
+    margin: 10px;
+    height: 10%;
+
+}
+
+.bottom_file_buttons {}
+
+
+.bottom_control_buttons {
+    float: right;
+}
+
+.editor_container {
+    height: 100%;
+    margin-left: 15px;
+    margin-right: 15px;
+    width: 60%;
+    float: left;
+}
+
+.settings_container {
+    margin-left: 60%;
+}

@@ -15,7 +15,6 @@ import "ace-builds/src-noconflict/ext-language_tools";
 import "ace-builds/src-noconflict/ext-beautify"
 import "ace-builds/src-min-noconflict/ext-searchbox";
 import { debounce } from "lodash";
-import { edit } from "ace-builds";
 
 
 const Editor = ({ editorText, onTextChange, currentLang, setCurrentLang, darkTheme, loadingIcon, columnLimitLine }) => {
