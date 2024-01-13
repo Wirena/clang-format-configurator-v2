@@ -1,5 +1,6 @@
 import React from "react";
 import AceEditor from "react-ace";
+import { saveAs } from 'file-saver';
 import styles from "./ConfigUiPage.module.css"
 import "./ace.css"
 import "ace-builds/src-noconflict/mode-yaml";
@@ -10,13 +11,12 @@ import "ace-builds/src-noconflict/ext-language_tools";
 import "ace-builds/src-noconflict/ext-beautify"
 import "ace-builds/src-min-noconflict/ext-searchbox";
 import { buildYamlConfigFile, loadOptionsFromString } from "../Yaml&ConfigStuff"
-import { saveAs } from 'file-saver';
 import config from "../config.json";
+
 
 const ConfigUiPage = ({ options, modifiedOptionTitles, unmodifiedOptions, onLoaded, onError, onClose, darkTheme }) => {
 
     const [optionsText, setOptionsText] = React.useState(buildYamlConfigFile(options, modifiedOptionTitles.current, unmodifiedOptions.current))
-
     const downloadConfigFile = React.useCallback(() => {
         const blob = new Blob([optionsText], { type: 'text/plain;charset=utf-8' })
         saveAs(blob, ".clang-format")
@@ -46,7 +46,9 @@ const ConfigUiPage = ({ options, modifiedOptionTitles, unmodifiedOptions, onLoad
     return (
         <div className={styles.config_ui_page}>
             <div className={styles.top_panel}>
-                Hello there!
+                <h1 className={styles.page_title_text}>
+                    Edit your .clang-format config file in place or use Upload and Download buttons to open File Explorer
+                </h1>
             </div>
             <div className={styles.middle_panel}>
                 <div className={styles.editor_container}>
@@ -67,9 +69,6 @@ const ConfigUiPage = ({ options, modifiedOptionTitles, unmodifiedOptions, onLoad
                         }}
                     />
                 </div>
-                <div className={styles.settings_container}>
-                    Right Div
-                </div>
             </div>
             <div className={styles.bottom_panel}>
                 <span className={styles.bottom_file_buttons}>
@@ -85,9 +84,7 @@ const ConfigUiPage = ({ options, modifiedOptionTitles, unmodifiedOptions, onLoad
                     <button onClick={onClose}>
                         Close
                     </button>
-                    <button
-                        onClick={() => { loadConfigTxtToOptions(optionsText) }}
-                    >
+                    <button onClick={() => { loadConfigTxtToOptions(optionsText) }}>
                         Load Config
                     </button>
                 </span>

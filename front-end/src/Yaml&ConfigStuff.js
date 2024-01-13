@@ -109,7 +109,7 @@ export function buildYamlCmdString(chosenOptions, config) {
 
 export function loadOptionsFromString(optionsStr, config, selectedVersion, onLoaded) {
   const options = yaml.parse(optionsStr)
-  if (typeof (options) == "string")
+  if (typeof (options) == "string" || Array.isArray(options) || options === null)
     throw new Error("Looks like invalid yaml file")
   const BasedOnStyle = options.BasedOnStyle
   if (BasedOnStyle === undefined) {

@@ -6,11 +6,11 @@ import Error from "./components/Error";
 import LoadingIcon from "./components/LoadingIcon";
 import { useEffect, useState, useRef } from "react";
 import config from "./config.json";
-import { buildYamlCmdString, buildYamlConfigFile, loadOptionsFromFile } from "./Yaml&ConfigStuff"
+import { buildYamlCmdString } from "./Yaml&ConfigStuff"
 import { Format } from "./API"
 import { useCookies } from "react-cookie";
 import Popup from 'reactjs-popup';
-import { saveAs } from 'file-saver';
+
 import { debounce } from "lodash";
 import ConfigUiPage from "./components/ConfigUiPage";
 
@@ -69,33 +69,6 @@ const App = () => {
         onDarkThemeChange={() => { const newDarkThemeStatus = !darkThemeActive; setCookie("theme", newDarkThemeStatus ? "dark" : "light", { path: "/" }); setDarkThemeActive(newDarkThemeStatus) }}
         onUpdate={() => { window.loadingIcon.setLoadingState("loading"); formatCode(options, text, currentLang) }}
         onConfigFile={() => { setConfigPageOpened(true) }}
-        onUpload={() => {
-          const input = document.createElement('input');
-          input.type = 'file';
-          input.onchange = (e) => {
-
-            /* 
-              SHITCODE WARNING
-              Since i use 'modifiedOptionTitles' and 'unmodifiedOptions'
-              i have to generate them in 'loadOptionsFromFile' function
-            */
-            loadOptionsFromFile(e.target.files[0], config, options.selectedVersion,
-              (errorDescription) => {
-                errorText.current = errorDescription
-                setActiveErrorPopup(true)
-              },
-              ({ newOptions, _unmodifiedOptions, _modifiedOptionTitles }) => {
-                if (newOptions === undefined)
-                  return
-                modifiedOptionTitles.current = _modifiedOptionTitles
-                unmodifiedOptions.current = _unmodifiedOptions
-                setOptions(newOptions)
-              })
-
-
-          }
-          input.click()
-        }}
         onAutoFormatChange={setAutoUpdateFormatting}
       />
       <Popup
@@ -136,6 +109,7 @@ const App = () => {
             errorText.current = errorDescription
             setActiveErrorPopup(true)
           }}
+          darkTheme={darkThemeActive}
           options={options}
           modifiedOptionTitles={modifiedOptionTitles}
           unmodifiedOptions={unmodifiedOptions}

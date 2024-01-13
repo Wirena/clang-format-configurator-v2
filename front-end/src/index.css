@@ -38,7 +38,17 @@ body.dark {
   height: 80vh;
   width: 70vw;
   min-width: 900px;
+  border-radius: 5px;
 }
+
+.dark .config_page_popup-content {
+  background-color: #313131;
+  border-color: #000000;
+  border-width: 2px;
+}
+
+
+
 
 .error_popup-content {
   position: absolute;
