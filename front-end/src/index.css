@@ -33,7 +33,23 @@ body.dark {
   overflow: hidden;
 }
 
-.popup-content {
+
+.config_page_popup-content {
+  height: 80vh;
+  width: 70vw;
+  min-width: 900px;
+  border-radius: 5px;
+}
+
+.dark .config_page_popup-content {
+  background-color: #313131;
+  border-color: #000000;
+  border-width: 2px;
+}
+
+
+
+.error_popup-content {
   position: absolute;
   top: -35%;
   border-color: black;
@@ -45,14 +61,14 @@ body.dark {
   margin: 0px;
 }
 
-.dark .popup-content {
+.dark .error_popup-content {
   background-color: #313131;
   border-color: #000000;
   border-width: 2px;
 }
 
 
-.popup-overlay {
+.error_popup-overlay {
   background: rgba(0, 0, 0, 0.13);
 }
 

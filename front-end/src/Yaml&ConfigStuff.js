@@ -107,6 +107,79 @@ export function buildYamlCmdString(chosenOptions, config) {
 }
 
 
+export function loadOptionsFromString(optionsStr, config, selectedVersion, onLoaded) {
+  const options = yaml.parse(optionsStr)
+  if (typeof (options) == "string" || Array.isArray(options) || options === null)
+    throw new Error("Looks like invalid yaml file")
+  const BasedOnStyle = options.BasedOnStyle
+  if (BasedOnStyle === undefined) {
+    const modifiedOptionTitles = Object.entries(options).map(([k, v]) => { return k })
+    options.selectedVersion = selectedVersion
+    onLoaded({
+      newOptions: options, _unmodifiedOptions: undefined,
+      _modifiedOptionTitles: modifiedOptionTitles
+    })
+    return
+  }
+
+  // check if config is compatible with selected version
+  // values might also differ for same key from version to version but this solution is ok for now
+
+  const listOfOptionTitles = config[selectedVersion].map(el => el.title)
+  Object.entries(options).forEach(([k, v]) => {
+    if (!listOfOptionTitles.includes(k)) {
+      throw new Error("Config contains key that is incompatible with selected clang-format version:\n" + k)
+    }
+  })
+
+  // fill optionsWithDefaults with default values for selected style
+  let unmodifiedOptions = {
+    selectedVersion: selectedVersion,
+    BasedOnStyle: BasedOnStyle
+  }
+
+  config[unmodifiedOptions.selectedVersion]
+    .slice(1).forEach((option) => {
+      if (
+        option.values.length === 1 &&
+        option.values[0].defaults[BasedOnStyle] !== undefined
+      ) {
+        unmodifiedOptions[option.title] =
+          option.values[0].defaults[BasedOnStyle].value;
+      } else {
+        // set all option values to selected style defaults
+        // inluding nested ones
+        // filter out options without defaults for this style
+        option.values.filter((element) => element.defaults[BasedOnStyle] !== undefined)
+          .forEach((nestedOption) => {
+            if (unmodifiedOptions[option.title] == undefined)
+              unmodifiedOptions[option.title] = {}
+            unmodifiedOptions[option.title][nestedOption.title] =
+              nestedOption.defaults[BasedOnStyle].value
+          }
+          );
+      }
+    });
+  let modifedOptions = cloneDeep(unmodifiedOptions)
+  let modifiedOptionTitles = []
+  Object.entries(options).forEach(([k, v]) => {
+    if (isObject(modifedOptions[k]))
+      /*if value is object such as BraceWrapping i.e. has nested options
+       then simply doing modifedOptions[k] = v; will undefine those properties
+      which were not declared in user selected .clang-format file
+      */
+      Object.assign(modifedOptions[k], v)
+    else
+      modifedOptions[k] = v;
+    modifiedOptionTitles.push(k)
+  })
+  onLoaded({
+    newOptions: modifedOptions, _unmodifiedOptions: unmodifiedOptions,
+    _modifiedOptionTitles: modifiedOptionTitles
+  })
+
+}
+
 
 
 export function loadOptionsFromFile(fileName, config, selectedVersion, onError, onLoaded) {
@@ -134,7 +207,7 @@ export function loadOptionsFromFile(fileName, config, selectedVersion, onError, 
       const listOfOptionTitles = config[selectedVersion].map(el => el.title)
       Object.entries(options).forEach(([k, v]) => {
         if (!listOfOptionTitles.includes(k)) {
-          throw new Error("Config contains key that is incompatible with selected clang-format version:\n"+k)
+          throw new Error("Config contains key that is incompatible with selected clang-format version:\n" + k)
         }
       })
 

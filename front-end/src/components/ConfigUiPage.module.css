@@ -1,0 +1,55 @@
+.config_ui_page {
+
+    padding: 0px;
+    margin: 0px;
+    height: 96%;
+}
+
+
+:global(.dark) .config_ui_page {
+    background-color: #313131;
+    border-color: #5b5b5b;
+}
+
+
+.top_panel {
+    margin: 10px;
+}
+
+.page_title_text {
+    font-family: sans-serif;
+    font-weight: normal;
+    font-size: 17px;
+    overflow: hidden;
+}
+
+:global(.dark) .page_title_text {
+    color: #cfcec4;
+}
+
+.middle_panel {
+    width: 100%;
+    height: 95%;
+}
+
+.bottom_panel {
+    margin: 10px;
+
+}
+
+.bottom_file_buttons {}
+
+
+.bottom_control_buttons {
+    float: right;
+}
+
+.editor_container {
+    height: 100%;
+    margin-left: 15px;
+    margin-right: 15px;
+    width: 98%;
+    float: left;
+    border: 1px solid;
+    border-color: black;
+}

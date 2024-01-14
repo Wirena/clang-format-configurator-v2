@@ -6,16 +6,19 @@ import Error from "./components/Error";
 import LoadingIcon from "./components/LoadingIcon";
 import { useEffect, useState, useRef } from "react";
 import config from "./config.json";
-import { buildYamlCmdString, buildYamlConfigFile, loadOptionsFromFile } from "./Yaml&ConfigStuff"
+import { buildYamlCmdString } from "./Yaml&ConfigStuff"
 import { Format } from "./API"
 import { useCookies } from "react-cookie";
 import Popup from 'reactjs-popup';
-import { saveAs } from 'file-saver';
+
 import { debounce } from "lodash";
+import ConfigUiPage from "./components/ConfigUiPage";
 
 
 const App = () => {
   const [cookie, setCookie] = useCookies([])
+
+  const [configPageOpened, setConfigPageOpened] = useState(false)
 
   const errorText = useRef("")
   const [activeErrorPopup, setActiveErrorPopup] = useState(false)
@@ -39,7 +42,6 @@ const App = () => {
   const unmodifiedOptions = useRef({})
 
   function formatCode(options, text, currentLang) {
-    //window.loadingIcon.setLoadingState("loading")
     const yamlStr = buildYamlCmdString(options, config)
     Format(text, yamlStr, options.selectedVersion, currentLang, (code) => { if (code !== "") { setText(code); window.loadingIcon.setLoadingState("success") } },
       (errortext) => {
@@ -66,41 +68,11 @@ const App = () => {
         darkTheme={darkThemeActive}
         onDarkThemeChange={() => { const newDarkThemeStatus = !darkThemeActive; setCookie("theme", newDarkThemeStatus ? "dark" : "light", { path: "/" }); setDarkThemeActive(newDarkThemeStatus) }}
         onUpdate={() => { window.loadingIcon.setLoadingState("loading"); formatCode(options, text, currentLang) }}
-        onDownload={() => {
-          const conf = buildYamlConfigFile(options, modifiedOptionTitles.current, unmodifiedOptions.current)
-          const blob = new Blob([conf], { type: 'text/plain;charset=utf-8' })
-          saveAs(blob, ".clang-format")
-        }}
-        onUpload={() => {
-          const input = document.createElement('input');
-          input.type = 'file';
-          input.onchange = (e) => {
-
-            /* 
-              SHITCODE WARNING
-              Since i use 'modifiedOptionTitles' and 'unmodifiedOptions'
-              i have to generate them in 'loadOptionsFromFile' function
-            */
-            loadOptionsFromFile(e.target.files[0], config, options.selectedVersion,
-              (errorDescription) => {
-                errorText.current = errorDescription
-                setActiveErrorPopup(true)
-              },
-              ({ newOptions, _unmodifiedOptions, _modifiedOptionTitles }) => {
-                if (newOptions === undefined)
-                  return
-                modifiedOptionTitles.current = _modifiedOptionTitles
-                unmodifiedOptions.current = _unmodifiedOptions
-                setOptions(newOptions)
-              })
-
-
-          }
-          input.click()
-        }}
+        onConfigFile={() => { setConfigPageOpened(true) }}
         onAutoFormatChange={setAutoUpdateFormatting}
       />
       <Popup
+        className="error_popup"
         open={activeErrorPopup}
         modal={true}
         closeOnEscape={true}
@@ -111,6 +83,40 @@ const App = () => {
           errorText={errorText.current}
         />
       </Popup>
+      <Popup
+        className="config_page_popup"
+        open={configPageOpened}
+        onClose={() => setConfigPageOpened(false)}
+        modal={true}
+        closeOnEscape={false}
+        closeOnDocumentClick={false}
+        position="center center"
+        modifiedOptionTitles={modifiedOptionTitles}
+        unmodifiedOptions={unmodifiedOptions}
+
+      >
+        <ConfigUiPage
+          onClose={() => setConfigPageOpened(false)}
+          onLoaded={({ newOptions, _unmodifiedOptions, _modifiedOptionTitles }) => {
+            if (newOptions === undefined)
+              return
+            modifiedOptionTitles.current = _modifiedOptionTitles
+            unmodifiedOptions.current = _unmodifiedOptions
+            setOptions(newOptions)
+            setConfigPageOpened(false)
+          }}
+          onError={(errorDescription) => {
+            errorText.current = errorDescription
+            setActiveErrorPopup(true)
+          }}
+          darkTheme={darkThemeActive}
+          options={options}
+          modifiedOptionTitles={modifiedOptionTitles}
+          unmodifiedOptions={unmodifiedOptions}
+
+        />
+      </Popup>
+
       <div className="pane_container">
         <Resizable
           className="left_side"
