@@ -96,5 +96,4 @@ const ConfigUiPage = ({ options, modifiedOptionTitles, unmodifiedOptions, onLoad
 
 };
 
-
 export default ConfigUiPage;
