@@ -163,7 +163,7 @@ const App = () => {
 
         </section>
       </div>
-    </div >
+    </div>
   );
 }
 

@@ -24,7 +24,8 @@ const Editor = ({ editorText, onTextChange, currentLang, setCurrentLang, darkThe
 
   const [leftPanelText, setLeftPanelText] = React.useState(editorText)
   const [rightPanelText, setRightPanelText] = React.useState("")
-  React.useEffect(() => { setLeftPanelText(editorText) }, [editorText])
+  React.useEffect(() => { if (editorDiffMode) setLeftPanelText(editorText) }, [editorDiffMode, editorText])
+  React.useEffect(() => { if (editorDiffMode) setRightPanelText(editorText) }, [editorDiffMode])
 
   const onTextChangeDebounced = React.useRef(debounce(onTextChange, 1000, { leading: false, trailing: true }), [])
 
