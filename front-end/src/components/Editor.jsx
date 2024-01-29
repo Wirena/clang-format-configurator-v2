@@ -16,17 +16,18 @@ import "ace-builds/src-noconflict/ext-beautify"
 import "ace-builds/src-min-noconflict/ext-searchbox";
 import { debounce } from "lodash";
 
-
 const Editor = ({ editorText, onTextChange, currentLang, setCurrentLang, darkTheme, loadingIcon, columnLimitLine }) => {
   const cppCodeString = React.useRef("")
   const javaCodeString = React.useRef("")
   const [editorDiffMode, setEditorDiffMode] = React.useState(false)
-  const [leftPaneText, setLeftPaneText] = React.useState("")
   const [orientationBeside, setOrientationBeside] = React.useState(true)
 
-  const onTextChangeDiffDebounced = React.useRef(debounce(([leftPaneText, rightPaneText]) => { setLeftPaneText(leftPaneText); onTextChange(leftPaneText) }, 1000, { leading: false, trailing: true }))
-  const onTextChangeSingleDebounced = React.useRef(debounce(onTextChange, 1000, { leading: false, trailing: true }))
+  const [leftPanelText, setLeftPanelText] = React.useState(editorText)
+  const [rightPanelText, setRightPanelText] = React.useState("")
+  React.useEffect(() => { if (editorDiffMode) setLeftPanelText(editorText) }, [editorDiffMode, editorText])
+  React.useEffect(() => { if (editorDiffMode) setRightPanelText(editorText) }, [editorDiffMode])
 
+  const onTextChangeDebounced = React.useRef(debounce(onTextChange, 1000, { leading: false, trailing: true }), [])
 
   React.useEffect(() => {
     //Load Cpp snippet
@@ -34,7 +35,6 @@ const Editor = ({ editorText, onTextChange, currentLang, setCurrentLang, darkThe
       .then((response) => response.text())
       .then((textContent) => {
         cppCodeString.current = textContent;
-        setLeftPaneText(textContent)
         onTextChange(cppCodeString.current)
       })
     //Load Java snippet
@@ -49,7 +49,7 @@ const Editor = ({ editorText, onTextChange, currentLang, setCurrentLang, darkThe
     <DiffEditor
       name="Ace Diff editor"
       height="97%"
-      width={"100%"}
+      width="100%"
       editorProps={{ $blockScrolling: true }}
       mode={currentLang}
       theme={darkTheme ? "clouds_midnight" : "textmate"}
@@ -57,11 +57,16 @@ const Editor = ({ editorText, onTextChange, currentLang, setCurrentLang, darkThe
       fontSize={14}
       debounceChangePeriod={0}
       showPrintMargin={true}
-      onChange={([leftPaneText, rightPaneText]) => { window.loadingIcon.setLoadingState("loading"); onTextChangeDiffDebounced.current(leftPaneText, rightPaneText) }}
-      value={[leftPaneText || "", editorText || ""]}
+      onChange={([leftPanelText, rightPanelText]) => {
+        if (leftPanelText !== editorText)
+          window.loadingIcon.setLoadingState("loading")
+        setLeftPanelText(leftPanelText)
+        setRightPanelText(rightPanelText)
+        onTextChangeDebounced.current(leftPanelText)
+      }}
+      value={[leftPanelText, rightPanelText]}
       setOptions={{
         printMargin: columnLimitLine,
-        useWorker: false,
         enableBasicAutocompletion: true,
         enableLiveAutocompletion: true,
         enableSnippets: true,
@@ -72,15 +77,18 @@ const Editor = ({ editorText, onTextChange, currentLang, setCurrentLang, darkThe
     editorProps={{ $blockScrolling: true }}
     name="Ace editor"
     height="97%"
-    width={"100%"}
-
+    width="100%"
     value={editorText}
     mode={currentLang}
     theme={darkTheme ? "clouds_midnight" : "textmate"}
     fontSize={14}
     debounceChangePeriod={0}
     showPrintMargin={true}
-    onChange={(text) => { window.loadingIcon.setLoadingState("loading"); onTextChangeSingleDebounced.current(text) }}
+    onChange={(text) => {
+      if (text !== editorText)
+        window.loadingIcon.setLoadingState("loading");
+      onTextChangeDebounced.current(text)
+    }}
     setOptions={{
       printMargin: columnLimitLine,
       enableBasicAutocompletion: true,
@@ -111,6 +119,11 @@ const Editor = ({ editorText, onTextChange, currentLang, setCurrentLang, darkThe
             }}>
             Java
           </button>
+          {editorDiffMode ? <span
+            className={styles.diffmode_guide}>
+            Format works only for left/top panel
+          </span> : null}
+
         </span>
         <span>
           {editorDiffMode ? (<button

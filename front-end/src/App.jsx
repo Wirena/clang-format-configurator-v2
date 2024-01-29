@@ -32,7 +32,7 @@ const App = () => {
   const [autoUpdateFormatting, setAutoUpdateFormatting] = useState(true);
   const [currentLang, setCurrentLang] = useState("c_cpp")
   /*
-  List of options that were modified manually 
+  List of options that were modified manually
   Used to ease removing options, which values match default values fro selected style
   */
   const modifiedOptionTitles = useRef([])
