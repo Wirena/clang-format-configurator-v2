@@ -1,6 +1,6 @@
 :root {
     --top-height: 30px;
-    --bottom-height: 30px;
+    --bottom-height: 50px;
 }
 
 .config_ui_page {
@@ -17,7 +17,8 @@
 
 
 .top_panel {
-    padding: 10px;
+    padding: 10px 5px 0px 15px;
+    margin: 0px;
     height: var(--top-height);
 }
 
@@ -26,6 +27,8 @@
     font-weight: normal;
     font-size: 17px;
     overflow: hidden;
+    margin: 0px;
+    padding: 0px;
 }
 
 :global(.dark) .page_title_text {
@@ -41,6 +44,21 @@
     padding: 10px;
     height: var(--bottom-height);
 
+}
+
+.bottom_config_options {}
+
+.config_option_description {
+    font-family: sans-serif;
+    font-weight: normal;
+    font-size: 15px;
+    overflow: hidden;
+    margin: 0px;
+    padding: 0px;
+}
+
+:global(.dark) .config_option_description {
+    color: #cfcec4;
 }
 
 .bottom_file_buttons {}

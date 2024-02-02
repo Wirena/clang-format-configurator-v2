@@ -12,11 +12,15 @@ import "ace-builds/src-noconflict/ext-beautify"
 import "ace-builds/src-min-noconflict/ext-searchbox";
 import { buildYamlConfigFile, loadOptionsFromString } from "../Yaml&ConfigStuff"
 import config from "../config.json";
+import { useCookies } from "react-cookie";
+
 
 
 const ConfigUiPage = ({ options, modifiedOptionTitles, unmodifiedOptions, onLoaded, onError, onClose, darkTheme }) => {
+    const [cookie, setCookie] = useCookies([])
+    const [removeDuplicates, setRemoveDuplicates] = React.useState(cookie["remove-duplicates"] === "true" ? true : false) // bruh
 
-    const [optionsText, setOptionsText] = React.useState(buildYamlConfigFile(options, modifiedOptionTitles.current, unmodifiedOptions.current))
+    const [optionsText, setOptionsText] = React.useState(buildYamlConfigFile(options, removeDuplicates, modifiedOptionTitles.current, unmodifiedOptions.current))
     const downloadConfigFile = React.useCallback(() => {
         const blob = new Blob([optionsText], { type: 'text/plain;charset=utf-8' })
         saveAs(blob, ".clang-format")
@@ -71,6 +75,19 @@ const ConfigUiPage = ({ options, modifiedOptionTitles, unmodifiedOptions, onLoad
                 </div>
             </div>
             <div className={styles.bottom_panel}>
+                <div className={styles.bottom_config_options}>
+                    <input type="checkbox"
+                        label="Remove duplicates"
+                        checked={removeDuplicates}
+                        onChange={() => {
+                            setCookie("remove-duplicates", !removeDuplicates);
+                            setRemoveDuplicates(!removeDuplicates);
+                            setOptionsText(buildYamlConfigFile(options, !removeDuplicates, modifiedOptionTitles.current, unmodifiedOptions.current))
+                        }} />
+                    <label
+                        className={styles.config_option_description}>Remove duplicates with BasedOnStyle (Not tested)</label>
+                </div>
+
                 <span className={styles.bottom_file_buttons}>
                     <button onClick={onUploadFileToStr}>
                         Upload file
