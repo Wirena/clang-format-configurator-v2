@@ -4,12 +4,14 @@ import styles from "./Option.module.css";
 import SingleSelector from "./SingleSelector";
 import MapSelector from "./MapSelector";
 import ArraySelector from "./ArraySelector";
+import { over } from "lodash";
 
 
 const Option = ({ optionInfo,
   currentOptionValue,
   currentStyle,
-  onChange
+  onChange,
+  overridenBy
 }) => {
   const [showDocString, setShowDocString] = React.useState(false);
 
@@ -64,7 +66,7 @@ const Option = ({ optionInfo,
     }
   }
 
-
+  const overrideWarningText = overridenBy === undefined ? "" : " overriden by " + overridenBy
 
   return (
     <section className={styles.option}>
@@ -81,6 +83,7 @@ const Option = ({ optionInfo,
           />
         </button>
         <span className={optionInfo.deprecated ? styles.title_deprecated : styles.title}>{optionInfo.title}</span>
+        <span className={styles.overriden_waring}>{overrideWarningText}</span>
         <Collapsible open={showDocString} transitionTime={100}>
           <div
             hidden={showDocString ? "" : "hidden"}
