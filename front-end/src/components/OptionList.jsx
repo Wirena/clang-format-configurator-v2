@@ -9,7 +9,7 @@ const OptionList = ({ config, options, llvmVersionOption, onOptionChange, update
   const deprecatedOptions = []
   const nonDeprecatedOptions = config[options.selectedVersion].slice(1).map((option) => {
 
-    const checkIfOverriden = (currentOptionName, options) => {
+    const checkIfOverridden = (currentOptionName, options) => {
       switch (currentOptionName) {
         case "BraceWrapping":
           if (options["BreakBeforeBraces"] !== "Custom")
@@ -23,7 +23,7 @@ const OptionList = ({ config, options, llvmVersionOption, onOptionChange, update
       key={option.title}
       optionInfo={option}
       currentStyle={options.BasedOnStyle}
-      overridenBy={checkIfOverriden(option.title, options)}
+      overridenBy={checkIfOverridden(option.title, options)}
       currentOptionValue={options[option.title]}
       onChange={(optionTitle, newOptionValue) => {
         updateModifiedList(optionTitle)

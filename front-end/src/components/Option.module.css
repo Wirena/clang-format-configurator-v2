@@ -33,14 +33,14 @@
   padding: 3px;
 }
 
-.overriden_waring {
+.overridden_waring {
   font-family: sans-serif;
   font-size: 10px;
   overflow: hidden;
   color: red;
 }
 
-:global(.dark) .overriden_waring {
+:global(.dark) .overridden_waring {
   color: #c98787;
 }
 
