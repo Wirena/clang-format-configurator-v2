@@ -7,6 +7,13 @@ function removeOptionsDuplicatingStyleDefs(options, modifiedOptionTitles, unmodi
 
     if (key1 === "BasedOnStyle") continue
 
+    if (key1 === "BraceWrapping") {
+      if (options["BreakBeforeBraces"] !== "Custom") {
+        delete options[key1]
+      }
+      continue
+    }
+
     if (!modifiedOptionTitles.includes(key1)) {
       delete options[key1]
       continue
@@ -34,8 +41,11 @@ function removeOptionsDuplicatingStyleDefs(options, modifiedOptionTitles, unmodi
   return options
 }
 
-export function buildYamlConfigFile(chosenOptions, modifiedOptionTitles, unmodifiedOptions) {
+export function buildYamlConfigFile(chosenOptions, removeDuplicates, modifiedOptionTitles, unmodifiedOptions) {
   let options = cloneDeep(chosenOptions)
+  if (options.BasedOnStyle !== undefined && removeDuplicates)
+    options = removeOptionsDuplicatingStyleDefs(options, modifiedOptionTitles, unmodifiedOptions)
+
   delete options.selectedVersion
   const doc = new yaml.Document();
   doc.contents = options
