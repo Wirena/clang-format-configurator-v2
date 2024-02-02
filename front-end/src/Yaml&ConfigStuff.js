@@ -9,7 +9,7 @@ function removeOptionsDuplicatingStyleDefs(options, modifiedOptionTitles, unmodi
 
     if (key1 === "BraceWrapping") {
       if (options["BreakBeforeBraces"] !== "Custom") {
-        delete [options[key1]]
+        delete options[key1]
       }
       continue
     }
