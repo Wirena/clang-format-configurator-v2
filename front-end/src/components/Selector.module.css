@@ -9,7 +9,8 @@
   -moz-box-sizing: content-box;
   -webkit-box-sizing: content-box;
   box-sizing: content-box;
-  font: -moz-pull-down-menu;
+  -moz-appearance: none !important;
+  appearance: none;
 }
 
 :global(.dark) .selector {
@@ -32,6 +33,8 @@
 
 
 .dropdown_option_default {
+  -moz-appearance: none;
+  appearance: none;
   font-style: italic;
   background-color: rgb(184, 184, 184);
 }
@@ -126,7 +129,7 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 
-:global(.dark) .popup_hint{
+:global(.dark) .popup_hint {
   color: #e2e1d8;
   border-color: #202020;
 }

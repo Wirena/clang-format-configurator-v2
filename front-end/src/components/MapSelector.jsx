@@ -3,8 +3,7 @@ import styles from "./Selector.module.css";
 import SingleSelector from "./SingleSelector";
 
 const MapSelector = ({ selectorInfo, onChange, currentStyle, currentOptionValue }) => {
-  const currentOptionValueDefined = currentOptionValue != undefined;
-
+  const currentOptionValueDefined = currentOptionValue !== undefined;
   return (
     <span className={styles.nested_container}>
       {selectorInfo.map((value) => {
@@ -18,6 +17,7 @@ const MapSelector = ({ selectorInfo, onChange, currentStyle, currentOptionValue 
                 newOptionValue[value.title] = changedValue;
                 onChange(newOptionValue)
               }}
+              defaultValue={value.defaults[currentStyle]}
               currentOptionValue={currentOptionValueDefined ? currentOptionValue[value.title] : ""}
               currentStyle={currentStyle}
             />
