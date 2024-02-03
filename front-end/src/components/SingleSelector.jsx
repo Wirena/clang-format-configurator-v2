@@ -13,6 +13,16 @@ const SingleSelector = ({ selectorInfo, onChange, defaultValue,
       ? undefined
       : defaultValue.value;
 
+
+  const defaultValueMarker_Firefox = " *"
+  // Firefox ignores CSS color, background-color and font-style for it's select option elements
+  const isFirefox = React.useMemo(() => {
+    const userAgent = navigator.userAgent;
+    return userAgent.match(/firefox|fxios/i)
+  }, [])
+
+
+
   switch (selectorInfo.argument_type) {
     case "unsigned":
     case "int8_t":
@@ -53,14 +63,14 @@ const SingleSelector = ({ selectorInfo, onChange, defaultValue,
               value={true}
               className={true === defValue ?
                 styles.dropdown_option_default : null}>
-              true
+              {(true === defValue && isFirefox) ? "true" + defaultValueMarker_Firefox : "true"}
             </option>
             <option
               key={2}
               value={false}
               className={false === defValue ?
                 styles.dropdown_option_default : null}>
-              false
+              {(false === defValue && isFirefox) ? "false" + defaultValueMarker_Firefox : "false"}
             </option>
           </select>
         </div>
@@ -84,7 +94,7 @@ const SingleSelector = ({ selectorInfo, onChange, defaultValue,
             className={[styles.selector,
             styles.selector_disableable].join(' ')}
             placeholder={currentOptionValue === undefined ?
-              "Undefined" : defValue}
+              "Option unset" : defValue}
             disabled={currentOptionValue === undefined}
             value={currentOptionValue || ""}
             onChange={(event) => onChange(event.target.value)} />
@@ -136,8 +146,9 @@ const SingleSelector = ({ selectorInfo, onChange, defaultValue,
             {selectorInfo.arg_val_enum.map((value) => (
               <option
                 key={value}
+                value={value}
                 className={value === defValue ? styles.dropdown_option_default : null}>
-                {value}
+                {(value === defValue && isFirefox) ? value + defaultValueMarker_Firefox : value}
               </option>
             ))}
           </select>
