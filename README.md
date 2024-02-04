@@ -12,33 +12,43 @@ Clang-format-configurator-v2 is a written from scratch successor of [clang-forma
 - Readable error description on invalid option value instead of "Bad Request"
 - Support for multiple programming languages
 - For complex options config file is correctly(?) generated now
-- Incomprehensible front-end shitcode and idiotic config generation algorithm
+- Incomprehensible frontend shitcode and idiotic config generation algorithm
 - Fix of critical "Not invented here" bug
 
 ## User guide
-
-   Every single option visible in option list is going to end up in the resulting .clang-format file.
-   Previously, all duplicating with BasedOnStyle options were removed, but due to the [bug](https://github.com/Wirena/clang-format-configurator-v2/issues/21) with BraceWrapping this feature was disabled. Gonna be fixed Soon™
    
-  ~~So, besides intuitive things such as config download/upload, array add/remove element buttons, options' title, documentation and selector, there is something worth mentioning.~~
+### Basic info
 
-   ~~The semantics of selected values is a bit different compared to the zed0's tool: the **defined** values you see is not what is written or read from your .clang-format file, but a final set of rules which ClangFormat formatting will be based on, with the exception of ``BraceWrapping`` and ``SpaceBeforeParensOptions``.~~
+   Clang-format tool defaults all unset options to values from selected BasedOnStyle when doing formatting, this configurator follows such behaviour: every time `BasedOnStyle` is changed, all options are filled with values from selected style, when user uploads their .clang-format config file, configurator also automatically fills all unset options to match style from user's config. 
+   
+   Default values for enum options in dropdown selectors are marked with asterisk (*) on Firefox and with different color and italic font style on other browsers. Default values for strings and numbers are set as a placeholder (can be seen when input field is empty). Setting dropdown selectors to blank does the same thing as setting them to current style's default value.
 
-   ~~So, on uploading of this 4 line config~~
-   ```
-   ---
-   BasedOnStyle: LLVM
-   AlignAfterOpenBracket: DontAlign
-   AlignArrayOfStructures: Right
-   ```
-   ~~the app will fill values not only for ``AlignAfterOpenBracket`` and ``AlignArrayOfStructures``, but every other option that is set in the specified ``BasedOnStyle``, in this case LLVM.~~
+   String selectors have "Unset" button to the right of an edit field and work this way:
 
-   ~~On downloading you will get the same 4 line config file, despite all options in UI have their values set.~~
+   - Unset option marked with "Option unset" text and is, well, unset. It defaults to selected style
+   - Active option with empty string in it is set to an empty string
 
-   ~~Now, about the exception of ``BraceWrapping`` and ``SpaceBeforeParensOptions``. As the documentation for ``BraceWrapping``  says: *"If BreakBeforeBraces is set to BS_Custom, use this to specify how each individual brace case should be handled. Otherwise, this is ignored."* So, if you set ``BreakBeforeBraces`` to ``BS_Linux`` for example, actual ``BraceWrapping`` rules will differ from those that are displayed because I haven't found a way to get these values for each ``BreakBeforeBraces`` variant, so it works how it works.~~
+   Array selectors have big red X buttons and big blue + buttons. First ones delete element above them, second ones append new empty element to the end. There are no empty arrays, because clang-format treats them the same way as unset option.
 
-   ~~I mentioned before that there are defined values, so, obviously there are undefined values. These undefined values are more of an initial design flaw than a feature. Basically, if some option is set to undefined (left blank for dropdows and numbers or greyed out for strings), then it simply won't end up in your config file. Which kinda breaks all of semantics described earlier: if ``BasedOnStyle`` is specified, then ClangFormat is setting undefined option's value to default value for selected ``BasedOnStyle``, which should be shown by the app instead of "Undefined". The default value for ``BasedOnStyle`` is LLVM. You can figure out what happens if ``BasedOnStyle`` is not specified. Yep, all undefined options fall back to LLVM style.~~
+   "Autoformat on changes" checkbox is quite self explanatory, works both for code changes and option changes
 
+   Deprecated options are placed at the bottom of the list and have strikethrough title style
+
+   Red "overridden by X" warning means that this option value is overridden by X option value. Currently, works only for `BraceWrapping` and `BreakBeforeBraces`. If you know other options that override something, please let me know by creating an Issue. 
+
+   Legacy values (`None, Consecutive, AcrossEmptyLines, AcrossComments, AcrossEmptyLinesAndComments`) for `AlignConsecutive*` are not supported by configurator.
+
+### Config File page
+
+   Well, "Upload"/"Download" buttons are for uploading/downloading config file, editor is for editing or copypasting config file contents in-place. "Close" button disgards all changes to config file, "Load Config" buttons applies them. 
+
+   "Remove duplicates with BasedOnStyle (Not tested)" checkbox is for removing options, which values match selected BasedOnStyle style. This feature is not properly tested. 
+
+### Diff mode
+
+   Configurator formats code on the left/top panel, code on the right/bottom panel is left unchanged.
+
+   Btw, if you want to make formatting as close as possible to existing formatted code, then try [clang-unformat](https://github.com/alandefreitas/clang-unformat)
 
 
 ## Build and Development
