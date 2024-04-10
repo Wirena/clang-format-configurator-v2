@@ -143,7 +143,7 @@ function inside-container() (
     REPOSITORY_DIR="${WORKDIR}/llvm"
     
     CORE_COUNT=$(nproc)
-    declare -a TAGS=("llvmorg-17.0.6" "llvmorg-16.0.6" "llvmorg-16.0.0" "llvmorg-15.0.7"  "llvmorg-15.0.0" "llvmorg-14.0.6"
+    declare -a TAGS=("llvmorg-18.1.3"  "llvmorg-18.1.0"  "llvmorg-17.0.6" "llvmorg-17.0.0" "llvmorg-16.0.6" "llvmorg-16.0.0" "llvmorg-15.0.7"  "llvmorg-15.0.0" "llvmorg-14.0.6"
         "llvmorg-14.0.0" "llvmorg-13.0.1" "llvmorg-12.0.1" "llvmorg-11.1.0" "llvmorg-11.0.1" "llvmorg-10.0.0"
     "llvmorg-9.0.1" "llvmorg-8.0.1" "llvmorg-7.1.0" "llvmorg-7.0.1")
     
