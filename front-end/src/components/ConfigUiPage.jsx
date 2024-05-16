@@ -79,12 +79,14 @@ const ConfigUiPage = ({ options, modifiedOptionTitles, unmodifiedOptions, onLoad
                     <input type="checkbox"
                         label="Remove duplicates"
                         checked={removeDuplicates}
+                        id="remove-duplicates"
                         onChange={() => {
                             setCookie("remove-duplicates", !removeDuplicates);
                             setRemoveDuplicates(!removeDuplicates);
                             setOptionsText(buildYamlConfigFile(options, !removeDuplicates, modifiedOptionTitles.current, unmodifiedOptions.current))
-                        }} />
+                        }} />{" "}
                     <label
+                        htmlFor="remove-duplicates"
                         className={styles.config_option_description}>Remove duplicates with BasedOnStyle (Not tested)</label>
                 </div>
 
