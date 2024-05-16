@@ -49,11 +49,11 @@ const ConfigUiPage = ({ options, modifiedOptionTitles, unmodifiedOptions, onLoad
 
     return (
         <div className={styles.config_ui_page}>
-            <div className={styles.top_panel}>
-                <h1 className={styles.page_title_text}>
+            <header className={styles.top_panel}>
+                <h2 className={styles.page_title_text}>
                     Edit your .clang-format config file in place or use Upload and Download buttons to open File Explorer
-                </h1>
-            </div>
+                </h2>
+            </header>
             <div className={styles.middle_panel}>
                 <div className={styles.editor_container}>
                     <AceEditor
@@ -74,7 +74,7 @@ const ConfigUiPage = ({ options, modifiedOptionTitles, unmodifiedOptions, onLoad
                     />
                 </div>
             </div>
-            <div className={styles.bottom_panel}>
+            <footer className={styles.bottom_panel}>
                 <div className={styles.bottom_config_options}>
                     <input type="checkbox"
                         label="Remove duplicates"
@@ -108,7 +108,7 @@ const ConfigUiPage = ({ options, modifiedOptionTitles, unmodifiedOptions, onLoad
                     </button>
                 </span>
 
-            </div>
+            </footer>
         </div>
 
     )

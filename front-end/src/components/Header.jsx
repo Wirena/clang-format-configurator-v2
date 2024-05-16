@@ -6,7 +6,7 @@ import styles from './Header.module.css'
 const Header = ({ autoFormat, onAutoFormatChange, darkTheme, onDarkThemeChange, onUpdate, onConfigFile }) => {
   return (
     <header className={styles.header}>
-      <h2 className={styles.title_text}>clang-format configurator v2</h2>
+      <h1 className={styles.title_text}>clang-format configurator v2</h1>
       <span>
         <input
           className={styles.checkbox} type="checkbox"
