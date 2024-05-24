@@ -6,14 +6,14 @@ import styles from './Header.module.css'
 const Header = ({ autoFormat, onAutoFormatChange, darkTheme, onDarkThemeChange, onUpdate, onConfigFile }) => {
   return (
     <header className={styles.header}>
-      <h2 className={styles.title_text}>clang-format configurator v2</h2>
+      <h1 className={styles.title_text}>clang-format configurator v2</h1>
       <span>
         <input
-          className={styles.checkbox} type={"checkbox"}
-          id={"autoupdate"} defaultChecked={autoFormat}
+          className={styles.checkbox} type="checkbox"
+          id="autoupdate" defaultChecked={autoFormat}
           onChange={(event) => onAutoFormatChange(event.currentTarget.checked)}
         />
-        <label className={styles.label}>Autoformat on changes</label>
+        <label className={styles.label} htmlFor="autoupdate">Autoformat on changes</label>
         <button className={styles.button} onClick={onUpdate}>
           Format
         </button>
