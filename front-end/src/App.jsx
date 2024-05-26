@@ -41,6 +41,7 @@ const App = () => {
   */
   const unmodifiedOptions = useRef({})
 
+
   function formatCode(options, text, currentLang) {
     const yamlStr = buildYamlCmdString(options, config)
     Format(text, yamlStr, options.selectedVersion, currentLang, (code) => { if (code !== "") { setText(code); window.loadingIcon.setLoadingState("success") } },

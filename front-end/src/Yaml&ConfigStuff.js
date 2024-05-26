@@ -125,6 +125,7 @@ export function loadOptionsFromString(optionsStr, config, selectedVersion, onLoa
   if (BasedOnStyle === undefined) {
     const modifiedOptionTitles = Object.entries(options).map(([k, v]) => { return k })
     options.selectedVersion = selectedVersion
+    manuallyValidate(options)
     onLoaded({
       newOptions: options, _unmodifiedOptions: undefined,
       _modifiedOptionTitles: modifiedOptionTitles
@@ -271,4 +272,15 @@ export function loadOptionsFromFile(fileName, config, selectedVersion, onError, 
     }
   }
   reader.readAsText(fileName)
+}
+
+
+export function manuallyValidate(config) {
+  // Check AlignConsecutive legacy values
+  if (parseInt(config.selectedVersion.split('.')) >= 15) {
+    if (typeof config.AlignConsecutiveAssignments === "string" || typeof config.AlignConsecutiveBitFields === "string" ||
+      typeof config.AlignConsecutiveDeclarations === "string" || typeof config.AlignConsecutiveMacros === "string") {
+      throw new Error("Legacy values like 'None', 'Consecutive', etc for 'AlignConsecutive*' options are not supported for versions >=15.0");
+    }
+  }
 }
