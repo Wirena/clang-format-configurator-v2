@@ -121,11 +121,12 @@ export function loadOptionsFromString(optionsStr, config, selectedVersion, onLoa
   const options = yaml.parse(optionsStr)
   if (typeof (options) == "string" || Array.isArray(options) || options === null)
     throw new Error("Looks like invalid yaml file")
+
+  manuallyValidate(options, selectedVersion)
   const BasedOnStyle = options.BasedOnStyle
   if (BasedOnStyle === undefined) {
     const modifiedOptionTitles = Object.entries(options).map(([k, v]) => { return k })
     options.selectedVersion = selectedVersion
-    manuallyValidate(options)
     onLoaded({
       newOptions: options, _unmodifiedOptions: undefined,
       _modifiedOptionTitles: modifiedOptionTitles
@@ -275,9 +276,9 @@ export function loadOptionsFromFile(fileName, config, selectedVersion, onError, 
 }
 
 
-export function manuallyValidate(config) {
+export function manuallyValidate(config, version) {
   // Check AlignConsecutive legacy values
-  if (parseInt(config.selectedVersion.split('.')) >= 15) {
+  if (parseInt(version) >= 15) {
     if (typeof config.AlignConsecutiveAssignments === "string" || typeof config.AlignConsecutiveBitFields === "string" ||
       typeof config.AlignConsecutiveDeclarations === "string" || typeof config.AlignConsecutiveMacros === "string") {
       throw new Error("Legacy values like 'None', 'Consecutive', etc for 'AlignConsecutive*' options are not supported for versions >=15.0");
