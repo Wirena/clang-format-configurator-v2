@@ -3,6 +3,15 @@
     --bottom-height: 50px;
 }
 
+:global(.dark) a {
+    color: #99c3ff;
+}
+
+:global(.dark) a:visited {
+    color: #c58af9;
+}
+
+
 .config_ui_page {
     padding: 0px;
     margin: 0px;
@@ -46,7 +55,6 @@
 
 }
 
-.bottom_config_options {}
 
 .config_option_description {
     font-family: sans-serif;
@@ -61,8 +69,6 @@
     color: #cfcec4;
 }
 
-.bottom_file_buttons {}
-
 
 .bottom_control_buttons {
     float: right;
@@ -76,4 +82,136 @@
     float: left;
     border: 1px solid;
     border-color: black;
+}
+
+
+.aligncons_error_ui_page {
+    height: 100%;
+    max-height: 100%;
+    padding: 10px;
+    margin: 0px;
+    overflow: hidden;
+}
+
+.aligncons_error_main_msg {
+    text-align: center;
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size: 30px;
+    padding: 0px;
+}
+
+:global(.dark) .aligncons_error_main_msg {
+    color: #cfcec4;
+}
+
+
+.aligncons_error_detailed_msg {
+    font-family: sans-serif;
+    font-weight: normal;
+    font-size: 20px;
+    margin: 20px;
+    padding: 0px;
+}
+
+
+:global(.dark) .aligncons_error_detailed_msg {
+    color: #cfcec4;
+}
+
+
+.aligncons_error_shitcode_msg {
+    font-family: sans-serif;
+    font-weight: lighter;
+    font-size: 8px;
+    margin: 0px;
+    padding: 0px;
+}
+
+
+:global(.dark) .aligncons_error_shitcode_msg {
+    color: #cfcec4;
+}
+
+.aligncons_error_spoiler {
+    max-height: 50%;
+    overflow: auto;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 5px;
+    margin: 5px;
+    padding: 5px;
+}
+
+
+.aligncons_error_spoiler_summary {
+    font-family: sans-serif;
+    font-weight: normal;
+    font-style: italic;
+    font-size: 18px;
+    margin: 0px;
+    padding: 0px;
+}
+
+
+:global(.dark) .aligncons_error_spoiler_summary {
+    color: #cfcec4;
+}
+
+.aligncons_error_spoiler_content {
+    font-family: sans-serif;
+    font-weight: normal;
+    font-style: normal;
+    font-size: 18px;
+    margin: 20px;
+    padding: 0px;
+}
+
+
+:global(.dark) .aligncons_error_spoiler_content {
+    color: #cfcec4;
+}
+
+.aligncons_error_spoiler_code_snippets_list {
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.aligncons_error_spoiler_code_snippet {
+    font-family: sans-serif;
+    font-weight: normal;
+    font-style: normal;
+    font-size: 18px;
+    overflow: hidden;
+    padding: 7px;
+
+}
+
+
+:global(.dark) .aligncons_error_spoiler_code_snippet {
+    color: #cfcec4;
+}
+
+
+.aligncons_error_convert_prompt {
+    text-align: center;
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size: 25px;
+    overflow: hidden;
+    margin: 20px;
+    margin-bottom: 10px;
+    padding: 0px;
+}
+
+
+:global(.dark) .aligncons_error_convert_prompt {
+    color: #cfcec4;
+}
+
+
+.aligncons_error_button_container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

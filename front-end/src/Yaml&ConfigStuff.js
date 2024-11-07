@@ -1,6 +1,43 @@
 import yaml from "yaml"
 import { cloneDeepWith, cloneDeep, isEmpty, isEqual, isNumber, isObject } from "lodash";
 
+export class ValidationError extends Error {
+  constructor(message, options) {
+    super(message, options);
+  }
+}
+
+export function convertLegacyAlignConsectutiveOptions(options) {
+  console.log(options)
+  const optionsList = Object.keys(options)
+  for (let i = 0; i < optionsList.length; i++) {
+    if (optionsList[i].startsWith("AlignConsecutive") && (typeof options[optionsList[i]] === "string")) {
+      const currentValStr = options[optionsList[i]];
+      options[optionsList[i]] = {};
+      switch (currentValStr) {
+        case "None":
+          break;
+        case "Consecutive":
+          break;
+        case "AcrossEmptyLines":
+          break;
+        case "AcrossComments":
+          break;
+        case "AcrossEmptyLinesAndComments":
+          break;
+
+        case "true":
+          break;
+        case "false":
+          break;
+        default:
+      }
+
+    }
+  }
+  return options
+
+}
 
 function removeOptionsDuplicatingStyleDefs(options, modifiedOptionTitles, unmodifiedOptions) {
   for (const [key1, value1] of Object.entries(options)) {
@@ -123,6 +160,7 @@ export function loadOptionsFromString(optionsStr, config, selectedVersion, onLoa
     throw new Error("Looks like invalid yaml file")
 
   manuallyValidate(options, selectedVersion)
+
   const BasedOnStyle = options.BasedOnStyle
   if (BasedOnStyle === undefined) {
     const modifiedOptionTitles = Object.entries(options).map(([k, v]) => { return k })
@@ -281,7 +319,8 @@ export function manuallyValidate(config, version) {
   if (parseInt(version) >= 15) {
     if (typeof config.AlignConsecutiveAssignments === "string" || typeof config.AlignConsecutiveBitFields === "string" ||
       typeof config.AlignConsecutiveDeclarations === "string" || typeof config.AlignConsecutiveMacros === "string") {
-      throw new Error("Legacy values like 'None', 'Consecutive', etc for 'AlignConsecutive*' options are not supported for versions >=15.0");
+      throw new ValidationError()
     }
   }
 }
+

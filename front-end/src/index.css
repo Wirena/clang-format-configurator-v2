@@ -14,6 +14,7 @@ body.dark {
   display: flex;
 }
 
+
 .left_side {
   width: 60vw;
   border-right-style: solid;
@@ -33,7 +34,6 @@ body.dark {
   overflow: hidden;
 }
 
-
 .config_page_popup-content {
   height: 70vh;
   width: 70vw;
@@ -46,7 +46,6 @@ body.dark {
   border-color: #000000;
   border-width: 2px;
 }
-
 
 
 .error_popup-content {
