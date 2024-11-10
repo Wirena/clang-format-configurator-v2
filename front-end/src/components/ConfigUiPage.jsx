@@ -10,7 +10,7 @@ import "ace-builds/src-noconflict/theme-clouds_midnight";
 import "ace-builds/src-noconflict/ext-language_tools";
 import "ace-builds/src-noconflict/ext-beautify"
 import "ace-builds/src-min-noconflict/ext-searchbox";
-import { buildYamlConfigFile, loadOptionsFromString, ValidationError } from "../Yaml&ConfigStuff"
+import { buildYamlConfigFile, loadOptionsFromString, convertLegacyAlignConsectutiveOptions, ValidationError } from "../Yaml&ConfigStuff"
 import config from "../config.json";
 import { useCookies } from "react-cookie";
 
@@ -109,7 +109,14 @@ const ConfigUiPage = ({ options, modifiedOptionTitles, unmodifiedOptions, onLoad
                 Convert legacy values to modern style?
             </h2>
             <div className={styles.aligncons_error_button_container}>
-                <button>Ok</button>
+                <button onClick={() => {
+                    const newOptionsText = convertLegacyAlignConsectutiveOptions(optionsText, parseInt(options.selectedVersion));
+                    setOptionsText(newOptionsText);
+                    loadConfigTxtToOptions(newOptionsText);
+                    setShowAlignConsecuriveErrPage(false);
+                }}>
+                    Ok
+                </button>
                 <button onClick={() => setShowAlignConsecuriveErrPage(false)}>Cancel</button>
             </div>
         </div>)

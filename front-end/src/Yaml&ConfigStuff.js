@@ -1,42 +1,158 @@
 import yaml from "yaml"
 import { cloneDeepWith, cloneDeep, isEmpty, isEqual, isNumber, isObject } from "lodash";
 
-export class ValidationError extends Error {
-  constructor(message, options) {
-    super(message, options);
+export class ValidationError extends Error { }
+
+
+
+function mapAlignConsecutive(value, version) {
+  switch (value) {
+    case "None":
+      if (version >= 18)
+        return {
+          Enabled: false,
+          AcrossEmptyLines: false,
+          AcrossComments: false,
+          AlignCompound: false,
+          AlignFunctionPointers: false,
+          PadOperators: true
+        }
+      else
+        return {
+          Enabled: false,
+          AcrossEmptyLines: false,
+          AcrossComments: false,
+          AlignCompound: false,
+          PadOperators: true
+        }
+    case "Consecutive":
+      if (version >= 18)
+        return {
+          Enabled: true,
+          AcrossEmptyLines: false,
+          AcrossComments: false,
+          AlignCompound: false,
+          AlignFunctionPointers: false,
+          PadOperators: true
+        }
+      else
+        return {
+          Enabled: true,
+          AcrossEmptyLines: false,
+          AcrossComments: false,
+          AlignCompound: false,
+          PadOperators: true
+        }
+    case "AcrossEmptyLines":
+      if (version >= 18)
+        return {
+          Enabled: true,
+          AcrossEmptyLines: true,
+          AcrossComments: false,
+          AlignCompound: false,
+          AlignFunctionPointers: false,
+          PadOperators: true
+        }
+      else
+        return {
+          Enabled: true,
+          AcrossEmptyLines: true,
+          AcrossComments: false,
+          AlignCompound: false,
+          PadOperators: true
+        }
+    case "AcrossComments":
+      if (version >= 18)
+        return {
+          Enabled: true,
+          AcrossEmptyLines: false,
+          AcrossComments: true,
+          AlignCompound: false,
+          AlignFunctionPointers: false,
+          PadOperators: true
+        }
+      else return {
+        Enabled: true,
+        AcrossEmptyLines: false,
+        AcrossComments: true,
+        AlignCompound: false,
+        PadOperators: true
+      }
+    case "AcrossEmptyLinesAndComments":
+      if (version >= 18)
+        return {
+          Enabled: true,
+          AcrossEmptyLines: true,
+          AcrossComments: true,
+          AlignCompound: false,
+          AlignFunctionPointers: false,
+          PadOperators: true
+        }
+      else
+        return {
+          Enabled: true,
+          AcrossEmptyLines: true,
+          AcrossComments: true,
+          AlignCompound: false,
+          PadOperators: true
+        }
+    case "true":
+      if (version >= 18)
+        return {
+          Enabled: true,
+          AcrossEmptyLines: false,
+          AcrossComments: false,
+          AlignCompound: false,
+          AlignFunctionPointers: false,
+          PadOperators: true
+        }
+      else
+        return {
+          Enabled: true,
+          AcrossEmptyLines: false,
+          AcrossComments: false,
+          AlignCompound: false,
+          PadOperators: true
+        }
+    case "false":
+      if (version >= 18)
+        return {
+          Enabled: false,
+          AcrossEmptyLines: false,
+          AcrossComments: false,
+          AlignCompound: false,
+          AlignFunctionPointers: false,
+          PadOperators: true
+        }
+      else
+        return {
+          Enabled: false,
+          AcrossEmptyLines: false,
+          AcrossComments: false,
+          AlignCompound: false,
+          PadOperators: true
+        }
+    default:
   }
 }
 
-export function convertLegacyAlignConsectutiveOptions(options) {
-  console.log(options)
+export function convertLegacyAlignConsectutiveOptions(yamlString, version) {
+  let options = yaml.parse(yamlString)
   const optionsList = Object.keys(options)
   for (let i = 0; i < optionsList.length; i++) {
-    if (optionsList[i].startsWith("AlignConsecutive") && (typeof options[optionsList[i]] === "string")) {
-      const currentValStr = options[optionsList[i]];
-      options[optionsList[i]] = {};
-      switch (currentValStr) {
-        case "None":
-          break;
-        case "Consecutive":
-          break;
-        case "AcrossEmptyLines":
-          break;
-        case "AcrossComments":
-          break;
-        case "AcrossEmptyLinesAndComments":
-          break;
-
-        case "true":
-          break;
-        case "false":
-          break;
-        default:
-      }
-
+    const isString = typeof options[optionsList[i]] === "string";
+    const isBoolean = typeof options[optionsList[i]] === "boolean";
+    if (optionsList[i].startsWith("AlignConsecutive") && (isBoolean || isString)) {
+      const currentVal = options[optionsList[i]];
+      options[optionsList[i]] = mapAlignConsecutive(isString ? currentVal : currentVal.toString(), version)
     }
   }
-  return options
-
+  const doc = new yaml.Document();
+  doc.contents = options
+  const YamlOptions = {
+    directives: true
+  }
+  return doc.toString(YamlOptions)
 }
 
 function removeOptionsDuplicatingStyleDefs(options, modifiedOptionTitles, unmodifiedOptions) {
