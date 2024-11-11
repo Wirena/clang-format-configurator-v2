@@ -4,7 +4,6 @@ import { cloneDeepWith, cloneDeep, isEmpty, isEqual, isNumber, isObject } from "
 export class ValidationError extends Error { }
 
 
-
 function mapAlignConsecutive(value, version) {
   switch (value) {
     case "None":
@@ -133,8 +132,11 @@ function mapAlignConsecutive(value, version) {
           PadOperators: true
         }
     default:
+      return undefined
   }
 }
+
+
 
 export function convertLegacyAlignConsectutiveOptions(yamlString, version) {
   let options = yaml.parse(yamlString)
@@ -194,6 +196,8 @@ function removeOptionsDuplicatingStyleDefs(options, modifiedOptionTitles, unmodi
   return options
 }
 
+
+
 export function buildYamlConfigFile(chosenOptions, removeDuplicates, modifiedOptionTitles, unmodifiedOptions) {
   let options = cloneDeep(chosenOptions)
   if (options.BasedOnStyle !== undefined && removeDuplicates)
@@ -222,6 +226,7 @@ function removeEmpty(obj) {
   })
   return obj
 }
+
 
 
 export function buildYamlCmdString(chosenOptions, config) {
@@ -430,12 +435,17 @@ export function loadOptionsFromFile(fileName, config, selectedVersion, onError, 
 }
 
 
+
 export function manuallyValidate(config, version) {
   // Check AlignConsecutive legacy values
   if (parseInt(version) >= 15) {
-    if (typeof config.AlignConsecutiveAssignments === "string" || typeof config.AlignConsecutiveBitFields === "string" ||
-      typeof config.AlignConsecutiveDeclarations === "string" || typeof config.AlignConsecutiveMacros === "string") {
-      throw new ValidationError()
+    const optionsList = Object.keys(config)
+    for (let i = 0; i < optionsList.length; i++) {
+      const isString = typeof config[optionsList[i]] === "string";
+      const isBoolean = typeof config[optionsList[i]] === "boolean";
+      if (optionsList[i].startsWith("AlignConsecutive") && (isBoolean || isString)) {
+        throw new ValidationError()
+      }
     }
   }
 }
