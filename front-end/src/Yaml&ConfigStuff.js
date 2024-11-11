@@ -1,6 +1,161 @@
 import yaml from "yaml"
 import { cloneDeepWith, cloneDeep, isEmpty, isEqual, isNumber, isObject } from "lodash";
 
+export class ValidationError extends Error { }
+
+
+function mapAlignConsecutive(value, version) {
+  switch (value) {
+    case "None":
+      if (version >= 18)
+        return {
+          Enabled: false,
+          AcrossEmptyLines: false,
+          AcrossComments: false,
+          AlignCompound: false,
+          AlignFunctionPointers: false,
+          PadOperators: true
+        }
+      else
+        return {
+          Enabled: false,
+          AcrossEmptyLines: false,
+          AcrossComments: false,
+          AlignCompound: false,
+          PadOperators: true
+        }
+    case "Consecutive":
+      if (version >= 18)
+        return {
+          Enabled: true,
+          AcrossEmptyLines: false,
+          AcrossComments: false,
+          AlignCompound: false,
+          AlignFunctionPointers: false,
+          PadOperators: true
+        }
+      else
+        return {
+          Enabled: true,
+          AcrossEmptyLines: false,
+          AcrossComments: false,
+          AlignCompound: false,
+          PadOperators: true
+        }
+    case "AcrossEmptyLines":
+      if (version >= 18)
+        return {
+          Enabled: true,
+          AcrossEmptyLines: true,
+          AcrossComments: false,
+          AlignCompound: false,
+          AlignFunctionPointers: false,
+          PadOperators: true
+        }
+      else
+        return {
+          Enabled: true,
+          AcrossEmptyLines: true,
+          AcrossComments: false,
+          AlignCompound: false,
+          PadOperators: true
+        }
+    case "AcrossComments":
+      if (version >= 18)
+        return {
+          Enabled: true,
+          AcrossEmptyLines: false,
+          AcrossComments: true,
+          AlignCompound: false,
+          AlignFunctionPointers: false,
+          PadOperators: true
+        }
+      else return {
+        Enabled: true,
+        AcrossEmptyLines: false,
+        AcrossComments: true,
+        AlignCompound: false,
+        PadOperators: true
+      }
+    case "AcrossEmptyLinesAndComments":
+      if (version >= 18)
+        return {
+          Enabled: true,
+          AcrossEmptyLines: true,
+          AcrossComments: true,
+          AlignCompound: false,
+          AlignFunctionPointers: false,
+          PadOperators: true
+        }
+      else
+        return {
+          Enabled: true,
+          AcrossEmptyLines: true,
+          AcrossComments: true,
+          AlignCompound: false,
+          PadOperators: true
+        }
+    case "true":
+      if (version >= 18)
+        return {
+          Enabled: true,
+          AcrossEmptyLines: false,
+          AcrossComments: false,
+          AlignCompound: false,
+          AlignFunctionPointers: false,
+          PadOperators: true
+        }
+      else
+        return {
+          Enabled: true,
+          AcrossEmptyLines: false,
+          AcrossComments: false,
+          AlignCompound: false,
+          PadOperators: true
+        }
+    case "false":
+      if (version >= 18)
+        return {
+          Enabled: false,
+          AcrossEmptyLines: false,
+          AcrossComments: false,
+          AlignCompound: false,
+          AlignFunctionPointers: false,
+          PadOperators: true
+        }
+      else
+        return {
+          Enabled: false,
+          AcrossEmptyLines: false,
+          AcrossComments: false,
+          AlignCompound: false,
+          PadOperators: true
+        }
+    default:
+      return undefined
+  }
+}
+
+
+
+export function convertLegacyAlignConsectutiveOptions(yamlString, version) {
+  let options = yaml.parse(yamlString)
+  const optionsList = Object.keys(options)
+  for (let i = 0; i < optionsList.length; i++) {
+    const isString = typeof options[optionsList[i]] === "string";
+    const isBoolean = typeof options[optionsList[i]] === "boolean";
+    if (optionsList[i].startsWith("AlignConsecutive") && (isBoolean || isString)) {
+      const currentVal = options[optionsList[i]];
+      options[optionsList[i]] = mapAlignConsecutive(isString ? currentVal : currentVal.toString(), version)
+    }
+  }
+  const doc = new yaml.Document();
+  doc.contents = options
+  const YamlOptions = {
+    directives: true
+  }
+  return doc.toString(YamlOptions)
+}
 
 function removeOptionsDuplicatingStyleDefs(options, modifiedOptionTitles, unmodifiedOptions) {
   for (const [key1, value1] of Object.entries(options)) {
@@ -41,6 +196,8 @@ function removeOptionsDuplicatingStyleDefs(options, modifiedOptionTitles, unmodi
   return options
 }
 
+
+
 export function buildYamlConfigFile(chosenOptions, removeDuplicates, modifiedOptionTitles, unmodifiedOptions) {
   let options = cloneDeep(chosenOptions)
   if (options.BasedOnStyle !== undefined && removeDuplicates)
@@ -69,6 +226,7 @@ function removeEmpty(obj) {
   })
   return obj
 }
+
 
 
 export function buildYamlCmdString(chosenOptions, config) {
@@ -123,6 +281,7 @@ export function loadOptionsFromString(optionsStr, config, selectedVersion, onLoa
     throw new Error("Looks like invalid yaml file")
 
   manuallyValidate(options, selectedVersion)
+
   const BasedOnStyle = options.BasedOnStyle
   if (BasedOnStyle === undefined) {
     const modifiedOptionTitles = Object.entries(options).map(([k, v]) => { return k })
@@ -276,12 +435,18 @@ export function loadOptionsFromFile(fileName, config, selectedVersion, onError, 
 }
 
 
+
 export function manuallyValidate(config, version) {
   // Check AlignConsecutive legacy values
   if (parseInt(version) >= 15) {
-    if (typeof config.AlignConsecutiveAssignments === "string" || typeof config.AlignConsecutiveBitFields === "string" ||
-      typeof config.AlignConsecutiveDeclarations === "string" || typeof config.AlignConsecutiveMacros === "string") {
-      throw new Error("Legacy values like 'None', 'Consecutive', etc for 'AlignConsecutive*' options are not supported for versions >=15.0");
+    const optionsList = Object.keys(config)
+    for (let i = 0; i < optionsList.length; i++) {
+      const isString = typeof config[optionsList[i]] === "string";
+      const isBoolean = typeof config[optionsList[i]] === "boolean";
+      if (optionsList[i].startsWith("AlignConsecutive") && (isBoolean || isString)) {
+        throw new ValidationError()
+      }
     }
   }
 }
+
