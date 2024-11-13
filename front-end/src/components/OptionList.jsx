@@ -14,7 +14,13 @@ const OptionList = ({ config, options, llvmVersionOption, onOptionChange, update
         case "BraceWrapping":
           if (options["BreakBeforeBraces"] !== "Custom")
             return "BreakBeforeBraces"
-          else return undefined
+          else
+            return undefined
+        case "SpaceBeforeParensOptions":
+          if (options["SpaceBeforeParens"] !== "Custom")
+            return "SpaceBeforeParens"
+          else
+            return undefined
         default: return undefined
       }
     }
