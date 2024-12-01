@@ -54,6 +54,8 @@ const App = () => {
 
   useEffect(() => { if (autoUpdateFormatting) { formatCode(options, text, currentLang) } }, [text]);
 
+  const editorTabWidth = (options.TabWidth) ? options.TabWidth : 4;
+
   // Another useeffect for options because of debouncing
   const formatCodeDebounced = useRef(debounce(formatCode, 1000, { leading: false, trailing: true })).current
   useEffect(() => {
@@ -157,6 +159,7 @@ const App = () => {
             currentLang={currentLang}
             onTextChange={setText}
             editorText={text}
+            tabWidth={editorTabWidth}
             darkTheme={darkThemeActive}
             loadingIcon={<LoadingIcon />}
             columnLimitLine={options.ColumnLimit ? Number(options.ColumnLimit) : 80}

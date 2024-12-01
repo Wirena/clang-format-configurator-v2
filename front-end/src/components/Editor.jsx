@@ -16,7 +16,7 @@ import "ace-builds/src-noconflict/ext-beautify"
 import "ace-builds/src-min-noconflict/ext-searchbox";
 import { debounce } from "lodash";
 
-const Editor = ({ editorText, onTextChange, currentLang, setCurrentLang, darkTheme, loadingIcon, columnLimitLine }) => {
+const Editor = ({ editorText, onTextChange, currentLang, setCurrentLang, tabWidth, darkTheme, loadingIcon, columnLimitLine }) => {
   const cppCodeString = React.useRef("")
   const javaCodeString = React.useRef("")
   const [editorDiffMode, setEditorDiffMode] = React.useState(false)
@@ -50,6 +50,7 @@ const Editor = ({ editorText, onTextChange, currentLang, setCurrentLang, darkThe
       name="Ace Diff editor"
       height="97%"
       width="100%"
+      tabSize={tabWidth}
       editorProps={{ $blockScrolling: true }}
       mode={currentLang}
       theme={darkTheme ? "clouds_midnight" : "textmate"}
@@ -78,6 +79,7 @@ const Editor = ({ editorText, onTextChange, currentLang, setCurrentLang, darkThe
     name="Ace editor"
     height="97%"
     width="100%"
+    tabSize={tabWidth}
     value={editorText}
     mode={currentLang}
     theme={darkTheme ? "clouds_midnight" : "textmate"}
