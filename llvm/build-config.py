@@ -81,7 +81,7 @@ def rst_docstring_to_html_codeblock(docstring: str) -> str:
     # single line code
     docstring = re.sub(r'`{1,2}(.+?)`{1,2}',
                   r'<code>\g<1></code>', docstring, 0, re.MULTILINE)
-    ## replate **deprecated** with 
+    ## replate **deprecated** with
     docstring = docstring.replace("**deprecated**", "<b>DEPRECATED</b>")
     return docstring.strip()
 
@@ -113,7 +113,7 @@ def parse_rst(rst: str):
             1), "docstring": rst_docstring_to_html_codeblock(options[i])
             # yep, bringing closer the global warming and the heat death of the universe by calling a replace method
             # on a version 7-13  docstring that is guaranteed not to have a singe occurrence of ":versionbadge:"
-            .replace(":versionbadge:", "Introduced in:"), 
+            .replace(":versionbadge:", "Introduced in:"),
             "deprecated": check_if_deprecated_by_docstring(options[i]),
             "values": []}
         values = []
@@ -156,14 +156,14 @@ def parse_defaults(path: str, optionList, version: str):
             styles[styleFileName.split("_")[1]] = yaml.safe_load(f.read())
             f.close()
         except FileNotFoundError:
-            sys.sterr.write(
+            sys.stderr.write(
                 f"Failed to open file {path}/{styleFileName}, continuing")
 
     for optionIndex in range(len(optionList)):
         if len(optionList[optionIndex]["values"]) == 1:
             defaults = {}
             for styleName, defaultsList in styles.items():
-                if optionList[optionIndex]["title"] not in defaultsList:
+                if optionList[optionIndex]["title"] not in defaultsList or optionList[optionIndex]["title"] == "Language":
                     continue
                 defaults[styleName] = {
                     "value": defaultsList[optionList[optionIndex]["title"]]}
@@ -174,7 +174,8 @@ def parse_defaults(path: str, optionList, version: str):
                 defaults = {}
                 for styleName, defaultsList in styles.items():
                     if optionList[optionIndex]["title"] not in defaultsList or \
-                            values[valuesIndex]["title"] not in defaultsList[optionList[optionIndex]["title"]]:
+                            values[valuesIndex]["title"] not in defaultsList[optionList[optionIndex]["title"]] \
+                            or optionList[optionIndex]["title"] == "Language":
                         continue
                     defaults[styleName] = {
                         "value": defaultsList[optionList[optionIndex]["title"]][values[valuesIndex]["title"]]}
