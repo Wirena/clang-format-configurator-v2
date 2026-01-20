@@ -47,7 +47,7 @@ const Option = ({ optionInfo,
             onChange={onChangeFunc}
           />)
 
-        if (optionInfo.values.length > 2)
+        if (optionInfo.values.length >= 2)
           return (<MapSelector
             selectorInfo={optionInfo.values}
             currentOptionValue={currentOptionValue}
